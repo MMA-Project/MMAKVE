@@ -1,8 +1,15 @@
 # MMAKVE
 
-This is a monorepo containing both frontend and backend applications.
+MONO-REPO
 
 ## Structure
 
-- `/front` - Frontend application
-- `/back` - Backend application
+- `apps/frontend` - Next.js application
+- `apps/backend` - Express.js application
+- `apps/packages/shared` - Shared utilities and types
+- `tsconfig.json` - TypeScript configuration for the monorepo
+- `package.json` - Monorepo package configuration and scripts
+
+## PNPM
+
+Utilisez pnpm
