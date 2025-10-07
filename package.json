@@ -1,0 +1,19 @@
+{
+  "name": "mmakve",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "eslint": "^9.11.1",
+    "prettier": "^3.3.3"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel dev", 
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint"
+  }
+}
