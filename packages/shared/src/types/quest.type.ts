@@ -7,7 +7,7 @@ export type Quest = {
     description: string;
     date_limit: number; // timestamp
     prime: number;
-    status: "waiting_approval" | "approved";
+    status: "waiting_approval" | "approved" | "in_progress" | "completed" | "failed";
 
     options?: {
         estimated_time: number; // in hours
