@@ -13,3 +13,117 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// Enum for adventurer type
+enum AdventurerType {
+    ARCHER
+    BARBARIAN
+    PALADIN
+    ARCANE_MAGE
+    PRIEST
+    GEOMANCER
+    ALCHEMIST
+    BLACKSMITH
+    ENCHANTER
+    MESSENGER
+}
+
+model Quest {
+  id                String              @id @default(uuid())
+  title             String
+  description       String?
+  deadline          DateTime?
+  reward            Int?
+  status            String?
+  estimatedDuration Int?
+  startDate         DateTime?
+  endDate           DateTime?
+  requiredProfiles  AdventurerType[]
+  xpRequired        Int?
+  assignments       QuestAssignment[]
+  createdBy         String
+}
+
+model QuestAssignment {
+  id            String      @id @default(uuid())
+  items         ItemOnQuestAssignment[]
+  adventurer    Adventurer  @relation(fields: [adventurerId], references: [id])
+  adventurerId  String
+  quest         Quest       @relation(fields: [questId], references: [id])
+  questId       String
+}
+
+model Adventurer {
+  id            String          @id @default(uuid())
+  name          String
+  type          AdventurerType
+  status        String?
+  xp            Int?
+  assignments   QuestAssignment[]
+  guilds        Guild[]         @relation("AdventurerGuild")
+  items         ItemOnAdventurer[]
+}
+
+model Item {
+  id            String          @id @default(uuid())
+  name          String
+  description   String?
+  durability    Int?
+  price         Int?
+  type          String?
+  stats         String?
+  rarity        String?
+  profiles      AdventurerType[]
+  adventurers   ItemOnAdventurer[]
+  questAssignments ItemOnQuestAssignment[]
+  guilds        ItemOnGuild[]
+}
+
+model Guild {
+  id            String          @id @default(uuid())
+  name          String
+  adventurers   Adventurer[]    @relation("AdventurerGuild")
+  bank          Bank?
+  inventory     ItemOnGuild[]
+}
+
+model Bank {
+  id            String          @id @default(uuid())
+  amount        Int
+  history       Transaction[]
+  guild         Guild           @relation(fields: [guildId], references: [id])
+  guildId       String @unique
+}
+
+model Transaction {
+  id            String      @id @default(uuid())
+  amount        Int
+  date          DateTime
+  name          String
+  bank          Bank        @relation(fields: [bankId], references: [id])
+  bankId        String
+}
+
+model ItemOnAdventurer {
+  adventurer   Adventurer @relation(fields: [adventurerId], references: [id])
+  adventurerId String
+  item         Item       @relation(fields: [itemId], references: [id])
+  itemId       String
+  @@id([adventurerId, itemId])
+}
+
+model ItemOnQuestAssignment {
+  questAssignment QuestAssignment @relation(fields: [questAssignmentId], references: [id])
+  questAssignmentId String
+  item              Item            @relation(fields: [itemId], references: [id])
+  itemId            String
+  @@id([questAssignmentId, itemId])
+}
+
+model ItemOnGuild {
+  guild Guild @relation(fields: [guildId], references: [id])
+  guildId String
+  item  Item  @relation(fields: [itemId], references: [id])
+  itemId String
+  @@id([guildId, itemId])
+}

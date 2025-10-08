@@ -1,12 +1,12 @@
 import { Item } from "./item.type";
 
 export type Guild = {
-    id: number;
+  id: number;
 
-    name: string;
+  name: string;
 
-    bank: number;
-    inventory: Item[];
-}
+  bank: number;
+  inventory: Item[];
+};
 
 export type GuildCreation = Omit<Guild, "id" | "bank" | "inventory">;
