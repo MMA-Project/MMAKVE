@@ -9,3 +9,8 @@ export type Transaction = {
     amount: number;
     date: number;
 }
+
+
+export type BankCreation = Omit<Bank, "transactions">;
+
+export type TransactionCreation = Omit<Transaction, "id">;

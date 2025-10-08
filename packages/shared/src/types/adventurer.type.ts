@@ -19,3 +19,5 @@ export type Adventurer = {
     status: "available" | "on_quest" | "injured" | "dead" | "sleeping";
     xp: number;
 }
+
+export type AdventurerCreation = Omit<Adventurer, "id" | "status" | "xp">;

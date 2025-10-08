@@ -8,3 +8,5 @@ export type Guild = {
     bank: number;
     inventory: Item[];
 }
+
+export type GuildCreation = Omit<Guild, "id" | "bank" | "inventory">;

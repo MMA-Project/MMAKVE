@@ -1,4 +1,4 @@
-import {Adventurer, AdventurerType} from "./adventurer.type";
+import {AdventurerType} from "./adventurer.type";
 
 export type Quest = {
     id: number;
@@ -16,6 +16,8 @@ export type Quest = {
         assignements: QuestAssignement[];
     };
 };
+
+export type QuestCreation = Omit<Quest, "id" | "status">;
 
 export type QuestAssignement = {
     id: number;

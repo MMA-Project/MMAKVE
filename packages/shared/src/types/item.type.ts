@@ -13,3 +13,5 @@ export type Item = {
 
     profiles: AdventurerType[];
 };
+
+export type ItemCreation = Omit<Item, "id">;
