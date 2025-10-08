@@ -1,26 +1,33 @@
-import {AdventurerType} from "./adventurer.type";
+import { Adventurer, AdventurerType } from "./adventurer.type";
 
 export type Quest = {
-    id: number;
+  id: number;
+  requester_id: number;
+  title: string;
+  description: string;
+  date_limit: number;
+  estimated_time: number;
+  prime: number;
+  status:
+    | "waiting_approval"
+    | "approved"
+    | "in_progress"
+    | "completed"
+    | "failed";
 
-    title: string;
-    description: string;
-    date_limit: number; // timestamp
-    prime: number;
-    status: "waiting_approval" | "approved" | "in_progress" | "completed" | "failed";
-
-    options?: {
-        estimated_time: number; // in hours
-        profils: AdventurerType[];
-        xp_required: number;
-        assignements: QuestAssignement[];
-    };
+  options?: {
+    profils: AdventurerType[];
+    start_date: number;
+    end_date: number;
+    xp_required: number;
+    assignements: QuestAssignement[];
+  };
 };
 
 export type QuestCreation = Omit<Quest, "id" | "status">;
 
 export type QuestAssignement = {
-    id: number;
-    items: number[];
-    adventurers: number[];
-}
+  id: number;
+  items: number[];
+  adventurer: Adventurer;
+};

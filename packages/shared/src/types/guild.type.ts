@@ -1,12 +1,15 @@
+import { Adventurer } from "./adventurer.type";
 import { Item } from "./item.type";
 
 export type Guild = {
-    id: number;
+  id: number;
+  name: string;
+  bank: number;
+  adventurers: Adventurer[];
+  inventory: Item[];
+};
 
-    name: string;
-
-    bank: number;
-    inventory: Item[];
-}
-
-export type GuildCreation = Omit<Guild, "id" | "bank" | "inventory">;
+export type GuildCreation = Omit<
+  Guild,
+  "id" | "bank" | "inventory" | "adventurers"
+>;
