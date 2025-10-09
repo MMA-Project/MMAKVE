@@ -15,24 +15,28 @@
         "test:watch": "vitest"
     },
     "dependencies": {
+        "@prisma/client": "^6.17.0",
+        "bcryptjs": "^2.4.3",
         "cors": "^2.8.5",
         "dotenv": "^16.6.1",
         "express": "^4.21.2",
         "helmet": "^8.1.0",
-        "bcryptjs": "^2.4.3",
         "jsonwebtoken": "^9.0.0",
-        "@prisma/client": "^6.17.0"
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.1"
     },
     "devDependencies": {
+        "@types/bcryptjs": "^2.4.2",
         "@types/express": "^5.0.3",
         "@types/jsonwebtoken": "^9.0.2",
-        "@types/bcryptjs": "^2.4.2",
-        "@types/supertest": "^2.0.16",
         "@types/node": "^24.7.0",
+        "@types/supertest": "^2.0.16",
+        "@types/swagger-jsdoc": "^6.0.4",
+        "@types/swagger-ui-express": "^4.1.8",
         "prisma": "^6.17.0",
         "supertest": "^7.0.0",
-        "vitest": "^2.1.1",
         "tsx": "^4.20.6",
-        "typescript": "^5.9.3"
+        "typescript": "^5.9.3",
+        "vitest": "^2.1.1"
     }
 }
