@@ -1,5 +1,5 @@
 import { prisma } from "apps/backend/prisma/client";
-import { Quest, QuestStatus, AdventurerType, QuestAssignement } from "packages/shared";
+import { Quest, QuestStatus, AdventurerType, QuestAssignement } from "@mmakve/shared";
 
 /**
  * ! Rôle: Assistant
