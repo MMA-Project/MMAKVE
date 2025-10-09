@@ -32,6 +32,28 @@ src/
 
 ---
 
+## 📚 Documentation API (Swagger)
+
+Swagger UI est disponible en dev sur :
+
+- UI: <http://localhost:4000/api/docs>
+
+On privilégie une doc “dans les routes” via des annotations JSDoc. Le schéma inclut déjà la sécurité Bearer (JWT) et des schémas de base. Ajoutez ou modifiez les blocs JSDoc directement à côté des handlers pour garder la doc à jour.
+
+Exemple d’annotation :
+
+```ts
+/**
+ * @openapi
+ * /auth/login:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Authentifier un utilisateur
+ */
+```
+
+---
+
 ## 🔐 Authentification & Autorisation
 
 ### 1. Login / Register
