@@ -37,7 +37,7 @@ src/
 ### 1. Login / Register
 
 - POST `/api/auth/register` `{ username, password, role? }`
-    - `role` optionnel (defaults `AVENTURIER`)
+    - `role` optionnel (defaults `CLIENT`)
 - POST `/api/auth/login` `{ username, password }` → `{ token }`
 
 ### 2. JWT

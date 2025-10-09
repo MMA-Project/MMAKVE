@@ -25,7 +25,7 @@ export const register = async ({ username, password, role }: RegisterInput) => {
     const existing = await __prisma.user.findUnique({ where: { username } });
     if (existing) throw new AppError(ErrorCodes.USERNAME_TAKEN, "Username already taken", 409);
 
-    const roleVal = normalizeRole(role) ?? "AVENTURIER";
+    const roleVal = normalizeRole(role) ?? "CLIENT";
     if (role && !normalizeRole(role))
         throw new AppError(ErrorCodes.VALIDATION_ERROR, "Invalid role", 422);
 

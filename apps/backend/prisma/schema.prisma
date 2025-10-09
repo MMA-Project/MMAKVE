@@ -69,7 +69,7 @@ model User {
   id           String      @id @default(uuid())
   username     String      @unique
   password     String
-  role         Role        @default(AVENTURIER)
+  role         Role        @default(CLIENT)
   createdAt    DateTime    @default(now())
   adventurer   Adventurer? @relation(fields: [adventurerId], references: [id])
   adventurerId String?     @unique
