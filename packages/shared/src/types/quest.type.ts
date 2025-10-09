@@ -1,19 +1,22 @@
 import { Adventurer, AdventurerType } from "./adventurer.type";
 
+export enum QuestStatus {
+  WAITING_APPROVAL = "waiting_approval",
+  APPROVED = "approved",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  FAILED = "failed",
+}
+
 export type Quest = {
-  id: number;
-  requester_id: number;
+  id: string;
+  requester_id: string;
   title: string;
   description: string;
   date_limit: number;
   estimated_time: number;
   prime: number;
-  status:
-    | "waiting_approval"
-    | "approved"
-    | "in_progress"
-    | "completed"
-    | "failed";
+  status: QuestStatus;
 
   options?: {
     profils: AdventurerType[];

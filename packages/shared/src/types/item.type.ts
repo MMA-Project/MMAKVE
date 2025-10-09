@@ -1,7 +1,7 @@
 import { AdventurerType } from "./adventurer.type";
 
 export type Item = {
-  id: number;
+  id: string;
 
   name: string;
   description: string;

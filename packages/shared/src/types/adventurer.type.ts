@@ -12,7 +12,7 @@ export enum AdventurerType {
 }
 
 export type Adventurer = {
-  id: number;
+  id: string;
 
   name: string;
   type: AdventurerType;
