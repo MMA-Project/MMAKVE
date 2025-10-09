@@ -28,6 +28,40 @@ enum AdventurerType {
     MESSENGER
 }
 
+// Roles for users
+enum Role {
+  AVENTURIER
+  ASSISTANT
+  CLIENT
+}
+
+model User {
+  id           String      @id @default(uuid())
+  username     String      @unique
+  password     String
+  role         Role        @default(AVENTURIER)
+  createdAt    DateTime    @default(now())
+  adventurer   Adventurer? @relation(fields: [adventurerId], references: [id])
+  adventurerId String?     @unique
+  assistant    Assistant?  @relation(fields: [assistantId], references: [id])
+  assistantId  String?     @unique
+  client       Client?     @relation(fields: [clientId], references: [id])
+  clientId     String?     @unique
+}
+
+model Assistant {
+  id        String   @id @default(uuid())
+  name      String
+  user      User?
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  user      User?
+}
+
+
 model Quest {
   id                String              @id @default(uuid())
   title             String
@@ -62,6 +96,7 @@ model Adventurer {
   assignments   QuestAssignment[]
   guilds        Guild[]         @relation("AdventurerGuild")
   items         ItemOnAdventurer[]
+  user          User?
 }
 
 model Item {
