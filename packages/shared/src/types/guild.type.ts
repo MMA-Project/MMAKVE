@@ -2,7 +2,7 @@ import { Adventurer } from "./adventurer.type";
 import { Item } from "./item.type";
 
 export type Guild = {
-  id: number;
+  id: string;
   name: string;
   bank: number;
   adventurers: Adventurer[];

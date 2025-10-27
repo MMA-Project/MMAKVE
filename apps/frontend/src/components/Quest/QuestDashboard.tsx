@@ -1,5 +1,4 @@
 import { useQuest } from "../../api/quest.api";
-import { getUser } from "../../App";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
 import { ProgressBar } from "./QuestProgressBar";
 import { useState } from "react";
@@ -9,6 +8,7 @@ import { computeProgress } from "../../utils/progressBar";
 import { DeleteButton } from "../Buttons/DeleteButton";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { ValidateButton } from "../Buttons/ValidateButton";
+import { useAuth } from "../../context/AuthContext";
 
 type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 
@@ -17,9 +17,11 @@ type SortOrder = "asc" | "desc";
 export function QuestDashboard() {
     const { getQuests } = useQuest();
     const navigate = useNavigate();
-    const user = getUser();
+    const { user } = useAuth();
     const [sortBy, setSortBy] = useState<SortBy>("date_limit");
     const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+    if (!user) return null;
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
@@ -64,9 +66,9 @@ export function QuestDashboard() {
 
                         switch (sortBy) {
                             case "date_limit":
-                                return compare(a.date_limit.getTime(), b.date_limit.getTime());
+                                return compare(a.deadline.getTime(), b.deadline.getTime());
                             case "prime":
-                                return compare(a.prime, b.prime);
+                                return compare(a.reward, b.reward);
                             case "status":
                                 return compare(
                                     Object.values(QuestStatus).indexOf(a.status),
@@ -78,7 +80,7 @@ export function QuestDashboard() {
                                     b.options?.xp_required ?? 0,
                                 );
                             case "client":
-                                return compare(a.requester_id, b.requester_id);
+                                return compare(a.requester.name, b.requester.name);
                         }
                     })
                     .map((quest) => (
@@ -100,8 +102,8 @@ export function QuestDashboard() {
                                         {quest.description}
                                     </p>
                                     <div className="mt-2 text-xs text-slate-400">
-                                        <p>Date limite : {quest.date_limit.toLocaleDateString()}</p>
-                                        <p>Prime : {quest.prime} 💰</p>
+                                        <p>Date limite : {quest.deadline.toLocaleDateString()}</p>
+                                        <p>Prime : {quest.reward} 💰</p>
                                         {quest.options && (
                                             <p>{quest.options?.xp_required ?? 0} XP requis</p>
                                         )}
