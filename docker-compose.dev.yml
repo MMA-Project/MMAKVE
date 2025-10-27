@@ -1,8 +1,6 @@
-version: "3.8"
-
 services:
   db:
-    image: postgres:15
+    image: postgres:17-alpine
     container_name: mmakve_db_dev
     restart: unless-stopped
     environment:

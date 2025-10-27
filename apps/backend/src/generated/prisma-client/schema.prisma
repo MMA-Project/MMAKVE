@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum for adventurer type
+enum AdventurerType {
+  ARCHER
+  BARBARIAN
+  PALADIN
+  ARCANE_MAGE
+  PRIEST
+  GEOMANCER
+  ALCHEMIST
+  BLACKSMITH
+  ENCHANTER
+  MESSENGER
+}
+
+// Roles for users
+enum Role {
+  AVENTURIER
+  ASSISTANT
+  CLIENT
+}
+
+enum QuestStatus {
+  PENDING
+  APPROVED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum AdventurerStatus {
+  AVAILABLE
+  ON_QUEST
+  INJURED
+  DEAD
+  RETIRED
+}
+
+enum ItemType {
+  WEAPON
+  EQUIPMENT
+  POTION
+  MISC
+}
+
+enum ItemRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model User {
+  id           String      @id @default(uuid())
+  username     String      @unique
+  password     String
+  role         Role        @default(CLIENT)
+  createdAt    DateTime    @default(now())
+  adventurer   Adventurer? @relation(fields: [adventurerId], references: [id])
+  adventurerId String?     @unique
+}
+
+model Quest {
+  id                String            @id @default(uuid())
+  title             String
+  description       String
+  deadline          DateTime
+  reward            Int
+  status            QuestStatus       @default(PENDING)
+  estimatedDuration Int
+  startDate         DateTime?
+  endDate           DateTime?
+  requiredProfiles  AdventurerType[]
+  xpRequired        Int?
+  assignments       QuestAssignment[]
+  createdBy         String
+}
+
+model QuestAssignment {
+  id           String                  @id @default(uuid())
+  items        ItemOnQuestAssignment[]
+  adventurer   Adventurer              @relation(fields: [adventurerId], references: [id])
+  adventurerId String
+  quest        Quest                   @relation(fields: [questId], references: [id])
+  questId      String
+}
+
+model Adventurer {
+  id          String            @id @default(uuid())
+  name        String
+  type        AdventurerType
+  status      AdventurerStatus  @default(AVAILABLE)
+  xp          Int               @default(0)
+  assignments QuestAssignment[]
+  guildId     String
+  guild       Guild             @relation("AdventurerGuild", fields: [guildId], references: [id])
+  user        User?
+}
+
+model Item {
+  id               String                  @id @default(uuid())
+  name             String
+  description      String
+  durability       Int
+  price            Int
+  type             ItemType
+  stats            String?
+  rarity           ItemRarity              @default(COMMON)
+  profiles         AdventurerType[]
+  questAssignments ItemOnQuestAssignment[]
+  guilds           ItemOnGuild[]
+}
+
+model Guild {
+  id          String        @id @default(uuid())
+  name        String
+  adventurers Adventurer[]  @relation("AdventurerGuild")
+  bank        Bank?
+  bankId      String        @unique
+  inventory   ItemOnGuild[]
+}
+
+model Bank {
+  id      String        @id @default(uuid())
+  amount  Int
+  history Transaction[]
+  guild   Guild         @relation(fields: [guildId], references: [id])
+  guildId String        @unique
+}
+
+model Transaction {
+  id     String   @id @default(uuid())
+  amount Int
+  date   DateTime
+  name   String
+  bank   Bank     @relation(fields: [bankId], references: [id])
+  bankId String
+}
+
+model ItemOnQuestAssignment {
+  questAssignment   QuestAssignment @relation(fields: [questAssignmentId], references: [id])
+  questAssignmentId String
+  item              Item            @relation(fields: [itemId], references: [id])
+  itemId            String
+
+  @@id([questAssignmentId, itemId])
+}
+
+model ItemOnGuild {
+  guild   Guild  @relation(fields: [guildId], references: [id])
+  guildId String
+  item    Item   @relation(fields: [itemId], references: [id])
+  itemId  String
+
+  @@id([guildId, itemId])
+}

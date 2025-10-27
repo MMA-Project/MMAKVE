@@ -1,5 +1,6 @@
-import { prisma } from "apps/backend/prisma/client";
+import { prisma } from "@mmakve/apps/backend/client";
 import { Quest, QuestStatus, AdventurerType, QuestAssignement } from "@mmakve/shared";
+import { getUserById } from "./auth.service";
 
 /**
  * ! Rôle: Assistant
@@ -14,17 +15,16 @@ export async function getAll(): Promise<Quest[]> {
 
     return quests.map((q) => ({
         id: q.id,
-        requester_id: q.createdBy ?? "0",
+        requester: q.createdBy ? getUserById(q.createdBy) as any : null,
         title: q.title,
         description: q.description ?? "",
-        date_limit: q.deadline ? new Date(q.deadline).getTime() : 0,
-        estimated_time: q.estimatedDuration ?? 0,
+        date_limit: q.deadline ? new Date(q.deadline) : new Date(),
         prime: q.reward ?? 0,
         status: (q.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
         options: {
             profils: (q.requiredProfiles ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: q.startDate ? new Date(q.startDate).getTime() : 0,
-            end_date: q.endDate ? new Date(q.endDate).getTime() : 0,
+            start_date: q.startDate ? new Date(q.startDate) : new Date(),
+            end_date: q.endDate ? new Date(q.endDate) : new Date(),
             xp_required: q.xpRequired ?? 0,
             assignements: (q.assignments ?? []) as unknown as QuestAssignement[],
         },
@@ -42,17 +42,16 @@ export const getAllByUser = async (userId: string): Promise<Quest[]> => {
 
     return quests.map((q) => ({
         id: q.id,
-        requester_id: q.createdBy ?? "0",
+        requester: q.createdBy ? getUserById(q.createdBy) as any : null,
         title: q.title,
         description: q.description ?? "",
-        date_limit: q.deadline ? new Date(q.deadline).getTime() : 0,
-        estimated_time: q.estimatedDuration ?? 0,
+        date_limit: q.deadline ? new Date(q.deadline) : new Date(),
         prime: q.reward ?? 0,
         status: (q.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
         options: {
             profils: (q.requiredProfiles ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: q.startDate ? new Date(q.startDate).getTime() : 0,
-            end_date: q.endDate ? new Date(q.endDate).getTime() : 0,
+            start_date: q.startDate ? new Date(q.startDate) : new Date(),
+            end_date: q.endDate ? new Date(q.endDate) : new Date(),
             xp_required: q.xpRequired ?? 0,
             assignements: (q.assignments ?? []) as unknown as QuestAssignement[],
         },
@@ -64,7 +63,7 @@ export const create = async (data: Quest): Promise<Quest> => {
     const quest = await prisma.quest.create({
         data: {
             ...data,
-            createdBy: data.requester_id,
+            createdBy: data.requester.id,
         },
         include: {
             assignments: true,
@@ -73,11 +72,10 @@ export const create = async (data: Quest): Promise<Quest> => {
 
     return {
         id: quest.id,
-        requester_id: quest.createdBy ?? "0",
+        requester: quest.createdBy ? getUserById(quest.createdBy) as any : null,
         title: quest.title,
         description: quest.description ?? "",
-        date_limit: quest.deadline ? new Date(quest.deadline).getTime() : 0,
-        estimated_time: quest.estimatedDuration ?? 0,
+        date_limit: quest.deadline ? new Date(quest.deadline) : new Date(),
         prime: quest.reward ?? 0,
         status: (quest.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
     };
@@ -88,7 +86,7 @@ export const update = async (id: string, data: Partial<Quest>): Promise<Quest | 
         where: { id },
         data: {
             ...data,
-            createdBy: data.requester_id,
+            createdBy: data?.requester?.id,
         },
         include: {
             assignments: true,
@@ -99,17 +97,16 @@ export const update = async (id: string, data: Partial<Quest>): Promise<Quest | 
 
     return {
         id: quest.id,
-        requester_id: quest.createdBy ?? "0",
+        requester: quest.createdBy ? getUserById(quest.createdBy) as any : null,
         title: quest.title,
         description: quest.description ?? "",
-        date_limit: quest.deadline ? new Date(quest.deadline).getTime() : 0,
-        estimated_time: quest.estimatedDuration ?? 0,
+        date_limit: quest.deadline ? new Date(quest.deadline) : new Date(),
         prime: quest.reward ?? 0,
         status: (quest.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
         options: {
             profils: (quest.requiredProfiles ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: quest.startDate ? new Date(quest.startDate).getTime() : 0,
-            end_date: quest.endDate ? new Date(quest.endDate).getTime() : 0,
+            start_date: quest.startDate ? new Date(quest.startDate) : new Date(),
+            end_date: quest.endDate ? new Date(quest.endDate) : new Date(),
             xp_required: quest.xpRequired ?? 0,
             assignements: (quest.assignments ?? []) as unknown as QuestAssignement[],
         },
@@ -129,17 +126,16 @@ export const validate = async (id: string): Promise<Quest | null> => {
 
     return {
         id: quest.id,
-        requester_id: quest.createdBy ?? "0",
+        requester: quest.createdBy ? getUserById(quest.createdBy) as any : null,
         title: quest.title,
         description: quest.description ?? "",
-        date_limit: quest.deadline ? new Date(quest.deadline).getTime() : 0,
-        estimated_time: quest.estimatedDuration ?? 0,
+        date_limit: quest.deadline ? new Date(quest.deadline) : new Date(),
         prime: quest.reward ?? 0,
         status: (quest.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
         options: {
             profils: (quest.requiredProfiles ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: quest.startDate ? new Date(quest.startDate).getTime() : 0,
-            end_date: quest.endDate ? new Date(quest.endDate).getTime() : 0,
+            start_date: quest.startDate ? new Date(quest.startDate) : new Date(),
+            end_date: quest.endDate ? new Date(quest.endDate) : new Date(),
             xp_required: quest.xpRequired ?? 0,
             assignements: (quest.assignments ?? []) as unknown as QuestAssignement[],
         },
@@ -158,17 +154,16 @@ export const cancel = async (id: string): Promise<Quest | null> => {
 
     return {
         id: quest.id,
-        requester_id: quest.createdBy ?? "0",
+        requester: quest.createdBy ? getUserById(quest.createdBy) as any : null,
         title: quest.title,
         description: quest.description ?? "",
-        date_limit: quest.deadline ? new Date(quest.deadline).getTime() : 0,
-        estimated_time: quest.estimatedDuration ?? 0,
+        date_limit: quest.deadline ? new Date(quest.deadline) : new Date(),
         prime: quest.reward ?? 0,
         status: (quest.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
         options: {
             profils: (quest.requiredProfiles ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: quest.startDate ? new Date(quest.startDate).getTime() : 0,
-            end_date: quest.endDate ? new Date(quest.endDate).getTime() : 0,
+            start_date: quest.startDate ? new Date(quest.startDate) : new Date(),
+            end_date: quest.endDate ? new Date(quest.endDate) : new Date(),
             xp_required: quest.xpRequired ?? 0,
             assignements: (quest.assignments ?? []) as unknown as QuestAssignement[],
         },
