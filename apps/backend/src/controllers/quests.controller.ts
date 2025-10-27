@@ -3,7 +3,16 @@ import { cancel, create, getAll, getAllByUser, update, validate } from "../servi
 import { AppError, ErrorCodes, sendError } from "../utils/error";
 import { Quest, QuestCreation } from "@mmakve/shared";
 
-export const getAllQuests = async () => await getAll();
+export const getAllQuests = async (_: Request, res: Response) => {
+    try {
+        const quests = await getAll();
+        return res.status(200).json(quests);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            return sendError(res, error.code, error.message, { status: error.status });
+        }
+    }
+}
 
 export const getAllQuestsByUser = async (req: Request, res: Response) => {
     const { userId } = req.params;
