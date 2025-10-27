@@ -1,5 +1,6 @@
 import { Adventurer, AdventurerType } from "./adventurer.type";
 import { Item } from "./item.type";
+import { User } from "./user.type";
 
 export enum QuestStatus {
     WAITING_APPROVAL = "waiting_approval",
@@ -11,19 +12,19 @@ export enum QuestStatus {
 }
 
 export type Quest = {
-    id: number;
-    requester_id: number;
+    id: string;
+    requester: User;
     title: string;
     description: string;
-    date_limit: Date;
-    prime: number;
+    deadline: Date;
+    reward: number;
     status: QuestStatus;
     options?: {
         profils: AdventurerType[];
         start_date: Date;
         end_date: Date;
         xp_required: number;
-        assignements: QuestAssignement[];
+        assignments: QuestAssignement[];
     };
 };
 

@@ -14,7 +14,7 @@ export enum AdventurerType {
 }
 
 export type Adventurer = {
-    id: number;
+    id: string;
     type: AdventurerType;
     status: "available" | "on_quest" | "injured" | "dead" | "sleeping";
     xp: number;

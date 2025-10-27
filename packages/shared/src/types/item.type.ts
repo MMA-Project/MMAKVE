@@ -15,7 +15,7 @@ export enum ItemRarity {
 }
 
 export type Item = {
-  id: number;
+  id: string;
 
   name: string;
   description: string;
