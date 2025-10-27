@@ -1,0 +1,6 @@
+Travail sur ma partie :
+
+- Formulaire créer et fonctionnelle
+- Refactor le tout pour le mettre les fichiers et les logiques aux bons endroits
+- Récupérer et merge la branche main avec ma branche afin de récupérer les dernières modifications et pouvoir plug le back avec le frontend
+- Regarder que le tout fonctionne correctement

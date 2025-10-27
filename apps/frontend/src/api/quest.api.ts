@@ -1,0 +1,108 @@
+import { useQuery } from "@tanstack/react-query";
+import { AdventurerType } from "../../../../packages/shared/src/types/adventurer.type";
+import { type Quest, QuestStatus } from "../../../../packages/shared/src/types/quest.type";
+
+export const mockQuests: Quest[] = [
+    {
+        id: 1,
+        requester_id: 1001,
+        title: "Retrieve the Azure Gem",
+        description:
+            "A precious gem was stolen by a band of river raiders. Retrieve it and return it safely.",
+        date_limit: new Date("2025-10-15T23:59:59Z"),
+        prime: 150,
+        status: QuestStatus.COMPLETED,
+        options: {
+            profils: [AdventurerType.ENCHANTER, AdventurerType.PRIEST],
+            start_date: new Date("2025-10-01T10:00:00Z"),
+            end_date: new Date("2025-10-15T23:59:59Z"),
+            xp_required: 1200,
+            assignements: [],
+        },
+    },
+    {
+        id: 2,
+        requester_id: 1002,
+        title: "Clear the Forgotten Mines",
+        description:
+            "The old mine tunnels have been infested by earth elementals. Clear them so miners can return.",
+        date_limit: new Date("2025-10-30T23:59:59Z"),
+        prime: 300,
+        status: QuestStatus.IN_PROGRESS,
+        options: {
+            profils: [AdventurerType.BARBARIAN, AdventurerType.PALADIN],
+            start_date: new Date("2025-10-25T09:00:00Z"),
+            end_date: new Date("2025-10-28T17:00:00Z"),
+            xp_required: 2400,
+            assignements: [],
+        },
+    },
+    {
+        id: 3,
+        requester_id: 1003,
+        title: "Escort the Merchant Caravan",
+        description:
+            "A caravan needs protection through bandit-prone passes. Ensure all wagons reach the next town.",
+        date_limit: new Date("2025-12-01T23:59:59Z"),
+        prime: 220,
+        status: QuestStatus.APPROVED,
+        options: {
+            profils: [AdventurerType.ROGUE, AdventurerType.WARRIOR, AdventurerType.PRIEST],
+            start_date: new Date("2025-11-28T08:00:00Z"),
+            end_date: new Date("2025-12-12T20:00:00Z"),
+            xp_required: 1800,
+            assignements: [],
+        },
+    },
+    {
+        id: 4,
+        requester_id: 1004,
+        title: "Seal the Rift at Blackfen",
+        description:
+            "A magical rift is leaking corrupting energies. Seal it before the swamp spreads further.",
+        date_limit: new Date("2025-11-20T23:59:59Z"),
+        prime: 500,
+        status: QuestStatus.WAITING_APPROVAL,
+    },
+    {
+        id: 5,
+        requester_id: 1005,
+        title: "Rescue the Lost Scouts",
+        description:
+            "A group of scouts went missing in the Darkwood Forest. Find and rescue them safely.",
+        date_limit: new Date("2025-10-22T23:59:59Z"),
+        prime: 350,
+        status: QuestStatus.FAILED,
+        options: {
+            profils: [AdventurerType.ARCHER, AdventurerType.ROGUE],
+            start_date: new Date("2025-10-15T10:00:00Z"),
+            end_date: new Date("2025-10-22T23:59:59Z"),
+            xp_required: 1500,
+            assignements: [],
+        },
+    },
+    {
+        id: 6,
+        requester_id: 1006,
+        title: "Investigate the Haunted Ruins",
+        description:
+            "Strange noises and lights have been reported in the old ruins. Investigate the source.",
+        date_limit: new Date("2025-11-05T23:59:59Z"),
+        prime: 400,
+        status: QuestStatus.WAITING_APPROVAL,
+    },
+];
+
+export const useQuest = () => {
+    const fetchQuests = async (): Promise<Quest[]> => {
+        return mockQuests;
+    };
+
+    const getQuests = useQuery({
+        queryKey: ["quests"],
+        queryFn: fetchQuests,
+        initialData: mockQuests,
+    });
+
+    return { getQuests };
+};

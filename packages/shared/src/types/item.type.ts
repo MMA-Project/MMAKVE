@@ -1,5 +1,19 @@
 import { AdventurerType } from "./adventurer.type";
 
+export enum ItemType {
+  WEAPON = "weapon",
+  ARMOR = "armor",
+  POTION = "potion",
+  MISC = "misc",
+}
+export enum ItemRarity {
+  COMMON = "common",
+  UNCOMMON = "uncommon",
+  RARE = "rare",
+  EPIC = "epic",
+  LEGENDARY = "legendary",
+}
+
 export type Item = {
   id: number;
 
@@ -8,8 +22,8 @@ export type Item = {
   durability: number;
   price: number;
 
-  type: "weapon" | "armor" | "potion" | "misc";
-  rarity: "common" | "uncommon" | "rare" | "epic" | "legendary";
+  type: ItemType;
+  rarity: ItemRarity;
 
   profiles: AdventurerType[];
 };
