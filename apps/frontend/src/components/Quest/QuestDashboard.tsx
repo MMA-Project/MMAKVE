@@ -53,6 +53,17 @@ export function QuestDashboard() {
                 </button>
             </div>
             <div className="w-full max-w-4xl space-y-4">
+                {user.role === "CLIENT" && (
+                    <div
+                        className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:cursor-pointer hover:bg-slate-800 transition"
+                        onClick={() => navigate("/quest/new")}
+                    >
+                        <div className="flex items-center justify-center gap-2 text-slate-400">
+                            <span>+</span>
+                            <span>Créer une nouvelle quête</span>
+                        </div>
+                    </div>
+                )}
                 {getQuests.data
                     ?.slice()
                     .sort((a, b) => {

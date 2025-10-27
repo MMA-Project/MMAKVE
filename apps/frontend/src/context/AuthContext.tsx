@@ -56,8 +56,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             // const data = await loginApi({ username, password });
             // setUser(data.user);
-            setUser(mockAssistant);
-            localStorage.setItem("auth", JSON.stringify({ user: mockAssistant }));
+            setUser(mockClient);
+            localStorage.setItem("auth", JSON.stringify({ user: mockClient }));
         } finally {
             setLoading(false);
         }
