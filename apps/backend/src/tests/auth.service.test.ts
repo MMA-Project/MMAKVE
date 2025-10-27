@@ -5,6 +5,9 @@ import { ErrorCodes } from "../utils/error";
 
 // Clean users table before each test
 beforeEach(async () => {
+    await prisma.questAssignment.deleteMany();
+    await prisma.quest.deleteMany();
+    await prisma.adventurer.deleteMany();
     await prisma.user.deleteMany();
 });
 
@@ -12,7 +15,7 @@ describe("Auth Service - register", () => {
     it("creates a user with default role when no role provided", async () => {
         const user = await register({ username: "alice", password: "secret" });
         expect(user.username).toBe("alice");
-        expect(user.role).toBe("AVENTURIER");
+        expect(user.role).toBe("CLIENT");
     });
 
     it("rejects duplicate username", async () => {
