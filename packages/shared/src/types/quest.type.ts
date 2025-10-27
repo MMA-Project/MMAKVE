@@ -11,8 +11,8 @@ export enum QuestStatus {
 }
 
 export type Quest = {
-    id: number;
-    requester_id: number;
+    id: string;
+    requester_id: string;
     title: string;
     description: string;
     date_limit: Date;
@@ -30,7 +30,7 @@ export type Quest = {
 export type QuestCreation = Omit<Quest, "id" | "status">;
 
 export type QuestAssignement = {
-    id: number;
+    id: string;
     items: Item[];
     adventurer: Adventurer;
 };
