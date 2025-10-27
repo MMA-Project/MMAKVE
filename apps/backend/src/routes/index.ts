@@ -1,5 +1,6 @@
 import { Router } from "express";
 import quests from "./quests.route.js";
+import adventurers from "./adventurer.route.js";
 
 import authRoutes from "./auth.route";
 
@@ -32,9 +33,13 @@ router.use("/ping", (_, res) => res.json({ message: "pong" }));
  *     description: Endpoints de santé et disponibilité du service
  *   - name: Auth
  *     description: Authentification et gestion des tokens JWT
+ *   - name: Adventurers
+ *     description: Gestion des aventuriers (Assistant)
  */
 router.use("/auth", authRoutes);
 
 router.use("/quests", quests);
+
+router.use("/adventurers", adventurers);
 
 export default router;

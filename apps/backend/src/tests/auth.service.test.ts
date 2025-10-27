@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { register, login, __prisma } from "../services/auth.service";
+import { register, login } from "../services/auth.service";
+import { prisma } from "../prisma-client";
 import { ErrorCodes } from "../utils/error";
 
 // Clean users table before each test
 beforeEach(async () => {
-    await __prisma.user.deleteMany();
+    await prisma.user.deleteMany();
 });
 
 describe("Auth Service - register", () => {

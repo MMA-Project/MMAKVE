@@ -4,6 +4,7 @@
 PNPM := pnpm
 DOCKER_COMPOSE := docker-compose -f docker-compose.dev.yml
 BACKEND_DIR := apps/backend
+FRONTEND_DIR := apps/frontend
 
 # Couleurs pour les messages
 GREEN := \033[0;32m
@@ -79,6 +80,14 @@ stop: ## Arrête tous les processus
 build: ## Build le projet
 	@echo "$(GREEN)🔨 Build du projet...$(NC)"
 	$(PNPM) build
+
+build-backend: ## Build uniquement le backend
+	@echo "$(GREEN)🔨 Build du backend...$(NC)"
+	cd $(BACKEND_DIR) && $(PNPM) build
+
+build-frontend: ## Build uniquement le frontend
+	@echo "$(GREEN)🔨 Build du frontend...$(NC)"
+	cd $(FRONTEND_DIR) && $(PNPM) build
 
 clean: ## Nettoie les fichiers de build
 	@echo "$(YELLOW)🧹 Nettoyage...$(NC)"
