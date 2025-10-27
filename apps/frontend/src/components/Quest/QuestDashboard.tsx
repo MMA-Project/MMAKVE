@@ -1,8 +1,8 @@
 import { useQuest } from "../../api/quest.api";
-import { getUser } from "../../App";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
 import { ProgressBar } from "./ProgressBar";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 
@@ -10,9 +10,11 @@ type SortOrder = "asc" | "desc";
 
 export function Dashboard() {
     const { getQuests } = useQuest();
-    const user = getUser();
+    const { user } = useAuth();
     const [sortBy, setSortBy] = useState<SortBy>("date_limit");
     const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+    if (!user) return null;
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
