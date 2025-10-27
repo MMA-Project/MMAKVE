@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login/Login";
 import { Protected, useAuth } from "./context/AuthContext";
 import { QuestDashboard } from "./components/Quest/QuestDashboard";
+import QuestPage from "./components/Quest/QuestPage";
 
 function LoginRoute() {
     const { user } = useAuth();
@@ -30,12 +31,13 @@ function NotFound() {
     );
 }
 
-// function Dashboard() {
-//     if (getUser().role === "ASSISTANT" || getUser().role === "CLIENT") {
-//         return <QuestDashboard />;
-//     }
-//     return <QuestDashboard />;
-// }
+function Dashboard() {
+    const { user } = useAuth();
+    if (user?.role === "ASSISTANT" || user?.role === "CLIENT") {
+        return <QuestDashboard />;
+    }
+    return <QuestDashboard />;
+}
 
 export default function App() {
     return (
@@ -45,7 +47,15 @@ export default function App() {
                 path="/dashboard"
                 element={
                     <Protected>
-                        <QuestDashboard />
+                        <Dashboard />
+                    </Protected>
+                }
+            />
+            <Route
+                path="/quest/:id"
+                element={
+                    <Protected>
+                        <QuestPage />
                     </Protected>
                 }
             />

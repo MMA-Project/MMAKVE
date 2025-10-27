@@ -22,7 +22,6 @@ export default function QuestPage() {
                 <div className="max-w-3xl w-full">
                     <ReturnButton />
                     <div className="absolute flex flex-col top-4 right-4 m-5">
-                        <QuestStatusBanner status={quest.status} />{" "}
                         {quest.status === QuestStatus.WAITING_APPROVAL &&
                             user.role === "ASSISTANT" && (
                                 <ValidateButton onClick={() => console.log("validate", quest.id)} />

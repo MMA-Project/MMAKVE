@@ -75,7 +75,7 @@ export const mockQuests: Quest[] = [
         options: {
             profils: [AdventurerType.BARBARIAN, AdventurerType.PALADIN],
             start_date: new Date("2025-10-25T09:00:00Z"),
-            end_date: new Date("2025-10-28T17:00:00Z"),
+            end_date: new Date("2025-10-30T17:00:00Z"),
             xp_required: 2400,
             assignments: [
                 {
