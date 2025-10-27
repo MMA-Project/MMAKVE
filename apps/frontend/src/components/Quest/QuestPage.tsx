@@ -6,16 +6,16 @@ import { computeProgress } from "../../utils/progressBar";
 import ReturnButton from "../Nav/ReturnButton";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
 import { DeleteButton } from "../Buttons/DeleteButton";
-import { getUser } from "../../App";
 import { ValidateButton } from "../Buttons/ValidateButton";
 import { UpdateButton } from "../Buttons/UpdateButton";
+import { useAuth } from "../../context/AuthContext";
 
 export default function QuestPage() {
     const { id } = useParams<{ id: string }>();
-    const user = getUser();
-    const requester = user;
+    const { user } = useAuth();
     const { getQuestById } = useQuestById(id!);
     const quest = getQuestById.data;
+    if (!user) return null;
     return (
         <div className="min-h-screen flex flex-col items-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
             {quest && (
@@ -41,9 +41,9 @@ export default function QuestPage() {
                     <h1 className="text-3xl font-bold">{quest.title}</h1>
                     <p className="text-lg text-slate-300 mt-4">{quest.description}</p>
                     <div className="mt-6 text-sm text-slate-400">
-                        <p>Date limite: {quest.date_limit?.toLocaleDateString() || "—"}</p>
-                        <p>Demandé par: {requester.name}</p>
-                        <p>Prime: {quest.prime} 💰</p>
+                        <p>Date limite: {quest.deadline?.toLocaleDateString() || "—"}</p>
+                        <p>Demandé par: {quest.requester.name}</p>
+                        <p>Prime: {quest.reward} 💰</p>
                         {quest.options && <p>XP requis: {quest.options.xp_required ?? 0}</p>}
                         {quest.options &&
                             (() => {
