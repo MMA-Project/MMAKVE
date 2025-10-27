@@ -73,6 +73,8 @@ model User {
   createdAt    DateTime    @default(now())
   adventurer   Adventurer? @relation(fields: [adventurerId], references: [id])
   adventurerId String?     @unique
+
+  Quest Quest[]
 }
 
 
@@ -81,15 +83,15 @@ model Quest {
   title             String
   description       String
   deadline          DateTime
+  start_date        DateTime?
+  end_date          DateTime?
+  xp_required       Int
   reward            Int
   status            QuestStatus         @default(PENDING)
-  estimatedDuration Int
-  startDate         DateTime?
-  endDate           DateTime?
-  requiredProfiles  AdventurerType[]
-  xpRequired        Int?
-  assignments       QuestAssignment[]
   createdBy         String
+  assignments       QuestAssignment[]
+  requester         User                @relation(fields: [createdBy], references: [id])
+  profils           AdventurerType[]
 }
 
 model QuestAssignment {

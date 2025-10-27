@@ -16,15 +16,15 @@ export type Quest = {
     requester: User;
     title: string;
     description: string;
-    date_limit: Date;
-    prime: number;
+    deadline: Date;
+    reward: number;
     status: QuestStatus;
     options?: {
         profils: AdventurerType[];
         start_date: Date;
         end_date: Date;
         xp_required: number;
-        assignements: QuestAssignement[];
+        assignments: QuestAssignement[];
     };
 };
 
