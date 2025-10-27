@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 interface LoginFormValues {
   username: string
@@ -14,12 +16,13 @@ interface FieldErrors {
   success?: string
 }
 
-// TODO: brancher avec un appel API réel (ex: fetch('/api/auth/login'))
 export default function Login() {
-  const [values, setValues] = useState<LoginFormValues>({ username: '', password: '', confirmPassword: '' })
+ const [values, setValues] = useState<LoginFormValues>({ username: '', password: '', confirmPassword: '' })
   const [errors, setErrors] = useState<FieldErrors>({})
-  const [submitting, setSubmitting] = useState(false)
+  const navigate = useNavigate()
+  const { login, register } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [mode, setMode] = useState<'login' | 'register'>('login')
 
   function validate(next: LoginFormValues): FieldErrors {
@@ -37,7 +40,6 @@ export default function Login() {
   function handleChange<K extends keyof LoginFormValues>(key: K, value: LoginFormValues[K]) {
     const next = { ...values, [key]: value }
     setValues(next)
-    // validation on change (live) uniquement pour le champ modifié
     const e = validate(next)
     setErrors(prev => ({ ...prev, [key]: (e as any)[key] }))
   }
@@ -47,25 +49,17 @@ export default function Login() {
     const validation = validate(values)
     setErrors(validation)
     if (Object.keys(validation).length > 0) return
+
     try {
-      setSubmitting(true)
-      // Simulation d'un délai réseau
-      await new Promise(res => setTimeout(res, 800))
       if (mode === 'login') {
-        // Ici tu ferais un vrai appel login
-        console.log('Login OK', values)
-        setErrors({ success: 'Connexion réussie ✅' })
+        await login(values.username, values.password)
+        navigate('/dashboard', { replace: true })
       } else {
-        // Ici tu ferais un appel register puis login auto potentiellement
-        console.log('Register OK', values)
-        setErrors({ success: 'Compte créé avec succès 🎉 Vous pouvez vous connecter.' })
-        setMode('login')
-        setValues(v => ({ ...v, password: '', confirmPassword: '' }))
+        await register(values.username, values.password)
+        navigate('/dashboard', { replace: true })
       }
     } catch (err: any) {
       setErrors({ global: err.message || 'Erreur inconnue' })
-    } finally {
-      setSubmitting(false)
     }
   }
 
@@ -106,7 +100,6 @@ export default function Login() {
             autoComplete="username"
             value={values.username}
             onChange={e => handleChange('username', e.target.value)}
-            disabled={submitting}
             className={`w-full rounded-xl border bg-neutral-800/70 px-3.5 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-neutral-500 ${errors.username ? 'border-red-500/70 focus:ring-red-500 focus:border-red-500' : 'border-neutral-700 hover:border-neutral-600'}`}
             placeholder="john.doe"
           />
@@ -125,7 +118,6 @@ export default function Login() {
               autoComplete="current-password"
               value={values.password}
               onChange={e => handleChange('password', e.target.value)}
-              disabled={submitting}
               className="w-full bg-transparent px-3.5 py-2.5 text-sm outline-none placeholder:text-neutral-500"
               placeholder="••••••"
             />
@@ -133,7 +125,6 @@ export default function Login() {
               type="button"
               onClick={() => setShowPassword(s => !s)}
               aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-              disabled={submitting}
               className="px-3 flex items-center text-lg select-none text-neutral-400 hover:text-neutral-200 transition disabled:opacity-40 focus:outline-none focus-visible:bg-neutral-700/40"
             >
               {showPassword ? '🙈' : '👁️'}
@@ -145,27 +136,37 @@ export default function Login() {
         {mode === 'register' && (
           <div className="space-y-1">
             <label htmlFor="confirmPassword" className="block text-xs font-medium uppercase tracking-wide text-neutral-300">Confirmer le mot de passe</label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              value={values.confirmPassword}
-              onChange={e => handleChange('confirmPassword', e.target.value)}
-              disabled={submitting}
-              className={`w-full rounded-xl border bg-neutral-800/70 px-3.5 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-neutral-500 ${errors.confirmPassword ? 'border-red-500/70 focus:ring-red-500 focus:border-red-500' : 'border-neutral-700 hover:border-neutral-600'}`}
-              placeholder="••••••"
-            />
+            <div
+              className={`group flex items-stretch rounded-xl border bg-neutral-800/70 overflow-hidden transition focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 ${errors.confirmPassword ? 'border-red-500/70 focus-within:ring-red-500 focus-within:border-red-500' : 'border-neutral-700 hover:border-neutral-600'}`}
+            >
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                value={values.confirmPassword}
+                onChange={e => handleChange('confirmPassword', e.target.value)}
+                className="w-full bg-transparent px-3.5 py-2.5 text-sm outline-none placeholder:text-neutral-500"
+                placeholder="••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(s => !s)}
+                aria-label={showConfirmPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                className="px-3 flex items-center text-lg select-none text-neutral-400 hover:text-neutral-200 transition disabled:opacity-40 focus:outline-none focus-visible:bg-neutral-700/40"
+              >
+                {showConfirmPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
             {errors.confirmPassword && <span className="block text-[11px] font-medium text-red-400">{errors.confirmPassword}</span>}
           </div>
         )}
 
         <button
           type="submit"
-          disabled={submitting}
           className="w-full rounded-xl bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-purple-600 px-4 py-3 text-sm font-semibold tracking-wide text-white shadow-lg shadow-indigo-900/30 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-neutral-900 hover:brightness-110 active:scale-[.985] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {submitting ? (mode === 'login' ? 'Connexion…' : 'Création…') : mode === 'login' ? 'Se connecter' : 'Créer le compte'}
+          {mode === 'login' ? 'Se connecter' : 'Créer le compte'}
         </button>
         <div className="pt-1 text-center space-y-1">
           {mode === 'login' ? (
