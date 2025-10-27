@@ -1,4 +1,6 @@
 import { Router } from "express";
+import quests from "./quests.route.js";
+
 import authRoutes from "./auth.route";
 
 const router: Router = Router();
@@ -32,5 +34,7 @@ router.use("/ping", (_, res) => res.json({ message: "pong" }));
  *     description: Authentification et gestion des tokens JWT
  */
 router.use("/auth", authRoutes);
+
+router.use("/quests", quests);
 
 export default router;
