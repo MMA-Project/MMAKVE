@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import Login from './login/Login'
+import Login from './components/Login/Login'
 
 function Dashboard() {
   return (
