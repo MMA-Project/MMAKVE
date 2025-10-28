@@ -1,3 +1,5 @@
+import { User } from "./user.type";
+
 export enum AdventurerType {
     ARCHER,
     BARBARIAN,
@@ -15,6 +17,7 @@ export enum AdventurerType {
 
 export type Adventurer = {
     id: string;
+    user: User;
     type: AdventurerType;
     status: "available" | "on_quest" | "injured" | "dead" | "sleeping";
     xp: number;

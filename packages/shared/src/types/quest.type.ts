@@ -31,7 +31,7 @@ export type Quest = {
 export type QuestCreation = Omit<Quest, "id" | "status">;
 
 export type QuestAssignement = {
-    id: number;
+    id: string;
     items: Item[];
     adventurer: Adventurer;
 };
