@@ -11,8 +11,12 @@
         "generate": "prisma generate",
         "migrate": "prisma migrate dev",
         "studio": "prisma studio",
+        "seed": "tsx prisma/seed.ts",
         "test": "vitest run",
         "test:watch": "vitest"
+    },
+    "prisma": {
+        "seed": "tsx prisma/seed.ts"
     },
     "dependencies": {
         "@mmakve/shared": "workspace:*",
