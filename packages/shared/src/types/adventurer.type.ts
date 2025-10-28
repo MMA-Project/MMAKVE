@@ -1,18 +1,18 @@
 import { User } from "./user.type";
 
 export enum AdventurerType {
-    ARCHER,
-    BARBARIAN,
-    PALADIN,
-    ARCANE_MAGE,
-    PRIEST,
-    GEOMANCER,
-    ALCHEMIST,
-    BLACKSMITH,
-    ENCHANTER,
-    MESSENGER,
-    ROGUE,
-    WARRIOR,
+    ARCHER = "ARCHER",
+    BARBARIAN = "BARBARIAN",
+    PALADIN = "PALADIN",
+    ARCANE_MAGE = "ARCANE_MAGE",
+    PRIEST = "PRIEST",
+    GEOMANCER = "GEOMANCER",
+    ALCHEMIST = "ALCHEMIST",
+    BLACKSMITH = "BLACKSMITH",
+    ENCHANTER = "ENCHANTER",
+    MESSENGER = "MESSENGER",
+    ROGUE = "ROGUE",
+    WARRIOR = "WARRIOR",
 }
 
 export type Adventurer = {

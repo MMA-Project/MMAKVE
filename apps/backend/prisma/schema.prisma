@@ -26,6 +26,8 @@ enum AdventurerType {
     BLACKSMITH
     ENCHANTER
     MESSENGER
+    ROGUE
+    WARRIOR
 }
 
 // Roles for users
@@ -48,7 +50,7 @@ enum AdventurerStatus {
   ON_QUEST
   INJURED
   DEAD
-  RETIRED
+  SLEEPING
 }
 
 enum ItemType {
