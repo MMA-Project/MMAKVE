@@ -3,6 +3,7 @@ import Login from "./components/Login/Login";
 import { Protected, useAuth } from "./context/AuthContext";
 import { QuestDashboard } from "./components/Quest/QuestDashboard";
 import QuestPage from "./components/Quest/QuestPage";
+import { CreateQuestPage } from "./components/Quest/CreateQuestPage";
 
 function LoginRoute() {
     const { user } = useAuth();
@@ -48,6 +49,14 @@ export default function App() {
                 element={
                     <Protected>
                         <Dashboard />
+                    </Protected>
+                }
+            />
+            <Route
+                path="/create-quest"
+                element={
+                    <Protected>
+                        <CreateQuestPage />
                     </Protected>
                 }
             />

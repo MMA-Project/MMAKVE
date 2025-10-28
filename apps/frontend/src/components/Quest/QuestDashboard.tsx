@@ -56,7 +56,7 @@ export function QuestDashboard() {
                 {user.role === "CLIENT" && (
                     <div
                         className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:cursor-pointer hover:bg-slate-800 transition"
-                        onClick={() => navigate("/quest/new")}
+                        onClick={() => navigate("/create-quest")}
                     >
                         <div className="flex items-center justify-center gap-2 text-slate-400">
                             <span>+</span>
