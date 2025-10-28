@@ -1,6 +1,14 @@
-import { Quest, QuestStatus, AdventurerType, QuestAssignement, QuestCreation } from "@mmakve/shared";
+import {
+    Quest,
+    QuestStatus,
+    AdventurerType,
+    QuestAssignement,
+    QuestCreation,
+    Adventurer,
+} from "@mmakve/shared";
 import { getUserById } from "./auth.service";
 import { prisma } from "../prisma-client";
+import { calculateSoloWinProbability, calculateTeamWinProbability } from "../utils/quests";
 
 /**
  * ! Rôle: Assistant
@@ -15,11 +23,11 @@ export async function getAll(): Promise<Quest[]> {
 
     return quests.map((q) => ({
         id: q.id,
-        requester: q.createdBy ? getUserById(q.createdBy) as any : null,
+        requester: q.createdBy ? (getUserById(q.createdBy) as any) : null,
         title: q.title,
         description: q.description ?? "",
         deadline: q.deadline ? new Date(q.deadline) : new Date(),
-        status: (q.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
+        status: (q.status as QuestStatus) ?? QuestStatus.PENDING,
         reward: q.reward ?? 0,
         options: {
             profils: (q.profils ?? []).map((p) => p as unknown as AdventurerType),
@@ -42,12 +50,12 @@ export const getAllByUser = async (userId: string): Promise<Quest[]> => {
 
     return quests.map((q) => ({
         id: q.id,
-        requester: q.createdBy ? getUserById(q.createdBy) as any : null,
+        requester: q.createdBy ? (getUserById(q.createdBy) as any) : null,
         title: q.title,
         description: q.description ?? "",
         deadline: q.deadline ? new Date(q.deadline) : new Date(),
         reward: q.reward ?? 0,
-        status: (q.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
+        status: (q.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (q.profils ?? []).map((p) => p as unknown as AdventurerType),
             start_date: q.start_date ? new Date(q.start_date) : new Date(),
@@ -66,7 +74,7 @@ export const create = async (data: QuestCreation): Promise<Quest> => {
             description: data.description,
             deadline: data.deadline,
             reward: data.reward,
-            status: QuestStatus.WAITING_APPROVAL as any,
+            status: QuestStatus.PENDING as any,
             createdBy: data.requester.id,
             xp_required: data.options?.xp_required ?? 0,
         },
@@ -77,12 +85,12 @@ export const create = async (data: QuestCreation): Promise<Quest> => {
 
     return {
         id: quest.id,
-        requester: quest.createdBy ? getUserById(quest.createdBy) as any : null,
+        requester: quest.createdBy ? (getUserById(quest.createdBy) as any) : null,
         title: quest.title,
         description: quest.description ?? "",
         deadline: quest.deadline ? new Date(quest.deadline) : new Date(),
         reward: quest.reward ?? 0,
-        status: (quest.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
+        status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
     };
 };
 
@@ -105,12 +113,12 @@ export const update = async (id: string, data: Partial<Quest>): Promise<Quest | 
 
     return {
         id: quest.id,
-        requester: quest.createdBy ? getUserById(quest.createdBy) as any : null,
+        requester: quest.createdBy ? (getUserById(quest.createdBy) as any) : null,
         title: quest.title,
         description: quest.description ?? "",
         deadline: quest.deadline ? new Date(quest.deadline) : new Date(),
         reward: quest.reward ?? 0,
-        status: (quest.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
+        status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
             start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
@@ -119,7 +127,7 @@ export const update = async (id: string, data: Partial<Quest>): Promise<Quest | 
             assignments: (quest.assignments ?? []) as unknown as QuestAssignement[],
         },
     };
-}
+};
 
 export const validate = async (id: string): Promise<Quest | null> => {
     const quest = await prisma.quest.update({
@@ -134,12 +142,12 @@ export const validate = async (id: string): Promise<Quest | null> => {
 
     return {
         id: quest.id,
-        requester: quest.createdBy ? getUserById(quest.createdBy) as any : null,
+        requester: quest.createdBy ? (getUserById(quest.createdBy) as any) : null,
         title: quest.title,
         description: quest.description ?? "",
         deadline: quest.deadline ? new Date(quest.deadline) : new Date(),
         reward: quest.reward ?? 0,
-        status: (quest.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
+        status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
             start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
@@ -148,7 +156,7 @@ export const validate = async (id: string): Promise<Quest | null> => {
             assignments: (quest.assignments ?? []) as unknown as QuestAssignement[],
         },
     };
-}
+};
 
 export const cancel = async (id: string): Promise<Quest | null> => {
     const quest = await prisma.quest.delete({
@@ -162,12 +170,12 @@ export const cancel = async (id: string): Promise<Quest | null> => {
 
     return {
         id: quest.id,
-        requester: quest.createdBy ? getUserById(quest.createdBy) as any : null,
+        requester: quest.createdBy ? (getUserById(quest.createdBy) as any) : null,
         title: quest.title,
         description: quest.description ?? "",
         deadline: quest.deadline ? new Date(quest.deadline) : new Date(),
         reward: quest.reward ?? 0,
-        status: (quest.status as QuestStatus) ?? QuestStatus.WAITING_APPROVAL,
+        status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
             start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
@@ -176,4 +184,65 @@ export const cancel = async (id: string): Promise<Quest | null> => {
             assignments: (quest.assignments ?? []) as unknown as QuestAssignement[],
         },
     };
-}
+};
+
+export const suggestQuestTeammates = async (
+    id: string,
+): Promise<{
+    bestTeammates: Adventurer[];
+    teamRates: number[];
+    winRate: number;
+}> => {
+    const quest = await prisma.quest.findUnique({
+        where: { id },
+        include: {
+            assignments: true,
+            requester: true,
+        }
+    });
+
+    if (!quest) throw new Error("Quest not found");
+
+    const xp_required = quest?.xp_required ?? 1000;
+    const profils = quest?.profils ?? [];
+
+    const availableTeammates = await prisma.adventurer.findMany({
+        where: { status: "AVAILABLE", AND: { type: { in: profils as any[] } } },
+        include: {
+            user: true,
+        },
+    });
+
+    const bestTeammates: Adventurer[] = [];
+
+    for (const profil of profils) {
+        const sameType = availableTeammates.filter((a) => a.type === profil);
+        if (sameType.length === 0) continue;
+
+        let bestCandidate: Adventurer | null = null;
+        let bestRate = 0;
+
+        for (const candidate of sameType) {
+            const simulatedTeam = [...bestTeammates, candidate];
+            const teamRates = simulatedTeam.map((a) =>
+                calculateSoloWinProbability(a.xp, xp_required),
+            );
+            const winRate = calculateTeamWinProbability(teamRates);
+
+            if (winRate > bestRate) {
+                bestRate = winRate;
+                bestCandidate = candidate;
+            }
+        }
+
+        if (bestCandidate) bestTeammates.push(bestCandidate);
+    }
+
+    const teamRates = bestTeammates.map((a) => calculateSoloWinProbability(a.xp, xp_required));
+    const winRate = calculateTeamWinProbability(teamRates);
+    return {
+        bestTeammates,
+        teamRates,
+        winRate,
+    };
+};

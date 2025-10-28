@@ -14,7 +14,7 @@ export const mockQuests: Quest[] = [
             "A precious gem was stolen by a band of river raiders. Retrieve it and return it safely.",
         deadline: new Date("2025-10-15T23:59:59Z"),
         reward: 150,
-        status: QuestStatus.WAITING_APPROVAL,
+        status: QuestStatus.PENDING,
         options: {
             profils: [AdventurerType.ENCHANTER, AdventurerType.PRIEST],
             start_date: new Date("2025-10-01T10:00:00Z"),

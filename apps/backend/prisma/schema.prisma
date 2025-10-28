@@ -32,7 +32,7 @@ enum AdventurerType {
 
 // Roles for users
 enum Role {
-  AVENTURIER
+  ADVENTURER
   ASSISTANT
   CLIENT
 }
@@ -69,7 +69,7 @@ enum ItemRarity {
 }
 model User {
   id           String      @id @default(uuid())
-  username     String      @unique
+  name     String      @unique
   password     String
   role         Role        @default(CLIENT)
   createdAt    DateTime    @default(now())
