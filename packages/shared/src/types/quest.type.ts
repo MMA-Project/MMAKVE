@@ -3,12 +3,11 @@ import { Item } from "./item.type";
 import { User } from "./user.type";
 
 export enum QuestStatus {
-    WAITING_APPROVAL = "waiting_approval",
-    APPROVED = "approved",
-    IN_PROGRESS = "in_progress",
-    COMPLETED = "completed",
-    FAILED = "failed",
-    CANCELED = "canceled",
+    PENDING = "PENDING",
+    APPROVED = "APPROVED",
+    IN_PROGRESS = "IN_PROGRESS",
+    COMPLETED = "COMPLETED",
+    FAILED = "FAILED",
 }
 
 export type Quest = {
