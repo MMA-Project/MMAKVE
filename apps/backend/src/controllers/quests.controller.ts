@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import { cancel, create, getAll, getAllByUser, update, validate } from "../services/quest.service";
 import { AppError, ErrorCodes, sendError } from "../utils/error";
-import { Quest, QuestCreation } from "@mmakve/shared";
+import { Adventurer, Quest, QuestCreation } from "@mmakve/shared";
+import { mockQuests } from "../mocks/quest.mock";
+import { calculateSoloWinProbability, calculateTeamWinProbability } from "../utils/quests";
+import { mockAdventurers } from "../mocks/adventurer.mock";
 
 export const getAllQuests = async (_: Request, res: Response) => {
     try {
@@ -12,7 +15,7 @@ export const getAllQuests = async (_: Request, res: Response) => {
             return sendError(res, error.code, error.message, { status: error.status });
         }
     }
-}
+};
 
 export const getAllQuestsByUser = async (req: Request, res: Response) => {
     const { userId } = req.params;
@@ -90,6 +93,38 @@ export const cancelQuest = async (req: Request, res: Response) => {
 /**
  * ! TODO: Pour assistants
  */
-export const suggestTeamates = async (req: Request, res: Response) => {
-    return res.status(501).json({ message: "Not implemented" });
-}
+
+export const suggestTeammates = async (req: Request, res: Response) => {
+    const quest: Quest = mockQuests[0];
+    const xp_required = quest.options?.xp_required ?? 1000;
+    const profils = quest.options?.profils ?? [];
+
+    const availableTeammates = mockAdventurers.filter(
+        (a) => a.status === "available" && profils.includes(a.type),
+    );
+
+    const bestTeammates: Adventurer[] = [];
+
+    for (const profil of profils) {
+        const sameType = availableTeammates.filter((a) => a.type === profil);
+
+        if (sameType.length === 0) continue;
+
+        const sorted = sameType.sort(
+            (a, b) => Math.abs(a.xp - xp_required) - Math.abs(b.xp - xp_required),
+        );
+
+        bestTeammates.push(sorted[0]);
+    }
+
+    const teamRates = bestTeammates.map((a) => calculateSoloWinProbability(a.xp, xp_required));
+    const winRate = calculateTeamWinProbability(teamRates);
+
+    return res.json({
+        quest: quest.title,
+        profils,
+        bestTeammates,
+        teamRates,
+        winRate,
+    });
+};

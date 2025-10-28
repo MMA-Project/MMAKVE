@@ -14,46 +14,13 @@ export const mockQuests: Quest[] = [
             "A precious gem was stolen by a band of river raiders. Retrieve it and return it safely.",
         deadline: new Date("2025-10-15T23:59:59Z"),
         reward: 150,
-        status: QuestStatus.COMPLETED,
+        status: QuestStatus.WAITING_APPROVAL,
         options: {
             profils: [AdventurerType.ENCHANTER, AdventurerType.PRIEST],
             start_date: new Date("2025-10-01T10:00:00Z"),
             end_date: new Date("2025-10-15T23:59:59Z"),
             xp_required: 1200,
-            assignments: [
-                {
-                    id: "1",
-                    items: [],
-                    adventurer: {
-                        id: "501",
-                        user: {
-                            id: "501",
-                            name: "Elara Swiftwind",
-                            role: "ADVENTURER",
-                            createdAt: new Date("2024-01-10T09:30:00Z"),
-                        },
-                        type: AdventurerType.ENCHANTER,
-                        status: "available",
-                        xp: 2500,
-                    },
-                },
-                {
-                    id: "2",
-                    items: [],
-                    adventurer: {
-                        id: "502",
-                        user: {
-                            id: "502",
-                            name: "Thalion the Swift",
-                            role: "ADVENTURER",
-                            createdAt: new Date("2024-01-12T11:15:00Z"),
-                        },
-                        type: AdventurerType.ROGUE,
-                        status: "available",
-                        xp: 3000,
-                    },
-                },
-            ],
+            assignments: [],
         },
     },
     {
@@ -75,7 +42,7 @@ export const mockQuests: Quest[] = [
             start_date: new Date("2025-10-25T09:00:00Z"),
             end_date: new Date("2025-10-30T17:00:00Z"),
             xp_required: 2400,
-            assignements: [
+            assignments: [
                 {
                     id: "3",
                     items: [],
@@ -114,7 +81,7 @@ export const mockQuests: Quest[] = [
             start_date: new Date("2025-11-28T08:00:00Z"),
             end_date: new Date("2025-12-12T20:00:00Z"),
             xp_required: 1800,
-            assignements: [],
+            assignments: [],
         },
     },
 ];
