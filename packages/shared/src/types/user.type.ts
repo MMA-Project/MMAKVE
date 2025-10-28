@@ -5,5 +5,4 @@ export type User = {
     name: string;
     role: Role;
     createdAt: Date;
-    adventurerId: string | null;
 };

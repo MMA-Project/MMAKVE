@@ -86,3 +86,10 @@ export const cancelQuest = async (req: Request, res: Response) => {
         }
     }
 };
+
+/**
+ * ! TODO: Pour assistants
+ */
+export const suggestTeamates = async (req: Request, res: Response) => {
+    return res.status(501).json({ message: "Not implemented" });
+}
