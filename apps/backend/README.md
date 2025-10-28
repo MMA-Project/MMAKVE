@@ -101,7 +101,7 @@ Toutes les réponses d'erreur suivent la forme :
 
 ```json
 {
-  "error": { "code": "ERROR_CODE", "message": "Description", "details": {} }
+    "error": { "code": "ERROR_CODE", "message": "Description", "details": {} }
 }
 ```
 
@@ -214,11 +214,11 @@ PORT=4000
 
 ## 🆘 Troubleshooting
 
-| Problème | Piste |
-| -------- | ----- |
-| `Error: P1001` | DB non démarrée -> lancer docker compose db |
-| `Invalid or expired token` | Revérifier header `Authorization: Bearer <token>` |
-| Migration refuse | Supprimer dossier `prisma/migrations` (uniquement en dev) et reset |
+| Problème                   | Piste                                                              |
+| -------------------------- | ------------------------------------------------------------------ |
+| `Error: P1001`             | DB non démarrée -> lancer docker compose db                        |
+| `Invalid or expired token` | Revérifier header `Authorization: Bearer <token>`                  |
+| Migration refuse           | Supprimer dossier `prisma/migrations` (uniquement en dev) et reset |
 
 ---
 
@@ -230,4 +230,3 @@ pnpm --filter @mmakve/backend run studio
 ```
 
 Ouvre une interface graphique pour naviguer/modifier les données.
-
