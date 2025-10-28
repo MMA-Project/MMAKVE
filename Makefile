@@ -25,7 +25,19 @@ install: ## Install all dependencies
 	@echo "$(GREEN)📦 Installation des dépendances...$(NC)"
 	$(PNPM) install
 
-setup: install docker-up prisma-migrate prisma-generate ## Setup complet du projet (install + docker + prisma)
+check-env: ## Vérifie et crée les fichiers .env manquants
+	@echo "$(GREEN)🔍 Vérification des fichiers .env...$(NC)"
+	@if [ ! -f "$(BACKEND_DIR)/.env" ] && [ -f "$(BACKEND_DIR)/.env.example" ]; then \
+		echo "$(YELLOW)📝 Création de $(BACKEND_DIR)/.env depuis .env.example$(NC)"; \
+		cp $(BACKEND_DIR)/.env.example $(BACKEND_DIR)/.env; \
+	fi
+	@if [ ! -f "$(FRONTEND_DIR)/.env" ] && [ -f "$(FRONTEND_DIR)/.env.example" ]; then \
+		echo "$(YELLOW)📝 Création de $(FRONTEND_DIR)/.env depuis .env.example$(NC)"; \
+		cp $(FRONTEND_DIR)/.env.example $(FRONTEND_DIR)/.env; \
+	fi
+	@echo "$(GREEN)✅ Vérification des .env terminée$(NC)"
+
+setup: install check-env docker-up prisma-migrate prisma-generate ## Setup complet du projet (install + docker + prisma)
 	@echo "$(GREEN)✅ Setup terminé!$(NC)"
 	@echo "$(YELLOW)Vous pouvez maintenant lancer: make dev$(NC)"
 
