@@ -1,15 +1,22 @@
 import { useQuest } from "../../api/quest.api";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
-import { ProgressBar } from "./ProgressBar";
+import { ProgressBar } from "./QuestProgressBar";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import QuestStatusBanner from "./QuestStatusBanner";
+import { computeProgress } from "../../utils/progressBar";
+import { DeleteButton } from "../Buttons/DeleteButton";
+import { UpdateButton } from "../Buttons/UpdateButton";
+import { ValidateButton } from "../Buttons/ValidateButton";
 import { useAuth } from "../../context/AuthContext";
 
 type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 
 type SortOrder = "asc" | "desc";
 
-export function Dashboard() {
+export function QuestDashboard() {
     const { getQuests } = useQuest();
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [sortBy, setSortBy] = useState<SortBy>("date_limit");
     const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
@@ -46,6 +53,17 @@ export function Dashboard() {
                 </button>
             </div>
             <div className="w-full max-w-4xl space-y-4">
+                {user.role === "CLIENT" && (
+                    <div
+                        className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:cursor-pointer hover:bg-slate-800 transition"
+                        onClick={() => navigate("/quest/new")}
+                    >
+                        <div className="flex items-center justify-center gap-2 text-slate-400">
+                            <span>+</span>
+                            <span>Créer une nouvelle quête</span>
+                        </div>
+                    </div>
+                )}
                 {getQuests.data
                     ?.slice()
                     .sort((a, b) => {
@@ -59,9 +77,9 @@ export function Dashboard() {
 
                         switch (sortBy) {
                             case "date_limit":
-                                return compare(a.date_limit.getTime(), b.date_limit.getTime());
+                                return compare(a.deadline.getTime(), b.deadline.getTime());
                             case "prime":
-                                return compare(a.prime, b.prime);
+                                return compare(a.reward, b.reward);
                             case "status":
                                 return compare(
                                     Object.values(QuestStatus).indexOf(a.status),
@@ -73,13 +91,20 @@ export function Dashboard() {
                                     b.options?.xp_required ?? 0,
                                 );
                             case "client":
-                                return compare(a.requester_id, b.requester_id);
+                                return compare(a.requester.name, b.requester.name);
                         }
                     })
                     .map((quest) => (
                         <div
                             key={quest.id}
-                            className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3"
+                            className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:cursor-pointer hover:bg-slate-800 transition"
+                            onClick={(e) => {
+                                if ((e.target as HTMLElement).closest("button")) {
+                                    e.stopPropagation();
+                                    return;
+                                }
+                                navigate(`/quest/${quest.id}`);
+                            }}
                         >
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
@@ -88,9 +113,8 @@ export function Dashboard() {
                                         {quest.description}
                                     </p>
                                     <div className="mt-2 text-xs text-slate-400">
-                                        <p>Date limite : {quest.date_limit.toLocaleDateString()}</p>
-                                        <p>Prime : {quest.prime} 💰</p>
-                                        <p>Status : {quest.status.replaceAll("_", " ")}</p>
+                                        <p>Date limite : {quest.deadline.toLocaleDateString()}</p>
+                                        <p>Prime : {quest.reward} 💰</p>
                                         {quest.options && (
                                             <p>{quest.options?.xp_required ?? 0} XP requis</p>
                                         )}
@@ -98,54 +122,27 @@ export function Dashboard() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
+                                    {quest.status === QuestStatus.WAITING_APPROVAL &&
+                                        user.role === "ASSISTANT" && (
+                                            <ValidateButton
+                                                onClick={() => console.log("validate", quest.id)}
+                                            />
+                                        )}
                                     {((user.role === "CLIENT" &&
                                         quest.status === QuestStatus.WAITING_APPROVAL) ||
                                         user.role === "ASSISTANT") && (
-                                        <button
-                                            aria-label="Edit quest"
-                                            title="Edit"
-                                            className="p-2 rounded hover:bg-slate-800"
-                                            onClick={() => console.log("edit", quest.id)}
-                                        >
-                                            <svg
-                                                className="w-5 h-5 text-slate-200"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 00.707-.293L19.707 8.293a1 1 0 000-1.414L17.12 4.293a1 1 0 00-1.414 0L5.293 14.707A1 1 0 005 15.414V20z"
-                                                />
-                                            </svg>
-                                        </button>
+                                        <UpdateButton
+                                            onClick={() => console.log("update", quest.id)}
+                                        />
                                     )}
                                     {((user.role === "CLIENT" &&
                                         quest.status === QuestStatus.WAITING_APPROVAL) ||
                                         user.role === "ASSISTANT") && (
-                                        <button
-                                            aria-label="Delete quest"
-                                            title="Delete"
-                                            className="p-2 rounded hover:bg-slate-800"
+                                        <DeleteButton
                                             onClick={() => console.log("delete", quest.id)}
-                                        >
-                                            <svg
-                                                className="w-5 h-5 text-rose-400"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M19 7L5 7M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12"
-                                                />
-                                            </svg>
-                                        </button>
+                                        />
                                     )}
+                                    <QuestStatusBanner status={quest.status} />
                                 </div>
                             </div>
                             {quest.options &&
@@ -163,7 +160,7 @@ export function Dashboard() {
                                                     {percent}%
                                                 </span>
                                             </div>
-                                            <ProgressBar percent={percent} />
+                                            <ProgressBar percent={percent} quest={quest} />
                                             <div className="flex items-center justify-between text-xs text-slate-400">
                                                 <div className="flex items-center gap-2">
                                                     <span className="px-2 py-0.5 bg-slate-800 rounded">
@@ -186,21 +183,3 @@ export function Dashboard() {
         </div>
     );
 }
-
-const computeProgress = (startDate?: Date, endDate?: Date, nowDate = new Date()) => {
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-    let percent = 0;
-    let totalDays: number | null = null;
-    let daysLeft: number | null = null;
-
-    if (start && end && !isNaN(start.getTime()) && !isNaN(end.getTime()) && end > start) {
-        const totalMs = end.getTime() - start.getTime();
-        const elapsedMs = Math.min(Math.max(nowDate.getTime() - start.getTime(), 0), totalMs);
-        percent = Math.round((elapsedMs / totalMs) * 100);
-        totalDays = Math.max(1, Math.ceil(totalMs / (1000 * 60 * 60 * 24)));
-        daysLeft = Math.ceil((end.getTime() - nowDate.getTime()) / (1000 * 60 * 60 * 24));
-    }
-
-    return { start, end, percent, totalDays, daysLeft };
-};
