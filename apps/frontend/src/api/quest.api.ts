@@ -1,6 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import {  useQuery } from "@tanstack/react-query";
 import { AdventurerType } from "../../../../packages/shared/src/types/adventurer.type";
-import { type Quest, QuestStatus } from "../../../../packages/shared/src/types/quest.type";
+import {
+    type Quest,
+    type QuestCreation,
+    QuestStatus,
+} from "../../../../packages/shared/src/types/quest.type";
 
 export const mockQuests: Quest[] = [
     {
@@ -197,4 +201,18 @@ export const useQuestById = (id: string) => {
         initialData: () => mockQuests.find((quest) => quest.id === id),
     });
     return { getQuestById };
+};
+
+export const useCreateQuest = () => {
+    const createQuest = async (questData: QuestCreation): Promise<Quest> => {
+        const newQuest: Quest = {
+            id: (mockQuests.length + 1).toString(),
+            status: QuestStatus.WAITING_APPROVAL,
+            ...questData,
+        };
+        mockQuests.push(newQuest);
+        return newQuest;
+    };
+
+    return { createQuest };
 };
