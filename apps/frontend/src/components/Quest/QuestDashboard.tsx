@@ -122,21 +122,21 @@ export function QuestDashboard() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    {quest.status === QuestStatus.WAITING_APPROVAL &&
+                                    {quest.status === QuestStatus.PENDING &&
                                         user.role === "ASSISTANT" && (
                                             <ValidateButton
                                                 onClick={() => console.log("validate", quest.id)}
                                             />
                                         )}
                                     {((user.role === "CLIENT" &&
-                                        quest.status === QuestStatus.WAITING_APPROVAL) ||
+                                        quest.status === QuestStatus.PENDING) ||
                                         user.role === "ASSISTANT") && (
                                         <UpdateButton
                                             onClick={() => console.log("update", quest.id)}
                                         />
                                     )}
                                     {((user.role === "CLIENT" &&
-                                        quest.status === QuestStatus.WAITING_APPROVAL) ||
+                                        quest.status === QuestStatus.PENDING) ||
                                         user.role === "ASSISTANT") && (
                                         <DeleteButton
                                             onClick={() => console.log("delete", quest.id)}
