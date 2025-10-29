@@ -6,9 +6,9 @@ import type { User } from "../../../../packages/shared/src/types/user.type";
 
 const mockClient: User = {
     id: "1004",
-    name: "Client User",
-    createdAt: new Date("2024-01-01T00:00:00Z"),
+    name: "Lyria Moonshadow",
     role: "CLIENT",
+    createdAt: new Date("2024-02-20T12:00:00Z"),
 };
 
 const mockAssistant: User = {

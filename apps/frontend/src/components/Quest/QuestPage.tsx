@@ -8,6 +8,8 @@ import { DeleteButton } from "../Buttons/DeleteButton";
 import { ValidateButton } from "../Buttons/ValidateButton";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { useAuth } from "../../context/AuthContext";
+import { XPtoLvl } from "../../utils/XPtoLvl";
+import { itemRarityColors } from "../../utils/itemRarityColors";
 
 export default function QuestPage() {
     const { id } = useParams<{ id: string }>();
@@ -72,6 +74,45 @@ export default function QuestPage() {
                                     </div>
                                 );
                             })()}
+                    </div>
+                    <div className="mt-6">
+                        <h2 className="text-2xl font-semibold mb-4">Affectations</h2>
+                        {quest.options?.assignments.length ? (
+                            <ul className="space-y-4">
+                                {quest.options.assignments.map((assignment) => (
+                                    <li key={assignment.id} className="p-4 bg-slate-800 rounded-lg">
+                                        <h3 className="text-xl font-semibold">
+                                            Aventurier: {assignment.adventurer.user.name}
+                                        </h3>
+                                        <p>Type: {assignment.adventurer.type}</p>
+                                        <p>LVL: {XPtoLvl(assignment.adventurer.xp)}</p>
+                                        {assignment.items.length > 0 && (
+                                            <div className="mt-2">
+                                                <h4 className="font-semibold">Objets:</h4>
+                                                <ul className="list-disc list-inside">
+                                                    {assignment.items.map((item) => (
+                                                        <li
+                                                            key={item.id}
+                                                            style={{
+                                                                marginLeft: "1rem",
+                                                                color: itemRarityColors[
+                                                                    item.rarity
+                                                                ],
+                                                            }}
+                                                        >
+                                                            {item.name} - Durabilité:{" "}
+                                                            {item.durability}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-slate-400">Aucune affectation pour cette quête.</p>
+                        )}
                     </div>
                 </div>
             )}
