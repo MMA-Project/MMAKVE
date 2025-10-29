@@ -4,6 +4,9 @@ import { Protected, useAuth } from "./context/AuthContext";
 import { QuestDashboard } from "./components/Quest/QuestDashboard";
 import QuestPage from "./components/Quest/QuestPage";
 import { CreateQuestPage } from "./components/Quest/CreateQuestPage";
+import { AdventurerDashboard } from "./components/Adventurer/AdventurerDashboard";
+import { AdventurerDetails } from "./components/Adventurer/AdventurerDetails";
+import { GuildDashboard } from "./components/Guild/GuildDashboard";
 
 function LoginRoute() {
     const { user } = useAuth();
@@ -43,7 +46,6 @@ function Dashboard() {
 export default function App() {
     return (
         <Routes>
-            <Route path="/logout" element={<LogoutRoute />} />
             <Route
                 path="/dashboard"
                 element={
@@ -68,7 +70,32 @@ export default function App() {
                     </Protected>
                 }
             />
+            <Route
+                path="/adventurers"
+                element={
+                    <Protected>
+                        <AdventurerDashboard />
+                    </Protected>
+                }
+            />
+            <Route
+                path="/adventurer/:id"
+                element={
+                    <Protected>
+                        <AdventurerDetails />
+                    </Protected>
+                }
+            />
+            <Route
+                path="/guild"
+                element={
+                    <Protected>
+                        <GuildDashboard />
+                    </Protected>
+                }
+            />
             <Route path="/" element={<LoginRoute />} />
+            <Route path="/logout" element={<LogoutRoute />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useQuestById } from "../../api/quest.api";
-import QuestStatusBanner from "./QuestStatusBanner";
 import { ProgressBar } from "./QuestProgressBar";
 import { computeProgress } from "../../utils/progressBar";
 import ReturnButton from "../Nav/ReturnButton";
@@ -22,17 +21,14 @@ export default function QuestPage() {
                 <div className="max-w-3xl w-full">
                     <ReturnButton />
                     <div className="absolute flex flex-col top-4 right-4 m-5">
-                        {quest.status === QuestStatus.WAITING_APPROVAL &&
-                            user.role === "ASSISTANT" && (
-                                <ValidateButton onClick={() => console.log("validate", quest.id)} />
-                            )}
-                        {((user.role === "CLIENT" &&
-                            quest.status === QuestStatus.WAITING_APPROVAL) ||
+                        {quest.status === QuestStatus.PENDING && user.role === "ASSISTANT" && (
+                            <ValidateButton onClick={() => console.log("validate", quest.id)} />
+                        )}
+                        {((user.role === "CLIENT" && quest.status === QuestStatus.PENDING) ||
                             user.role === "ASSISTANT") && (
                             <UpdateButton onClick={() => console.log("update", quest.id)} />
                         )}
-                        {((user.role === "CLIENT" &&
-                            quest.status === QuestStatus.WAITING_APPROVAL) ||
+                        {((user.role === "CLIENT" && quest.status === QuestStatus.PENDING) ||
                             user.role === "ASSISTANT") && (
                             <DeleteButton onClick={() => console.log("delete", quest.id)} />
                         )}

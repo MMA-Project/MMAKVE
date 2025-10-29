@@ -1,4 +1,4 @@
-import {  useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { AdventurerType } from "../../../../packages/shared/src/types/adventurer.type";
 import {
     type Quest,
@@ -136,7 +136,7 @@ export const mockQuests: Quest[] = [
             "A magical rift is leaking corrupting energies. Seal it before the swamp spreads further.",
         deadline: new Date("2025-11-20T23:59:59Z"),
         reward: 500,
-        status: QuestStatus.WAITING_APPROVAL,
+        status: QuestStatus.PENDING,
     },
     {
         id: "5",
@@ -173,7 +173,7 @@ export const mockQuests: Quest[] = [
             "Strange noises and lights have been reported in the old ruins. Investigate the source.",
         deadline: new Date("2025-11-05T23:59:59Z"),
         reward: 400,
-        status: QuestStatus.WAITING_APPROVAL,
+        status: QuestStatus.PENDING,
     },
 ];
 
@@ -207,7 +207,7 @@ export const useCreateQuest = () => {
     const createQuest = async (questData: QuestCreation): Promise<Quest> => {
         const newQuest: Quest = {
             id: (mockQuests.length + 1).toString(),
-            status: QuestStatus.WAITING_APPROVAL,
+            status: QuestStatus.PENDING,
             ...questData,
         };
         mockQuests.push(newQuest);
