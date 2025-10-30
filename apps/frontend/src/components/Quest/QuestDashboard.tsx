@@ -1,6 +1,6 @@
 import { useQuest } from "../../api/quest.api";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
-import { ProgressBar } from "./QuestProgressBar";
+import { QuestProgressBar } from "./QuestProgressBar";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import QuestStatusBanner from "./QuestStatusBanner";
@@ -38,195 +38,197 @@ export function QuestDashboard() {
         <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
             <h1 className="text-3xl font-bold">Tableau de bord des quêtes</h1>
 
-            {/* Section de tri */}
-            <div className="flex items-center gap-4">
-                <label htmlFor="sort" className="text-sm font-medium">
-                    Trier par :
-                </label>
-                <select
-                    id="sort"
-                    className="p-2 rounded bg-slate-800 text-slate-100"
-                    onChange={(e) => {
-                        const sortBy = e.target.value;
-                        setSortBy(sortBy as SortBy);
-                    }}
-                >
-                    <option value="date_limit">Date limite</option>
-                    <option value="prime">Prime</option>
-                    <option value="status">Status</option>
-                    <option value="xp">XP requis</option>
-                    <option value="client">Client</option>
-                </select>
-                <button
-                    id="order"
-                    className="p-2 rounded bg-slate-800 text-slate-100"
-                    onClick={() => setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))}
-                >
-                    {sortOrder === "asc" ? "⬆" : "⬇"}
-                </button>
-            </div>
-
             {/* Section de filtrage */}
-            <div className="w-full max-w-4xl">
-                <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="flex items-center gap-2 px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-100 transition"
-                >
-                    <span>{showFilters ? "▼" : "▶"}</span>
-                    <span>Filtres avancés</span>
-                    {(minReward ||
-                        maxReward ||
-                        minXp ||
-                        maxXp ||
-                        startDate ||
-                        endDate ||
-                        selectedStatus ||
-                        clientSearch) && (
-                        <span className="ml-2 px-2 py-0.5 text-xs bg-blue-600 rounded">Actif</span>
-                    )}
-                </button>
+            <div className="w-full flex justify-between items-end max-w-4xl gap-4 flex-wrap">
+                <div className="flex items-center gap-4">
+                    <label htmlFor="sort" className="text-sm font-medium">
+                        Trier par :
+                    </label>
+                    <select
+                        id="sort"
+                        className="p-2 rounded bg-slate-800 text-slate-100"
+                        onChange={(e) => {
+                            const sortBy = e.target.value;
+                            setSortBy(sortBy as SortBy);
+                        }}
+                    >
+                        <option value="date_limit">Date limite</option>
+                        <option value="prime">Prime</option>
+                        <option value="status">Status</option>
+                        <option value="xp">XP requis</option>
+                        <option value="client">Client</option>
+                    </select>
+                    <button
+                        id="order"
+                        className="p-2 rounded bg-slate-800 text-slate-100"
+                        onClick={() => setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))}
+                    >
+                        {sortOrder === "asc" ? "⬆" : "⬇"}
+                    </button>
+                </div>
+                <div className="max-w-4xl">
+                    <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className="flex items-center gap-2 px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-100 transition"
+                    >
+                        <span>{showFilters ? "▼" : "▶"}</span>
+                        <span>Filtres avancés</span>
+                        {(minReward ||
+                            maxReward ||
+                            minXp ||
+                            maxXp ||
+                            startDate ||
+                            endDate ||
+                            selectedStatus ||
+                            clientSearch) && (
+                            <span className="ml-2 px-2 py-0.5 text-xs bg-blue-600 rounded">
+                                Actif
+                            </span>
+                        )}
+                    </button>
 
-                {showFilters && (
-                    <div className="mt-2 space-y-4 p-4 border border-slate-700 rounded bg-slate-900/50">
-                        {/* Filtre par prime */}
-                        <div className="flex items-center gap-4">
-                            <label className="text-sm font-medium w-32">Prime :</label>
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="number"
-                                    placeholder="Min"
-                                    value={minReward}
-                                    onChange={(e) => setMinReward(e.target.value)}
-                                    className="w-24 p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
-                                    min="0"
-                                />
-                                <span className="text-slate-400">—</span>
-                                <input
-                                    type="number"
-                                    placeholder="Max"
-                                    value={maxReward}
-                                    onChange={(e) => setMaxReward(e.target.value)}
-                                    className="w-24 p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
-                                    min="0"
-                                />
-                                <span>💰</span>
+                    {showFilters && (
+                        <div className="mt-2 space-y-4 p-4 border border-slate-700 rounded bg-slate-900/50">
+                            {/* Filtre par prime */}
+                            <div className="flex items-center gap-4">
+                                <label className="text-sm font-medium w-32">Prime :</label>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        placeholder="Min"
+                                        value={minReward}
+                                        onChange={(e) => setMinReward(e.target.value)}
+                                        className="w-24 p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
+                                        min="0"
+                                    />
+                                    <span className="text-slate-400">—</span>
+                                    <input
+                                        type="number"
+                                        placeholder="Max"
+                                        value={maxReward}
+                                        onChange={(e) => setMaxReward(e.target.value)}
+                                        className="w-24 p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
+                                        min="0"
+                                    />
+                                    <span>💰</span>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Filtre par XP requis */}
-                        <div className="flex items-center gap-4">
-                            <label className="text-sm font-medium w-32">XP requis :</label>
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="number"
-                                    placeholder="Min"
-                                    value={minXp}
-                                    onChange={(e) => setMinXp(e.target.value)}
-                                    className="w-24 p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
-                                    min="0"
-                                />
-                                <span className="text-slate-400">—</span>
-                                <input
-                                    type="number"
-                                    placeholder="Max"
-                                    value={maxXp}
-                                    onChange={(e) => setMaxXp(e.target.value)}
-                                    className="w-24 p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
-                                    min="0"
-                                />
-                                <span>⭐</span>
+                            {/* Filtre par XP requis */}
+                            <div className="flex items-center gap-4">
+                                <label className="text-sm font-medium w-32">XP requis :</label>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        placeholder="Min"
+                                        value={minXp}
+                                        onChange={(e) => setMinXp(e.target.value)}
+                                        className="w-24 p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
+                                        min="0"
+                                    />
+                                    <span className="text-slate-400">—</span>
+                                    <input
+                                        type="number"
+                                        placeholder="Max"
+                                        value={maxXp}
+                                        onChange={(e) => setMaxXp(e.target.value)}
+                                        className="w-24 p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
+                                        min="0"
+                                    />
+                                    <span>⭐</span>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Filtre par date limite */}
-                        <div className="flex flex-wrap items-center gap-4">
-                            <label className="text-sm font-medium w-20 sm:w-32 flex-shrink-0">
-                                Date limite :
-                            </label>
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1 sm:flex-none">
-                                <input
-                                    type="date"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                    className="w-full sm:w-auto p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
-                                />
-                                <span className="hidden sm:inline text-slate-400">—</span>
-                                <input
-                                    type="date"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                    className="w-full sm:w-auto p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
-                                />
-                                <span className="hidden sm:inline">📅</span>
-                            </div>
-                        </div>
-
-                        {/* Filtre par status */}
-                        <div className="flex flex-wrap items-center gap-4">
-                            <label className="text-sm font-medium w-20 sm:w-32 flex-shrink-0">
-                                Status :
-                            </label>
-                            <select
-                                value={selectedStatus}
-                                onChange={(e) =>
-                                    setSelectedStatus(e.target.value as QuestStatus | "")
-                                }
-                                className="flex-1 sm:flex-none p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
-                            >
-                                <option value="">Tous les status</option>
-                                <option value={QuestStatus.PENDING}>
-                                    En attente d'approbation
-                                </option>
-                                <option value={QuestStatus.APPROVED}>Approuvé</option>
-                                <option value={QuestStatus.IN_PROGRESS}>En cours</option>
-                                <option value={QuestStatus.COMPLETED}>Complété</option>
-                                <option value={QuestStatus.FAILED}>Échoué</option>
-                            </select>
-                        </div>
-
-                        {/* Filtre par client */}
-                        {/* Filtre par client */}
-                        <div className="flex flex-wrap items-center gap-4 sm:justify-between">
-                            <div className="flex items-center gap-4 flex-1 sm:flex-none">
+                            {/* Filtre par date limite */}
+                            <div className="flex flex-wrap items-center gap-4">
                                 <label className="text-sm font-medium w-20 sm:w-32 flex-shrink-0">
-                                    Client :
+                                    Date limite :
                                 </label>
-                                <input
-                                    type="text"
-                                    placeholder="Rechercher un client..."
-                                    value={clientSearch}
-                                    onChange={(e) => setClientSearch(e.target.value)}
-                                    className="flex-1 sm:w-96 sm:flex-none p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
-                                />
+                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1 sm:flex-none">
+                                    <input
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        className="w-full sm:w-auto p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
+                                    />
+                                    <span className="hidden sm:inline text-slate-400">—</span>
+                                    <input
+                                        type="date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        className="w-full sm:w-auto p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
+                                    />
+                                    <span className="hidden sm:inline">📅</span>
+                                </div>
                             </div>
-                            {/* Bouton de réinitialisation */}
-                            {(minReward ||
-                                maxReward ||
-                                minXp ||
-                                maxXp ||
-                                startDate ||
-                                endDate ||
-                                selectedStatus ||
-                                clientSearch) && (
-                                <button
-                                    onClick={() => {
-                                        setMinReward("");
-                                        setMaxReward("");
-                                        setMinXp("");
-                                        setMaxXp("");
-                                        setStartDate("");
-                                        setEndDate("");
-                                        setSelectedStatus("");
-                                        setClientSearch("");
-                                    }}
-                                    className="w-full sm:w-auto px-4 py-2 text-sm rounded bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-slate-100 transition whitespace-nowrap"
+
+                            {/* Filtre par status */}
+                            <div className="flex flex-wrap items-center gap-4">
+                                <label className="text-sm font-medium w-20 sm:w-32 flex-shrink-0">
+                                    Status :
+                                </label>
+                                <select
+                                    value={selectedStatus}
+                                    onChange={(e) =>
+                                        setSelectedStatus(e.target.value as QuestStatus | "")
+                                    }
+                                    className="flex-1 sm:flex-none p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
                                 >
-                                    Réinitialiser tous les filtres
-                                </button>
-                            )}
+                                    <option value="">Tous les status</option>
+                                    <option value={QuestStatus.PENDING}>
+                                        En attente d'approbation
+                                    </option>
+                                    <option value={QuestStatus.APPROVED}>Approuvé</option>
+                                    <option value={QuestStatus.IN_PROGRESS}>En cours</option>
+                                    <option value={QuestStatus.COMPLETED}>Complété</option>
+                                    <option value={QuestStatus.FAILED}>Échoué</option>
+                                </select>
+                            </div>
+
+                            {/* Filtre par client */}
+                            {/* Filtre par client */}
+                            <div className="flex flex-wrap items-center gap-4 sm:justify-between">
+                                <div className="flex items-center gap-4 flex-1 sm:flex-none">
+                                    <label className="text-sm font-medium w-20 sm:w-32 flex-shrink-0">
+                                        Client :
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Rechercher un client..."
+                                        value={clientSearch}
+                                        onChange={(e) => setClientSearch(e.target.value)}
+                                        className="flex-1 sm:w-96 sm:flex-none p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
+                                    />
+                                </div>
+                                {/* Bouton de réinitialisation */}
+                                {(minReward ||
+                                    maxReward ||
+                                    minXp ||
+                                    maxXp ||
+                                    startDate ||
+                                    endDate ||
+                                    selectedStatus ||
+                                    clientSearch) && (
+                                    <button
+                                        onClick={() => {
+                                            setMinReward("");
+                                            setMaxReward("");
+                                            setMinXp("");
+                                            setMaxXp("");
+                                            setStartDate("");
+                                            setEndDate("");
+                                            setSelectedStatus("");
+                                            setClientSearch("");
+                                        }}
+                                        className="w-full sm:w-auto px-4 py-2 text-sm rounded bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-slate-100 transition whitespace-nowrap"
+                                    >
+                                        Réinitialiser tous les filtres
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
             <div className="w-full max-w-4xl space-y-4">
@@ -392,7 +394,7 @@ export function QuestDashboard() {
                                                         {percent}%
                                                     </span>
                                                 </div>
-                                                <ProgressBar percent={percent} quest={quest} />
+                                                <QuestProgressBar percent={percent} quest={quest} />
                                                 <div className="flex items-center justify-between text-xs text-slate-400">
                                                     <div className="flex items-center gap-2">
                                                         <span className="px-2 py-0.5 bg-slate-800 rounded">

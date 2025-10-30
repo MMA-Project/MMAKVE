@@ -1,28 +1,4 @@
-import type { User } from "../../../../packages/shared/src/types/user.type";
-
 const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
-
-const mockClient: User = {
-    id: "1004",
-    name: "Client User",
-    createdAt: new Date("2024-01-01T00:00:00Z"),
-    role: "CLIENT",
-};
-
-const mockAssistant: User = {
-    id: "assistant-456",
-    name: "Assistant User",
-    createdAt: new Date("2024-01-01T00:00:00Z"),
-    role: "ASSISTANT",
-};
-
-const mockAdventurer: User = {
-    id: "adventurer-789",
-    name: "Adventurer User",
-    createdAt: new Date("2024-01-01T00:00:00Z"),
-    role: "ADVENTURER",
-};
-
 export interface LoginCredentials {
     username: string;
     password: string;

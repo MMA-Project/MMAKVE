@@ -5,6 +5,7 @@ import {
     type QuestCreation,
     QuestStatus,
 } from "../../../../packages/shared/src/types/quest.type";
+import { ItemName, ItemRarity, ItemType } from "../../../../packages/shared/src/types/item.type";
 
 export const mockQuests: Quest[] = [
     {
@@ -29,7 +30,28 @@ export const mockQuests: Quest[] = [
             assignments: [
                 {
                     id: "1",
-                    items: [],
+                    items: [
+                        {
+                            id: "301",
+                            name: ItemName.STAFF,
+                            description: "A basic staff.",
+                            durability: 1,
+                            price: 25,
+                            type: ItemType.WEAPON,
+                            rarity: ItemRarity.COMMON,
+                            profiles: [],
+                        },
+                        {
+                            id: "302",
+                            name: ItemName.ARMOR,
+                            description: "Epic protective gear.",
+                            durability: 1,
+                            price: 25,
+                            type: ItemType.ARMOR,
+                            rarity: ItemRarity.EPIC,
+                            profiles: [],
+                        },
+                    ],
                     adventurer: {
                         id: "501",
                         user: {
@@ -40,12 +62,23 @@ export const mockQuests: Quest[] = [
                         },
                         type: AdventurerType.ENCHANTER,
                         status: "available",
-                        xp: 2500,
+                        xp: 112500,
                     },
                 },
                 {
                     id: "2",
-                    items: [],
+                    items: [
+                        {
+                            id: "303",
+                            name: ItemName.DAGGER,
+                            description: "A sharp dagger.",
+                            durability: 1,
+                            price: 15,
+                            type: ItemType.WEAPON,
+                            rarity: ItemRarity.UNCOMMON,
+                            profiles: [],
+                        },
+                    ],
                     adventurer: {
                         id: "502",
                         user: {
