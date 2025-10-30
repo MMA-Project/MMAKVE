@@ -1,5 +1,13 @@
 import { Request, Response } from "express";
-import { cancel, create, getAll, getAllByUser, update, validate } from "../services/quest.service";
+import {
+    cancel,
+    create,
+    getAll,
+    getAllByUser,
+    suggestQuestTeammates,
+    update,
+    validate,
+} from "../services/quest.service";
 import { AppError, ErrorCodes, sendError } from "../utils/error";
 import { Quest, QuestCreation, QuestStatus, AdventurerType } from "@mmakve/shared";
 
@@ -97,5 +105,28 @@ export const cancelQuest = async (req: Request, res: Response) => {
         if (error instanceof AppError) {
             return sendError(res, error.code, error.message, { status: error.status });
         }
+    }
+};
+
+/**
+ * ! TODO: Pour assistants
+ */
+
+export const suggestTeammates = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return sendError(res, ErrorCodes.VALIDATION_ERROR, "Quest ID is required", { status: 422 });
+    }
+    try {
+        const suggestion = await suggestQuestTeammates(id);
+        return res.json({ ...suggestion });
+    } catch (error) {
+        if (error instanceof AppError) {
+            return sendError(res, error.code, error.message, { status: error.status });
+        }
+        return sendError(res, ErrorCodes.INTERNAL_ERROR, "An unexpected error occurred", {
+            status: 500,
+        });
     }
 };

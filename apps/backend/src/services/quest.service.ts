@@ -4,9 +4,12 @@ import {
     AdventurerType,
     QuestAssignement,
     QuestCreation,
+    Adventurer,
 } from "@mmakve/shared";
 import { getUserById } from "./auth.service";
 import { prisma } from "../prisma-client";
+import { calculateSoloWinProbability, calculateTeamWinProbability } from "../utils/quests";
+import { AppError, ErrorCodes } from "../utils/error";
 
 /**
  * ! Rôle: Assistant
@@ -223,5 +226,66 @@ export const cancel = async (id: string): Promise<Quest | null> => {
             xp_required: quest.xp_required ?? 0,
             assignments: (quest.assignments ?? []) as unknown as QuestAssignement[],
         },
+    };
+};
+
+export const suggestQuestTeammates = async (
+    id: string,
+): Promise<{
+    bestTeammates: Adventurer[];
+    teamRates: number[];
+    winRate: number;
+}> => {
+    const quest = await prisma.quest.findUnique({
+        where: { id },
+        include: {
+            assignments: true,
+            requester: true,
+        },
+    });
+
+    if (!quest) throw new AppError(ErrorCodes.NOT_FOUND, "Quest not found", 404);
+
+    const xp_required = quest?.xp_required ?? 1000;
+    const profils = quest?.profils ?? [];
+
+    const availableTeammates = await prisma.adventurer.findMany({
+        where: { status: "AVAILABLE", AND: { type: { in: profils } } },
+        include: {
+            user: true,
+        },
+    });
+
+    const bestTeammates: Adventurer[] = [];
+
+    for (const profil of profils) {
+        const sameType = availableTeammates.filter((a) => a.type === profil);
+        if (sameType.length === 0) continue;
+
+        let bestCandidate: Adventurer | null = null;
+        let bestRate = 0;
+
+        for (const candidate of sameType) {
+            const simulatedTeam = [...bestTeammates, candidate];
+            const teamRates = simulatedTeam.map((a) =>
+                calculateSoloWinProbability(a.xp, xp_required),
+            );
+            const winRate = calculateTeamWinProbability(teamRates);
+
+            if (winRate > bestRate) {
+                bestRate = winRate;
+                bestCandidate = candidate as any;
+            }
+        }
+
+        if (bestCandidate) bestTeammates.push(bestCandidate);
+    }
+
+    const teamRates = bestTeammates.map((a) => calculateSoloWinProbability(a.xp, xp_required));
+    const winRate = calculateTeamWinProbability(teamRates);
+    return {
+        bestTeammates,
+        teamRates,
+        winRate,
     };
 };

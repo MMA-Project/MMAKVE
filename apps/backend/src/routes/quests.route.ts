@@ -142,4 +142,39 @@ router.put("/:id", QuestController.validateQuest);
  */
 router.delete("/:id", QuestController.cancelQuest);
 
+/**
+ * @openapi
+ * /quests/suggest/{id}:
+ *   get:
+ *     tags: [Quests]
+ *     summary: Suggérer des coéquipiers pour une quête
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la quête
+ *     responses:
+ *       200:
+ *         description: Suggestions de coéquipiers avec leurs taux de réussite
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 teamRates:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       adventurerId:
+ *                         type: string
+ *                       winRate:
+ *                         type: number
+ *                 winRate:
+ *                   type: number
+ */
+router.get("/suggest/:id", QuestController.suggestTeammates);
+
 export default router;
