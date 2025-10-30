@@ -1,22 +1,22 @@
 services:
-  db:
-    image: postgres:17-alpine
-    container_name: mmakve_db_dev
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: mmakve
-      POSTGRES_PASSWORD: mmakve_pass
-      POSTGRES_DB: mmakve_dev
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mmakve -d mmakve_dev"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    db:
+        image: postgres:17-alpine
+        container_name: mmakve_db_dev
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: mmakve
+            POSTGRES_PASSWORD: mmakve_pass
+            POSTGRES_DB: mmakve_dev
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U mmakve -d mmakve_dev"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
 volumes:
-  db_data:
-    name: mmakve_db_data
+    db_data:
+        name: mmakve_db_data

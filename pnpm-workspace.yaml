@@ -1,10 +1,10 @@
 packages:
-  - apps/*
-  - packages/*
+    - apps/*
+    - packages/*
 
 ignoredBuiltDependencies:
-  - esbuild
+    - esbuild
 
 onlyBuiltDependencies:
-  - "@prisma/engines"
-  - prisma
+    - "@prisma/engines"
+    - prisma

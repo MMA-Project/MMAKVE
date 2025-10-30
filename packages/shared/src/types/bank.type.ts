@@ -1,13 +1,13 @@
 export type Bank = {
-  balance: number;
-  transactions: Transaction[];
+    balance: number;
+    transactions: Transaction[];
 };
 
 export type Transaction = {
-  id: string;
-  name: string;
-  amount: number;
-  date: number;
+    id: string;
+    name: string;
+    amount: number;
+    date: number;
 };
 
 export type BankCreation = Omit<Bank, "transactions">;

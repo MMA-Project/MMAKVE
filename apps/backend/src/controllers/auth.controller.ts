@@ -14,9 +14,9 @@ export const register = async (req: Request, res: Response) => {
         }
         const user = await AuthService.register({ username, password, role });
         const token = await AuthService.login({ username, password });
-        return res.status(201).json({ 
+        return res.status(201).json({
             user: { id: user.id, username: user.username, role: user.role },
-            token 
+            token,
         });
     } catch (err: any) {
         if (err instanceof AppError) {
@@ -48,11 +48,13 @@ export const login = async (req: Request, res: Response) => {
         const token = await AuthService.login({ username, password });
         const user = await AuthService.findByUsername(username);
         if (!user) {
-            return sendError(res, ErrorCodes.AUTH_USER_NOT_FOUND, "User not found", { status: 404 });
+            return sendError(res, ErrorCodes.AUTH_USER_NOT_FOUND, "User not found", {
+                status: 404,
+            });
         }
-        return res.json({ 
+        return res.json({
             user: { id: user.id, username: user.username, role: user.role },
-            token 
+            token,
         });
     } catch (err: any) {
         const msg = err?.message;
