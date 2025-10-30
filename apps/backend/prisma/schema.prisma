@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "../src/generated/prisma-client"
+  output   = "../src/generated/prisma-client"
 }
 
 datasource db {
@@ -16,18 +16,18 @@ datasource db {
 
 // Enum for adventurer type
 enum AdventurerType {
-    ARCHER
-    BARBARIAN
-    PALADIN
-    ARCANE_MAGE
-    PRIEST
-    GEOMANCER
-    ALCHEMIST
-    BLACKSMITH
-    ENCHANTER
-    MESSENGER
-    ROGUE
-    WARRIOR
+  ARCHER
+  BARBARIAN
+  PALADIN
+  ARCANE_MAGE
+  PRIEST
+  GEOMANCER
+  ALCHEMIST
+  BLACKSMITH
+  ENCHANTER
+  MESSENGER
+  ROGUE
+  WARRIOR
 }
 
 // Roles for users
@@ -67,108 +67,128 @@ enum ItemRarity {
   EPIC
   LEGENDARY
 }
+
+enum ItemName {
+  SWORD
+  SHIELD
+  HELMET
+  HEALING_POTION
+  MAGIC_RING
+  BOW
+  DAGGER
+  STAFF
+  ARMOR
+  AXE
+  ARROW
+}
+
+/**
+ * Traité
+ */
 model User {
-  id           String      @id @default(uuid())
-  name     String      @unique
-  password     String
-  role         Role        @default(CLIENT)
-  createdAt    DateTime    @default(now())
+  id        String   @id @default(uuid())
+  name      String   @unique
+  password  String
+  role      Role     @default(CLIENT)
+  createdAt DateTime @default(now())
+
   adventurer   Adventurer? @relation(fields: [adventurerId], references: [id])
   adventurerId String?     @unique
 
   Quest Quest[]
 }
 
-
 model Quest {
-  id                String              @id @default(uuid())
-  title             String
-  description       String
-  deadline          DateTime
-  start_date        DateTime?
-  end_date          DateTime?
-  xp_required       Int
-  reward            Int
-  status            QuestStatus         @default(PENDING)
-  createdBy         String
-  assignments       QuestAssignment[]
-  requester         User                @relation(fields: [createdBy], references: [id])
-  profils           AdventurerType[]
+  id          String            @id @default(uuid())
+  title       String
+  description String
+  deadline    DateTime
+  start_date  DateTime?
+  end_date    DateTime?
+  xp_required Int
+  reward      Int
+  status      QuestStatus       @default(PENDING)
+  createdBy   String
+  assignments QuestAssignment[]
+  requester   User              @relation(fields: [createdBy], references: [id])
+  profils     AdventurerType[]
 }
 
 model QuestAssignment {
-  id            String      @id @default(uuid())
-  items         ItemOnQuestAssignment[]
-  adventurer    Adventurer  @relation(fields: [adventurerId], references: [id])
-  adventurerId  String
-  quest         Quest       @relation(fields: [questId], references: [id])
-  questId       String
+  id    String                  @id @default(uuid())
+  items ItemOnQuestAssignment[]
+
+  adventurer   Adventurer @relation(fields: [adventurerId], references: [id])
+  adventurerId String
+  quest        Quest      @relation(fields: [questId], references: [id])
+  questId      String
 }
 
 model Adventurer {
-  id            String           @id @default(uuid())
-  name          String
-  type          AdventurerType
-  status        AdventurerStatus @default(AVAILABLE)
-  xp            Int              @default(0)
-  assignments   QuestAssignment[]
-  guildId       String
-  guild         Guild            @relation("AdventurerGuild", fields: [guildId], references: [id])
-  user          User?
+  id          String            @id @default(uuid())
+  type        AdventurerType
+  status      AdventurerStatus  @default(AVAILABLE)
+  xp          Int               @default(0)
+  assignments QuestAssignment[]
+  guildId     String
+  guild       Guild             @relation("AdventurerGuild", fields: [guildId], references: [id])
+  user        User?
 }
 
 model Item {
-  id            String          @id @default(uuid())
-  name          String
-  description   String
-  durability    Int
-  price         Int
-  type          ItemType
-  stats         String?
-  rarity        ItemRarity      @default(COMMON)
-  profiles      AdventurerType[]
+  id               String                  @id @default(uuid())
+  name             ItemName
+  description      String
+  durability       Int
+  price            Int
+  type             ItemType
+  stats            String?
+  rarity           ItemRarity              @default(COMMON)
+  profiles         AdventurerType[]
   questAssignments ItemOnQuestAssignment[]
-  guilds        ItemOnGuild[]
+  guilds           ItemOnGuild[]
 }
 
 model Guild {
-  id            String          @id @default(uuid())
-  name          String
-  adventurers   Adventurer[]    @relation("AdventurerGuild")
-  bank          Bank?
-  bankId        String @unique
-  inventory     ItemOnGuild[]
+  id          String        @id @default(uuid())
+  name        String
+  adventurers Adventurer[]  @relation("AdventurerGuild")
+  bank        Bank?
+  bankId      String        @unique
+  inventory   ItemOnGuild[]
 }
 
 model Bank {
-  id            String          @id @default(uuid())
-  amount        Int
-  history       Transaction[]
-  guild         Guild           @relation(fields: [guildId], references: [id])
-  guildId       String @unique
+  id      String        @id @default(uuid())
+  amount  Int
+  history Transaction[]
+  guild   Guild         @relation(fields: [guildId], references: [id])
+  guildId String        @unique
 }
 
 model Transaction {
-  id            String      @id @default(uuid())
-  amount        Int
-  date          DateTime
-  name          String
-  bank          Bank        @relation(fields: [bankId], references: [id])
-  bankId        String
+  id     String   @id @default(uuid())
+  amount Int
+  date   DateTime
+  name   String
+  bank   Bank     @relation(fields: [bankId], references: [id])
+  bankId String
 }
 
 model ItemOnQuestAssignment {
-  questAssignment QuestAssignment @relation(fields: [questAssignmentId], references: [id])
+  questAssignment   QuestAssignment @relation(fields: [questAssignmentId], references: [id])
   questAssignmentId String
   item              Item            @relation(fields: [itemId], references: [id])
   itemId            String
+
   @@id([questAssignmentId, itemId])
 }
 
 model ItemOnGuild {
-  guild Guild @relation(fields: [guildId], references: [id])
+  guild   Guild  @relation(fields: [guildId], references: [id])
   guildId String
-  item  Item  @relation(fields: [itemId], references: [id])
-  itemId String
+  item    Item   @relation(fields: [itemId], references: [id])
+  itemId  String
+
   @@id([guildId, itemId])
 }
