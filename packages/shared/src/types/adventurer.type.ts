@@ -15,11 +15,19 @@ export enum AdventurerType {
     WARRIOR = "WARRIOR",
 }
 
+export enum AdventurerStatus {
+    AVAILABLE = "available",
+    ON_QUEST = "on_quest",
+    INJURED = "injured",
+    DEAD = "dead",
+    SLEEPING = "sleeping",
+}
+
 export type Adventurer = {
     id: string;
     user: User;
     type: AdventurerType;
-    status: "available" | "on_quest" | "injured" | "dead" | "sleeping";
+    status: AdventurerStatus;
     xp: number;
 };
 
