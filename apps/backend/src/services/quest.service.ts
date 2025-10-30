@@ -9,6 +9,7 @@ import {
 import { getUserById } from "./auth.service";
 import { prisma } from "../prisma-client";
 import { calculateSoloWinProbability, calculateTeamWinProbability } from "../utils/quests";
+import { AppError, ErrorCodes } from "../utils/error";
 
 /**
  * ! Rôle: Assistant
@@ -198,10 +199,10 @@ export const suggestQuestTeammates = async (
         include: {
             assignments: true,
             requester: true,
-        }
+        },
     });
 
-    if (!quest) throw new Error("Quest not found");
+    if (!quest) throw new AppError(ErrorCodes.NOT_FOUND, "Quest not found", 404);
 
     const xp_required = quest?.xp_required ?? 1000;
     const profils = quest?.profils ?? [];
@@ -231,7 +232,7 @@ export const suggestQuestTeammates = async (
 
             if (winRate > bestRate) {
                 bestRate = winRate;
-                bestCandidate = candidate;
+                bestCandidate = candidate as any;
             }
         }
 

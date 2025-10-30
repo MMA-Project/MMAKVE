@@ -105,8 +105,13 @@ export const suggestTeammates = async (req: Request, res: Response) => {
     if (!id) {
         return sendError(res, ErrorCodes.VALIDATION_ERROR, "Quest ID is required", { status: 422 });
     }
-
-    const suggestion = await suggestQuestTeammates(id);
-
-    return res.json({ ...suggestion });
+    try {
+        const suggestion = await suggestQuestTeammates(id);
+        return res.json({ ...suggestion });
+    } catch (error) {
+        if (error instanceof AppError) {
+            return sendError(res, error.code, error.message, { status: error.status });
+        }
+        return sendError(res, ErrorCodes.INTERNAL_ERROR, "An unexpected error occurred", { status: 500 });
+    }
 };
