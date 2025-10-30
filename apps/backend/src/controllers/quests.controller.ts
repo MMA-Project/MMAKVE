@@ -9,11 +9,24 @@ import {
     validate,
 } from "../services/quest.service";
 import { AppError, ErrorCodes, sendError } from "../utils/error";
-import { Quest, QuestCreation } from "@mmakve/shared";
+import { Quest, QuestCreation, QuestStatus, AdventurerType } from "@mmakve/shared";
 
-export const getAllQuests = async (_: Request, res: Response) => {
+export const getAllQuests = async (req: Request, res: Response) => {
     try {
-        const quests = await getAll();
+        const { status, createdBy, minReward, maxReward, startDate, endDate, profils } = req.query;
+
+        const params: any = {};
+        if (status) params.status = status as QuestStatus;
+        if (createdBy) params.createdBy = createdBy as string;
+        if (minReward) params.minReward = parseInt(minReward as string);
+        if (maxReward) params.maxReward = parseInt(maxReward as string);
+        if (startDate) params.startDate = new Date(startDate as string);
+        if (endDate) params.endDate = new Date(endDate as string);
+        if (profils) {
+            params.profils = Array.isArray(profils) ? profils : [profils];
+        }
+
+        const quests = await getAll(params);
         return res.status(200).json(quests);
     } catch (error: any) {
         if (error instanceof AppError) {

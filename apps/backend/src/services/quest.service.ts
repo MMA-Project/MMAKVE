@@ -14,8 +14,46 @@ import { AppError, ErrorCodes } from "../utils/error";
 /**
  * ! Rôle: Assistant
  */
-export async function getAll(): Promise<Quest[]> {
+export async function getAll(params?: {
+    status?: QuestStatus | string;
+    createdBy?: string;
+    profils?: AdventurerType[];
+    minReward?: number;
+    maxReward?: number;
+    startDate?: Date;
+    endDate?: Date;
+}): Promise<Quest[]> {
+    const where: any = {};
+
+    if (params?.status) {
+        where.status = params.status;
+    }
+    if (params?.createdBy) {
+        where.createdBy = params.createdBy;
+    }
+    if (params?.minReward !== undefined || params?.maxReward !== undefined) {
+        where.reward = {};
+        if (params.minReward !== undefined) {
+            where.reward.gte = params.minReward;
+        }
+        if (params.maxReward !== undefined) {
+            where.reward.lte = params.maxReward;
+        }
+    }
+    if (params?.startDate) {
+        where.start_date = { gte: params.startDate };
+    }
+    if (params?.endDate) {
+        where.end_date = { lte: params.endDate };
+    }
+    if (params?.profils && params.profils.length > 0) {
+        where.profils = {
+            hasSome: params.profils,
+        };
+    }
+
     const quests = await prisma.quest.findMany({
+        where,
         include: {
             assignments: true,
         },
@@ -160,6 +198,10 @@ export const validate = async (id: string): Promise<Quest | null> => {
 };
 
 export const cancel = async (id: string): Promise<Quest | null> => {
+    await prisma.questAssignment.deleteMany({
+        where: { questId: id },
+    });
+
     const quest = await prisma.quest.delete({
         where: { id },
         include: {

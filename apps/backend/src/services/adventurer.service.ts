@@ -47,6 +47,14 @@ export async function getAll(params?: {
 
     return adventurers.map((a: any) => ({
         id: a.id,
+        user: a.user
+            ? {
+                  id: a.user.id,
+                  name: a.user.username,
+                  role: a.user.role,
+                  createdAt: new Date(a.user.createdAt),
+              }
+            : (null as any),
         type: a.type as unknown as AdventurerType,
         status: a.status.toLowerCase() as
             | "available"
@@ -80,6 +88,14 @@ export async function getById(id: string): Promise<Adventurer | null> {
 
     return {
         id: adventurer.id,
+        user: adventurer.user
+            ? {
+                  id: adventurer.user.id,
+                  name: adventurer.user.username,
+                  role: adventurer.user.role,
+                  createdAt: new Date(adventurer.user.createdAt),
+              }
+            : (null as any),
         type: adventurer.type as unknown as AdventurerType,
         status: adventurer.status.toLowerCase() as
             | "available"
@@ -110,6 +126,14 @@ export async function getByQuest(questId: string): Promise<Adventurer[]> {
 
     return assignments.map((assignment: any) => ({
         id: assignment.adventurer.id,
+        user: assignment.adventurer.user
+            ? {
+                  id: assignment.adventurer.user.id,
+                  name: assignment.adventurer.user.username,
+                  role: assignment.adventurer.user.role,
+                  createdAt: new Date(assignment.adventurer.user.createdAt),
+              }
+            : (null as any),
         type: assignment.adventurer.type as unknown as AdventurerType,
         status: assignment.adventurer.status.toLowerCase() as
             | "available"
@@ -175,7 +199,7 @@ export async function create(data: {
         });
 
         // Create the user linked to the adventurer
-        await tx.user.create({
+        const user = await tx.user.create({
             data: {
                 username: data.username,
                 password: hashedPassword,
@@ -184,19 +208,25 @@ export async function create(data: {
             },
         });
 
-        return adventurer;
+        return { adventurer, user };
     });
 
     return {
-        id: result.id,
-        type: result.type as unknown as AdventurerType,
-        status: result.status.toLowerCase() as
+        id: result.adventurer.id,
+        user: {
+            id: result.user.id,
+            name: result.user.username,
+            role: result.user.role,
+            createdAt: new Date(result.user.createdAt),
+        },
+        type: result.adventurer.type as unknown as AdventurerType,
+        status: result.adventurer.status.toLowerCase() as
             | "available"
             | "on_quest"
             | "injured"
             | "dead"
             | "sleeping",
-        xp: result.xp,
+        xp: result.adventurer.xp,
     };
 }
 
@@ -250,6 +280,14 @@ export async function modify(
 
     return {
         id: adventurer.id,
+        user: adventurer.user
+            ? {
+                  id: adventurer.user.id,
+                  name: adventurer.user.username,
+                  role: adventurer.user.role,
+                  createdAt: new Date(adventurer.user.createdAt),
+              }
+            : (null as any),
         type: adventurer.type as unknown as AdventurerType,
         status: adventurer.status.toLowerCase() as
             | "available"

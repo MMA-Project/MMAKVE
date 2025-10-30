@@ -14,9 +14,23 @@ export enum ItemRarity {
     LEGENDARY = "legendary",
 }
 
+export enum ItemName {
+    SWORD = "Sword",
+    SHIELD = "Shield",
+    HELMET = "Helmet",
+    HEALING_POTION = "Healing Potion",
+    MAGIC_RING = "Magic Ring",
+    BOW = "Bow",
+    DAGGER = "Dagger",
+    STAFF = "Staff",
+    ARMOR = "Armor",
+    AXE = "Axe",
+    ARROW = "Arrow",
+}
+
 export type Item = {
     id: string;
-    name: string;
+    name: ItemName;
     description: string;
     durability: number;
     price: number;

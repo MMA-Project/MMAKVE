@@ -1,6 +1,4 @@
-import { QuestStatus, type Quest } from "../../../../../packages/shared/src/types/quest.type";
-
-export const QuestProgressBar = ({ percent, quest }: { percent: number; quest: Quest }) => {
+export const XpProgressBar = ({ percent }: { percent: number }) => {
     return (
         <div className="w-full bg-slate-800 rounded h-3 overflow-hidden border border-slate-700">
             <div className="h-full relative overflow-hidden" style={{}}>
@@ -9,18 +7,7 @@ export const QuestProgressBar = ({ percent, quest }: { percent: number; quest: Q
                     style={{
                         width: `${Math.max(0, Math.min(100, percent))}%`,
                         transition: "width 400ms ease",
-                        backgroundColor: (() => {
-                            switch (quest.status) {
-                                case QuestStatus.IN_PROGRESS:
-                                    return "#2563eb";
-                                case QuestStatus.COMPLETED:
-                                    return "#16a34a";
-                                case QuestStatus.FAILED:
-                                    return "#dc2626";
-                                default:
-                                    return "#9ca3af";
-                            }
-                        })(),
+                        backgroundColor: "#2563eb",
                         overflow: "hidden",
                     }}
                 >

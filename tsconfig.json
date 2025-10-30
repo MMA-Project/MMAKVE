@@ -1,29 +1,29 @@
 {
-  "files": [],
-  "references": [
-    { "path": "packages/shared" },
-    { "path": "apps/backend" },
-    { "path": "apps/frontend" }
-  ],
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@mmakve/shared": ["packages/shared/src"],
-      "@mmakve/shared/*": ["packages/shared/src/*"],
-      "@mmakve/apps/backend/*": ["apps/backend/src/*"],
-      "@mmakve/apps/frontend/*": ["apps/frontend/src/*"]
-    },
+    "files": [],
+    "references": [
+        { "path": "packages/shared" },
+        { "path": "apps/backend" },
+        { "path": "apps/frontend" }
+    ],
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@mmakve/shared": ["packages/shared/src"],
+            "@mmakve/shared/*": ["packages/shared/src/*"],
+            "@mmakve/apps/backend/*": ["apps/backend/src/*"],
+            "@mmakve/apps/frontend/*": ["apps/frontend/src/*"]
+        },
 
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "strict": true,
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "strict": true,
 
-    "types": ["node"],
-    "composite": true,
-    "declaration": true
-  }
+        "types": ["node"],
+        "composite": true,
+        "declaration": true
+    }
 }

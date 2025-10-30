@@ -1,15 +1,15 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "rootDir": ".",
-    "outDir": "dist",
-    "composite": true,
-    "module": "ESNext",
-    "target": "ES2022",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "types": ["node"],
-  },
-  "include": ["src", "prisma"],
-  "references": [{ "path": "../../packages/shared" }]
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "rootDir": ".",
+        "outDir": "dist",
+        "composite": true,
+        "module": "ESNext",
+        "target": "ES2022",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "types": ["node"]
+    },
+    "include": ["src", "prisma"],
+    "references": [{ "path": "../../packages/shared" }]
 }
