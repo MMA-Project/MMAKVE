@@ -1,6 +1,6 @@
 import { useQuest } from "../../api/quest.api";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
-import { ProgressBar } from "./QuestProgressBar";
+import { QuestProgressBar } from "./QuestProgressBar";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import QuestStatusBanner from "./QuestStatusBanner";
@@ -160,7 +160,7 @@ export function QuestDashboard() {
                                                     {percent}%
                                                 </span>
                                             </div>
-                                            <ProgressBar percent={percent} quest={quest} />
+                                            <QuestProgressBar percent={percent} quest={quest} />
                                             <div className="flex items-center justify-between text-xs text-slate-400">
                                                 <div className="flex items-center gap-2">
                                                     <span className="px-2 py-0.5 bg-slate-800 rounded">

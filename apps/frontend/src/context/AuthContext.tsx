@@ -56,8 +56,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             // const data = await loginApi({ username, password });
             // setUser(data.user);
-            setUser(mockClient);
-            localStorage.setItem("auth", JSON.stringify({ user: mockClient }));
+            setUser(mockAssistant);
+            localStorage.setItem("auth", JSON.stringify({ user: mockAssistant }));
         } finally {
             setLoading(false);
         }
@@ -67,8 +67,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(true);
         try {
             // const data = await registerApi({ username, password });
-            // setUser(data.user);
-            localStorage.setItem("auth", JSON.stringify({ user: mockAssistant }));
+            setUser(mockClient);
+            localStorage.setItem("auth", JSON.stringify({ user: mockClient }));
         } finally {
             setLoading(false);
         }
