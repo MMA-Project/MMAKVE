@@ -174,14 +174,13 @@ export function QuestDashboard() {
                                 className="flex-1 sm:flex-none p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none"
                             >
                                 <option value="">Tous les status</option>
-                                <option value={QuestStatus.WAITING_APPROVAL}>
+                                <option value={QuestStatus.PENDING}>
                                     En attente d'approbation
                                 </option>
                                 <option value={QuestStatus.APPROVED}>Approuvé</option>
                                 <option value={QuestStatus.IN_PROGRESS}>En cours</option>
                                 <option value={QuestStatus.COMPLETED}>Complété</option>
                                 <option value={QuestStatus.FAILED}>Échoué</option>
-                                <option value={QuestStatus.CANCELED}>Annulé</option>
                             </select>
                         </div>
 
@@ -242,9 +241,8 @@ export function QuestDashboard() {
                         </div>
                     </div>
                 )}
-                {getQuests.data
-                    ?.slice()
-                    .filter((quest) => {
+                {(() => {
+                    const filteredQuests = getQuests.data?.slice().filter((quest) => {
                         // Filtrage par prime
                         const min = minReward ? parseFloat(minReward) : null;
                         const max = maxReward ? parseFloat(maxReward) : null;
@@ -281,120 +279,141 @@ export function QuestDashboard() {
                         }
 
                         return true;
-                    })
-                    .sort((a, b) => {
-                        const compare = (valueA: number | string, valueB: number | string) => {
-                            if (sortOrder === "asc") {
-                                return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-                            } else {
-                                return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
-                            }
-                        };
+                    });
 
-                        switch (sortBy) {
-                            case "date_limit":
-                                return compare(a.deadline.getTime(), b.deadline.getTime());
-                            case "prime":
-                                return compare(a.reward, b.reward);
-                            case "status":
-                                return compare(
-                                    Object.values(QuestStatus).indexOf(a.status),
-                                    Object.values(QuestStatus).indexOf(b.status),
-                                );
-                            case "xp":
-                                return compare(
-                                    a.options?.xp_required ?? 0,
-                                    b.options?.xp_required ?? 0,
-                                );
-                            case "client":
-                                return compare(a.requester.name, b.requester.name);
-                        }
-                    })
-                    .map((quest) => (
-                        <div
-                            key={quest.id}
-                            className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:cursor-pointer hover:bg-slate-800 transition"
-                            onClick={(e) => {
-                                if ((e.target as HTMLElement).closest("button")) {
-                                    e.stopPropagation();
-                                    return;
+                    if (filteredQuests && filteredQuests.length === 0) {
+                        return (
+                            <div className="p-8 border border-slate-700 rounded bg-slate-900/50 flex flex-col items-center justify-center gap-3 text-slate-400">
+                                <span className="text-4xl">🔍</span>
+                                <p className="text-lg font-medium">Aucune quête trouvée</p>
+                                <p className="text-sm">
+                                    Essayez de modifier vos critères de recherche
+                                </p>
+                            </div>
+                        );
+                    }
+
+                    return filteredQuests
+                        ?.sort((a, b) => {
+                            const compare = (valueA: number | string, valueB: number | string) => {
+                                if (sortOrder === "asc") {
+                                    return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+                                } else {
+                                    return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
                                 }
-                                navigate(`/quest/${quest.id}`);
-                            }}
-                        >
-                            <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1">
-                                    <h2 className="text-xl font-semibold">{quest.title}</h2>
-                                    <p className="text-sm text-slate-300 mt-1">
-                                        {quest.description}
-                                    </p>
-                                    <div className="mt-2 text-xs text-slate-400">
-                                        <p>Date limite : {quest.deadline.toLocaleDateString()}</p>
-                                        <p>Prime : {quest.reward} 💰</p>
-                                        {quest.options && (
-                                            <p>{quest.options?.xp_required ?? 0} XP requis</p>
-                                        )}
-                                    </div>
-                                </div>
+                            };
 
-                                <div className="flex items-center gap-2">
-                                    {quest.status === QuestStatus.PENDING &&
-                                        user.role === "ASSISTANT" && (
-                                            <ValidateButton
-                                                onClick={() => console.log("validate", quest.id)}
+                            switch (sortBy) {
+                                case "date_limit":
+                                    return compare(a.deadline.getTime(), b.deadline.getTime());
+                                case "prime":
+                                    return compare(a.reward, b.reward);
+                                case "status":
+                                    return compare(
+                                        Object.values(QuestStatus).indexOf(a.status),
+                                        Object.values(QuestStatus).indexOf(b.status),
+                                    );
+                                case "xp":
+                                    return compare(
+                                        a.options?.xp_required ?? 0,
+                                        b.options?.xp_required ?? 0,
+                                    );
+                                case "client":
+                                    return compare(a.requester.name, b.requester.name);
+                            }
+                        })
+                        .map((quest) => (
+                            <div
+                                key={quest.id}
+                                className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:cursor-pointer hover:bg-slate-800 transition"
+                                onClick={(e) => {
+                                    if ((e.target as HTMLElement).closest("button")) {
+                                        e.stopPropagation();
+                                        return;
+                                    }
+                                    navigate(`/quest/${quest.id}`);
+                                }}
+                            >
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex-1">
+                                        <h2 className="text-xl font-semibold">{quest.title}</h2>
+                                        <p className="text-sm text-slate-300 mt-1">
+                                            {quest.description}
+                                        </p>
+                                        <div className="mt-2 text-xs text-slate-400">
+                                            <p>
+                                                Date limite : {quest.deadline.toLocaleDateString()}
+                                            </p>
+                                            <p>Prime : {quest.reward} 💰</p>
+                                            {quest.options && (
+                                                <p>{quest.options?.xp_required ?? 0} XP requis</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        {quest.status === QuestStatus.PENDING &&
+                                            user.role === "ASSISTANT" && (
+                                                <ValidateButton
+                                                    onClick={() =>
+                                                        console.log("validate", quest.id)
+                                                    }
+                                                />
+                                            )}
+                                        {((user.role === "CLIENT" &&
+                                            quest.status === QuestStatus.PENDING) ||
+                                            user.role === "ASSISTANT") && (
+                                            <UpdateButton
+                                                onClick={() => console.log("update", quest.id)}
                                             />
                                         )}
-                                    {((user.role === "CLIENT" &&
-                                        quest.status === QuestStatus.PENDING) ||
-                                        user.role === "ASSISTANT") && (
-                                        <UpdateButton
-                                            onClick={() => console.log("update", quest.id)}
-                                        />
-                                    )}
-                                    {((user.role === "CLIENT" &&
-                                        quest.status === QuestStatus.PENDING) ||
-                                        user.role === "ASSISTANT") && (
-                                        <DeleteButton
-                                            onClick={() => console.log("delete", quest.id)}
-                                        />
-                                    )}
-                                    <QuestStatusBanner status={quest.status} />
+                                        {((user.role === "CLIENT" &&
+                                            quest.status === QuestStatus.PENDING) ||
+                                            user.role === "ASSISTANT") && (
+                                            <DeleteButton
+                                                onClick={() => console.log("delete", quest.id)}
+                                            />
+                                        )}
+                                        <QuestStatusBanner status={quest.status} />
+                                    </div>
                                 </div>
+                                {quest.options &&
+                                    (() => {
+                                        const { start, end, percent } = computeProgress(
+                                            quest.options.start_date,
+                                            quest.options.end_date,
+                                        );
+
+                                        return (
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between text-xs text-slate-400">
+                                                    <span>Progress</span>
+                                                    <span className="font-medium text-slate-100">
+                                                        {percent}%
+                                                    </span>
+                                                </div>
+                                                <ProgressBar percent={percent} quest={quest} />
+                                                <div className="flex items-center justify-between text-xs text-slate-400">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="px-2 py-0.5 bg-slate-800 rounded">
+                                                            {start
+                                                                ? start.toLocaleDateString()
+                                                                : "—"}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="px-2 py-0.5 bg-slate-800 rounded">
+                                                            {end ? end.toLocaleDateString() : "—"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
                             </div>
-                            {quest.options &&
-                                (() => {
-                                    const { start, end, percent } = computeProgress(
-                                        quest.options.start_date,
-                                        quest.options.end_date,
-                                    );
-
-                                    return (
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between text-xs text-slate-400">
-                                                <span>Progress</span>
-                                                <span className="font-medium text-slate-100">
-                                                    {percent}%
-                                                </span>
-                                            </div>
-                                            <ProgressBar percent={percent} quest={quest} />
-                                            <div className="flex items-center justify-between text-xs text-slate-400">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="px-2 py-0.5 bg-slate-800 rounded">
-                                                        {start ? start.toLocaleDateString() : "—"}
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <span className="px-2 py-0.5 bg-slate-800 rounded">
-                                                        {end ? end.toLocaleDateString() : "—"}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })()}
-                        </div>
-                    ))}
+                        ));
+                })()}
             </div>
         </div>
     );
