@@ -208,7 +208,7 @@ export const suggestQuestTeammates = async (
     const profils = quest?.profils ?? [];
 
     const availableTeammates = await prisma.adventurer.findMany({
-        where: { status: "AVAILABLE", AND: { type: { in: profils as any[] } } },
+        where: { status: "AVAILABLE", AND: { type: { in: profils } } },
         include: {
             user: true,
         },

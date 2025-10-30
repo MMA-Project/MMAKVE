@@ -112,6 +112,8 @@ export const suggestTeammates = async (req: Request, res: Response) => {
         if (error instanceof AppError) {
             return sendError(res, error.code, error.message, { status: error.status });
         }
-        return sendError(res, ErrorCodes.INTERNAL_ERROR, "An unexpected error occurred", { status: 500 });
+        return sendError(res, ErrorCodes.INTERNAL_ERROR, "An unexpected error occurred", {
+            status: 500,
+        });
     }
 };
