@@ -1,23 +1,25 @@
 {
-    "name": "mmakve",
-    "private": true,
-    "version": "1.0.0",
-    "workspaces": [
-        "apps/*",
-        "packages/*"
-    ],
-    "devDependencies": {
-        "@types/node": "^24.7.0",
-        "eslint": "^9.11.1",
-        "prettier": "^3.6.2",
-        "typescript": "^5.6.3"
-    },
-    "scripts": {
-        "dev": "pnpm -r --parallel dev",
-        "build": "pnpm -r build",
-        "lint": "pnpm -r lint",
-        "format": "prettier --write .",
-        "format:check": "prettier --check ."
-    },
-    "packageManager": "pnpm@10.17.0+sha512.fce8a3dd29a4ed2ec566fb53efbb04d8c44a0f05bc6f24a73046910fb9c3ce7afa35a0980500668fa3573345bd644644fa98338fa168235c80f4aa17aa17fbef"
+  "name": "mmakve",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^24.7.0",
+    "eslint": "^9.11.1",
+    "husky": "^9.1.7",
+    "prettier": "^3.6.2",
+    "typescript": "^5.6.3"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "packageManager": "pnpm@10.17.0+sha512.fce8a3dd29a4ed2ec566fb53efbb04d8c44a0f05bc6f24a73046910fb9c3ce7afa35a0980500668fa3573345bd644644fa98338fa168235c80f4aa17aa17fbef"
 }
