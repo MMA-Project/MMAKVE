@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import ReturnButton from "../Nav/ReturnButton";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import type { QuestCreation } from "../../../../../packages/shared/src/types/quest.type";
 
 const validationSchema = yup.object({
     title: yup.string().required("Le titre est requis"),
@@ -20,10 +21,8 @@ const validationSchema = yup.object({
 
 export function CreateQuestPage() {
     const { user } = useAuth();
-    if (!user) return null;
     const { createQuest } = useCreateQuest();
     const navigate = useNavigate();
-
     const formik = useFormik({
         initialValues: {
             title: "",
@@ -33,8 +32,8 @@ export function CreateQuestPage() {
         },
         validationSchema,
         onSubmit: async (values) => {
-            const questData = {
-                requester: user,
+            const questData: QuestCreation = {
+                requester: user!,
                 title: values.title,
                 description: values.description,
                 deadline: new Date(values.deadline),
@@ -44,6 +43,7 @@ export function CreateQuestPage() {
             navigate("/quest/" + quest.id);
         },
     });
+    if (!user) return null;
 
     return (
         <div className="min-h-screen flex flex-col items-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">

@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { AdventurerType } from "../../../../packages/shared/src/types/adventurer.type";
+import {
+    AdventurerStatus,
+    AdventurerType,
+} from "../../../../packages/shared/src/types/adventurer.type";
 import {
     type Quest,
     type QuestCreation,
@@ -61,7 +64,7 @@ export const mockQuests: Quest[] = [
                             createdAt: new Date("2024-01-10T09:30:00Z"),
                         },
                         type: AdventurerType.ENCHANTER,
-                        status: "available",
+                        status: AdventurerStatus.AVAILABLE,
                         xp: 112500,
                     },
                 },
@@ -88,7 +91,7 @@ export const mockQuests: Quest[] = [
                             createdAt: new Date("2024-01-12T11:15:00Z"),
                         },
                         type: AdventurerType.ROGUE,
-                        status: "available",
+                        status: AdventurerStatus.AVAILABLE,
                         xp: 3000,
                     },
                 },
@@ -127,7 +130,7 @@ export const mockQuests: Quest[] = [
                             createdAt: new Date("2024-01-15T14:45:00Z"),
                         },
                         type: AdventurerType.BARBARIAN,
-                        status: "available",
+                        status: AdventurerStatus.ON_QUEST,
                         xp: 2800,
                     },
                 },
