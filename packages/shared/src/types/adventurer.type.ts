@@ -1,3 +1,4 @@
+import { Guild } from "./guild.type";
 import { User } from "./user.type";
 
 export enum AdventurerType {
@@ -29,6 +30,7 @@ export type Adventurer = {
     type: AdventurerType;
     status: AdventurerStatus;
     xp: number;
+    guild?: Guild; /** On peut avoir une boucle infinie ici car guild possède 'Adventurer[]' */
 };
 
 export type AdventurerCreation = Omit<Adventurer, "id" | "status" | "xp">;
