@@ -343,6 +343,7 @@ export function QuestDashboard() {
                                             {quest.description}
                                         </p>
                                         <div className="mt-2 text-xs text-slate-400">
+                                            <p>Client : {quest.requester.name}</p>
                                             <p>
                                                 Date limite : {quest.deadline.toLocaleDateString()}
                                             </p>
