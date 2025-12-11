@@ -266,21 +266,21 @@ async function main() {
         // Clients
         prisma.user.create({
             data: {
-                username: "client_jean",
+                name: "client_jean",
                 password: hashedPassword,
                 role: Role.CLIENT,
             },
         }),
         prisma.user.create({
             data: {
-                username: "client_marie",
+                name: "client_marie",
                 password: hashedPassword,
                 role: Role.CLIENT,
             },
         }),
         prisma.user.create({
             data: {
-                username: "client_pierre",
+                name: "client_pierre",
                 password: hashedPassword,
                 role: Role.CLIENT,
             },
@@ -289,14 +289,14 @@ async function main() {
         // Assistants
         prisma.user.create({
             data: {
-                username: "assistant_alice",
+                name: "assistant_alice",
                 password: hashedPassword,
                 role: Role.ASSISTANT,
             },
         }),
         prisma.user.create({
             data: {
-                username: "assistant_bob",
+                name: "assistant_bob",
                 password: hashedPassword,
                 role: Role.ASSISTANT,
             },
@@ -305,7 +305,7 @@ async function main() {
         // Aventuriers (liés à des aventuriers existants)
         prisma.user.create({
             data: {
-                username: "aventurier_theron",
+                name: "aventurier_theron",
                 password: hashedPassword,
                 role: Role.AVENTURIER,
                 adventurerId: adventurers[0].id,
@@ -313,7 +313,7 @@ async function main() {
         }),
         prisma.user.create({
             data: {
-                username: "aventurier_morgana",
+                name: "aventurier_morgana",
                 password: hashedPassword,
                 role: Role.AVENTURIER,
                 adventurerId: adventurers[4].id,
@@ -321,7 +321,7 @@ async function main() {
         }),
         prisma.user.create({
             data: {
-                username: "aventurier_lyra",
+                name: "aventurier_lyra",
                 password: hashedPassword,
                 role: Role.AVENTURIER,
                 adventurerId: adventurers[8].id,
