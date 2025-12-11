@@ -30,7 +30,6 @@ export type Adventurer = {
     type: AdventurerType;
     status: AdventurerStatus;
     xp: number;
-    guild?: Guild; /** On peut avoir une boucle infinie ici car guild possède 'Adventurer[]' */
 };
 
 export type AdventurerCreation = Omit<Adventurer, "id" | "status" | "xp">;
