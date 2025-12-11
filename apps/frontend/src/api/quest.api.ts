@@ -9,6 +9,7 @@ import {
     QuestStatus,
 } from "../../../../packages/shared/src/types/quest.type";
 import { ItemName, ItemRarity, ItemType } from "../../../../packages/shared/src/types/item.type";
+import { type Role } from "../../../../packages/shared/src/types/user.type";
 
 export const mockQuests: Quest[] = [
     {
@@ -16,7 +17,7 @@ export const mockQuests: Quest[] = [
         requester: {
             id: "1004",
             name: "Lyria Moonshadow",
-            role: "CLIENT",
+            role: "CLIENT" as Role,
             createdAt: new Date("2024-02-20T12:00:00Z"),
         },
         title: "Retrieve the Azure Gem",
