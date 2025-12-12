@@ -182,6 +182,7 @@ export function QuestFilters() {
                             <option value={QuestStatus.IN_PROGRESS}>En cours</option>
                             <option value={QuestStatus.COMPLETED}>Complété</option>
                             <option value={QuestStatus.FAILED}>Échoué</option>
+                            <option value={QuestStatus.CANCELED}>Annulé</option>
                         </select>
                         <span>📊</span>
                     </div>

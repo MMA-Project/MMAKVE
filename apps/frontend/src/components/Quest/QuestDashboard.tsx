@@ -138,6 +138,8 @@ export function QuestDashboard() {
                             sortBy={sortBy}
                             sortOrder={sortOrder}
                             userRole={user.role}
+                            userId={user.id}
+                            cancelQuestMutation={cancelQuestMutation}
                         />
                     );
                 })()}
