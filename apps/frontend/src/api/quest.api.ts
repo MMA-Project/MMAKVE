@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     AdventurerStatus,
     AdventurerType,
@@ -252,4 +252,23 @@ export const useCreateQuest = () => {
     };
 
     return { createQuest };
+};
+
+export const useCancelQuest = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async (questId: string): Promise<void> => {
+            const quest = mockQuests.find((q) => q.id === questId);
+            if (quest) {
+                quest.status = QuestStatus.CANCELED;
+            }
+        },
+        onSuccess: () => {
+            // Invalider et refetch les quêtes
+            queryClient.invalidateQueries({ queryKey: ["quests"] });
+        },
+    });
+
+    return mutation;
 };

@@ -1,6 +1,7 @@
-import { useQuest } from "../../api/quest.api";
+import { useQuest, useCancelQuest } from "../../api/quest.api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CancelButton } from "../Buttons/CancelButton";
 import { useAuth } from "../../context/AuthContext";
 import { QuestFilters } from "./QuestFilters";
 import { QuestList } from "./QuestList";
@@ -12,6 +13,7 @@ type SortOrder = "asc" | "desc";
 
 export function QuestDashboard() {
     const { getQuests } = useQuest();
+    const cancelQuestMutation = useCancelQuest();
     const navigate = useNavigate();
     const { user } = useAuth();
     const [sortBy, setSortBy] = useState<SortBy>("date_limit");
