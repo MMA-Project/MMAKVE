@@ -1,52 +1,33 @@
-import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
 import { AdventurerType } from "../../../../../packages/shared/src/types/adventurer.type";
+import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
 import { useState, useRef, useEffect } from "react";
+import { useFilterStore } from "../../store/useFilterStore";
 
-interface QuestFiltersProps {
-    minReward: string;
-    setMinReward: (value: string) => void;
-    maxReward: string;
-    setMaxReward: (value: string) => void;
-    minXp: string;
-    setMinXp: (value: string) => void;
-    maxXp: string;
-    setMaxXp: (value: string) => void;
-    startDate: string;
-    setStartDate: (value: string) => void;
-    endDate: string;
-    setEndDate: (value: string) => void;
-    selectedStatus: QuestStatus | "";
-    setSelectedStatus: (value: QuestStatus | "") => void;
-    clientSearch: string;
-    setClientSearch: (value: string) => void;
-    selectedClasses: AdventurerType[];
-    setSelectedClasses: (value: AdventurerType[]) => void;
-}
-
-export function QuestFilters({
-    minReward,
-    setMinReward,
-    maxReward,
-    setMaxReward,
-    minXp,
-    setMinXp,
-    maxXp,
-    setMaxXp,
-    startDate,
-    setStartDate,
-    endDate,
-    setEndDate,
-    selectedStatus,
-    setSelectedStatus,
-    clientSearch,
-    setClientSearch,
-    selectedClasses,
-    setSelectedClasses,
-}: QuestFiltersProps) {
+export function QuestFilters() {
+    const {
+        minReward,
+        setMinReward,
+        maxReward,
+        setMaxReward,
+        minXp,
+        setMinXp,
+        maxXp,
+        setMaxXp,
+        startDate,
+        setStartDate,
+        endDate,
+        setEndDate,
+        selectedStatus,
+        setSelectedStatus,
+        clientSearch,
+        setClientSearch,
+        selectedClasses,
+        setSelectedClasses,
+        resetAllFilters,
+    } = useFilterStore();
     const [isClassDropdownOpen, setIsClassDropdownOpen] = useState(false);
     const classDropdownRef = useRef<HTMLDivElement>(null);
 
-    // Fermer le dropdown quand on clique en dehors
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -99,18 +80,6 @@ export function QuestFilters({
         selectedStatus ||
         clientSearch ||
         selectedClasses.length > 0;
-
-    const resetAllFilters = () => {
-        setMinReward("");
-        setMaxReward("");
-        setMinXp("");
-        setMaxXp("");
-        setStartDate("");
-        setEndDate("");
-        setSelectedStatus("");
-        setClientSearch("");
-        setSelectedClasses([]);
-    };
 
     return (
         <div className="relative group">

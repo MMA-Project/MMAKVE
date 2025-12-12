@@ -1,11 +1,10 @@
 import { useQuest } from "../../api/quest.api";
-import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
-import { AdventurerType } from "../../../../../packages/shared/src/types/adventurer.type";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { QuestFilters } from "./QuestFilters";
 import { QuestList } from "./QuestList";
+import { useFilterStore } from "../../store/useFilterStore";
 
 type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 
@@ -18,16 +17,17 @@ export function QuestDashboard() {
     const [sortBy, setSortBy] = useState<SortBy>("date_limit");
     const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
-    // Filtres
-    const [minReward, setMinReward] = useState<string>("");
-    const [maxReward, setMaxReward] = useState<string>("");
-    const [minXp, setMinXp] = useState<string>("");
-    const [maxXp, setMaxXp] = useState<string>("");
-    const [startDate, setStartDate] = useState<string>("");
-    const [endDate, setEndDate] = useState<string>("");
-    const [selectedStatus, setSelectedStatus] = useState<QuestStatus | "">("");
-    const [clientSearch, setClientSearch] = useState<string>("");
-    const [selectedClasses, setSelectedClasses] = useState<AdventurerType[]>([]);
+    const {
+        minReward,
+        maxReward,
+        minXp,
+        maxXp,
+        startDate,
+        endDate,
+        selectedStatus,
+        clientSearch,
+        selectedClasses,
+    } = useFilterStore();
 
     if (!user) return null;
 
@@ -66,26 +66,7 @@ export function QuestDashboard() {
                             {sortOrder === "asc" ? "⬆" : "⬇"}
                         </button>
                     </div>
-                    <QuestFilters
-                        minReward={minReward}
-                        setMinReward={setMinReward}
-                        maxReward={maxReward}
-                        setMaxReward={setMaxReward}
-                        minXp={minXp}
-                        setMinXp={setMinXp}
-                        maxXp={maxXp}
-                        setMaxXp={setMaxXp}
-                        startDate={startDate}
-                        setStartDate={setStartDate}
-                        endDate={endDate}
-                        setEndDate={setEndDate}
-                        selectedStatus={selectedStatus}
-                        setSelectedStatus={setSelectedStatus}
-                        clientSearch={clientSearch}
-                        setClientSearch={setClientSearch}
-                        selectedClasses={selectedClasses}
-                        setSelectedClasses={setSelectedClasses}
-                    />
+                    <QuestFilters />
                 </div>
             </div>
 
