@@ -1,4 +1,4 @@
-import { Adventurer, AdventurerType } from "@mmakve/shared";
+import { Adventurer, AdventurerStatus, AdventurerType } from "@mmakve/shared";
 
 export const mockAdventurers: Adventurer[] = [
     {
@@ -10,7 +10,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-01-02T10:00:00Z"),
         },
         type: AdventurerType.ENCHANTER,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 1800,
     },
     {
@@ -22,7 +22,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-01-12T09:15:00Z"),
         },
         type: AdventurerType.PRIEST,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 2400,
     },
     {
@@ -34,7 +34,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-01-15T14:45:00Z"),
         },
         type: AdventurerType.ENCHANTER,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 2800,
     },
 
@@ -47,7 +47,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-01-12T11:15:00Z"),
         },
         type: AdventurerType.ENCHANTER,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 1000,
     },
     {
@@ -59,7 +59,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-02-10T10:00:00Z"),
         },
         type: AdventurerType.ARCHER,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 1600,
     },
 
@@ -72,7 +72,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-01-10T10:30:00Z"),
         },
         type: AdventurerType.ENCHANTER,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 1050,
     },
     {
@@ -84,7 +84,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-02-20T08:45:00Z"),
         },
         type: AdventurerType.ARCANE_MAGE,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 2200,
     },
 
@@ -97,7 +97,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-03-10T09:00:00Z"),
         },
         type: AdventurerType.PRIEST,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 1300,
     },
     {
@@ -109,7 +109,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-03-12T11:00:00Z"),
         },
         type: AdventurerType.PRIEST,
-        status: "sleeping",
+        status: AdventurerStatus.SLEEPING,
         xp: 1500,
     },
 
@@ -123,7 +123,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-03-14T15:00:00Z"),
         },
         type: AdventurerType.ENCHANTER,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 900,
     },
     {
@@ -135,7 +135,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-03-18T13:00:00Z"),
         },
         type: AdventurerType.GEOMANCER,
-        status: "available",
+        status: AdventurerStatus.AVAILABLE,
         xp: 2500,
     },
 
@@ -149,7 +149,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-02-02T09:00:00Z"),
         },
         type: AdventurerType.ROGUE,
-        status: "on_quest",
+        status: AdventurerStatus.ON_QUEST,
         xp: 1900,
     },
     {
@@ -161,7 +161,7 @@ export const mockAdventurers: Adventurer[] = [
             createdAt: new Date("2024-03-03T12:00:00Z"),
         },
         type: AdventurerType.ENCHANTER,
-        status: "sleeping",
+        status: AdventurerStatus.SLEEPING,
         xp: 2300,
     },
 ];

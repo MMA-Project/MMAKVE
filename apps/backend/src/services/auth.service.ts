@@ -6,8 +6,8 @@ import { prisma } from "../prisma-client";
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 const TOKEN_EXPIRY = process.env.JWT_EXPIRES_IN || "2h";
 
-type RegisterInput = { username: string; password: string; role?: string };
-type LoginInput = { username: string; password: string };
+type RegisterInput = { name: string; password: string; role?: string };
+type LoginInput = { name: string; password: string };
 
 const normalizeRole = (role?: string) => {
     if (!role) return undefined;
@@ -17,11 +17,11 @@ const normalizeRole = (role?: string) => {
     return undefined;
 };
 
-export const register = async ({ username, password, role }: RegisterInput) => {
-    if (!username || !password)
+export const register = async ({ name, password, role }: RegisterInput) => {
+    if (!name || !password)
         throw new AppError(ErrorCodes.VALIDATION_ERROR, "Username and password are required", 422);
 
-    const existing = await prisma.user.findUnique({ where: { username } });
+    const existing = await prisma.user.findUnique({ where: { name } });
     if (existing) throw new AppError(ErrorCodes.USERNAME_TAKEN, "Username already taken", 409);
 
     const roleVal = normalizeRole(role) ?? "CLIENT";
@@ -32,7 +32,7 @@ export const register = async ({ username, password, role }: RegisterInput) => {
 
     const user = await prisma.user.create({
         data: {
-            username,
+            name,
             password: hashed,
             role: roleVal as any,
         },
@@ -41,11 +41,11 @@ export const register = async ({ username, password, role }: RegisterInput) => {
     return user;
 };
 
-export const login = async ({ username, password }: LoginInput) => {
-    if (!username || !password)
+export const login = async ({ name, password }: LoginInput) => {
+    if (!name || !password)
         throw new AppError(ErrorCodes.VALIDATION_ERROR, "Username and password are required", 422);
 
-    const user = await prisma.user.findUnique({ where: { username } });
+    const user = await prisma.user.findUnique({ where: { name } });
     if (!user) throw new AppError(ErrorCodes.INVALID_CREDENTIALS, "Invalid credentials", 401);
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -63,6 +63,6 @@ export const getUserById = async (id: string) => {
     return prisma.user.findUnique({ where: { id } });
 };
 
-export const findByUsername = async (username: string) => {
-    return prisma.user.findUnique({ where: { username } });
+export const findByName = async (name: string) => {
+    return prisma.user.findUnique({ where: { name } });
 };

@@ -1,3 +1,4 @@
+import { Guild } from "./guild.type";
 import { User } from "./user.type";
 
 export enum AdventurerType {
