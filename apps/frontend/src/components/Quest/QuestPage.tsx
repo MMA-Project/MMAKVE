@@ -54,7 +54,7 @@ export default function QuestPage() {
                                 return (
                                     <div className="space-y-2">
                                         <div className="flex items-center justify-between text-xs text-slate-400">
-                                            <span>Progress</span>
+                                            <span>Progression</span>
                                             <span className="font-medium text-slate-100">
                                                 {percent}%
                                             </span>
