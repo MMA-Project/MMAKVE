@@ -7,6 +7,7 @@ import { CreateQuestPage } from "./components/Quest/CreateQuestPage";
 import { AdventurerDashboard } from "./components/Adventurer/AdventurerDashboard";
 import { AdventurerDetails } from "./components/Adventurer/AdventurerDetails";
 import { GuildDashboard } from "./components/Guild/GuildDashboard";
+import { Navbar } from "./components/Nav/Navbar";
 
 function LoginRoute() {
     const { user } = useAuth();
@@ -44,59 +45,64 @@ function Dashboard() {
 }
 
 export default function App() {
+    const { user } = useAuth();
+
     return (
-        <Routes>
-            <Route
-                path="/dashboard"
-                element={
-                    <Protected>
-                        <Dashboard />
-                    </Protected>
-                }
-            />
-            <Route
-                path="/create-quest"
-                element={
-                    <Protected>
-                        <CreateQuestPage />
-                    </Protected>
-                }
-            />
-            <Route
-                path="/quest/:id"
-                element={
-                    <Protected>
-                        <QuestPage />
-                    </Protected>
-                }
-            />
-            <Route
-                path="/adventurers"
-                element={
-                    <Protected>
-                        <AdventurerDashboard />
-                    </Protected>
-                }
-            />
-            <Route
-                path="/adventurer/:id"
-                element={
-                    <Protected>
-                        <AdventurerDetails />
-                    </Protected>
-                }
-            />
-            <Route
-                path="/guild"
-                element={
-                    <Protected>
-                        <GuildDashboard />
-                    </Protected>
-                }
-            />
-            <Route path="/" element={<LoginRoute />} />
-            <Route path="/logout" element={<LogoutRoute />} />
-            <Route path="*" element={<NotFound />} />
-        </Routes>
+        <>
+            {user && <Navbar />}
+            <Routes>
+                <Route
+                    path="/dashboard"
+                    element={
+                        <Protected>
+                            <Dashboard />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/create-quest"
+                    element={
+                        <Protected>
+                            <CreateQuestPage />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/quest/:id"
+                    element={
+                        <Protected>
+                            <QuestPage />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/adventurers"
+                    element={
+                        <Protected>
+                            <AdventurerDashboard />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/adventurer/:id"
+                    element={
+                        <Protected>
+                            <AdventurerDetails />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/guild"
+                    element={
+                        <Protected>
+                            <GuildDashboard />
+                        </Protected>
+                    }
+                />
+                <Route path="/" element={<LoginRoute />} />
+                <Route path="/logout" element={<LogoutRoute />} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </>
     );
 }
