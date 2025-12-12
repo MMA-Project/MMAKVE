@@ -43,6 +43,7 @@ enum QuestStatus {
   IN_PROGRESS
   COMPLETED
   FAILED
+  CANCELED
 }
 
 enum AdventurerStatus {

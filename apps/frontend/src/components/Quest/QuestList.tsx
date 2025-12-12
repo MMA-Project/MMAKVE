@@ -6,15 +6,25 @@ import { computeProgress } from "../../utils/progressBar";
 import { DeleteButton } from "../Buttons/DeleteButton";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { ValidateButton } from "../Buttons/ValidateButton";
+import { CancelButton } from "../Buttons/CancelButton";
 
 interface QuestListProps {
     quests: Quest[] | undefined;
     sortBy: "date_limit" | "prime" | "status" | "xp" | "client";
     sortOrder: "asc" | "desc";
     userRole: string;
+    userId: string;
+    cancelQuestMutation: any;
 }
 
-export function QuestList({ quests, sortBy, sortOrder, userRole }: QuestListProps) {
+export function QuestList({
+    quests,
+    sortBy,
+    sortOrder,
+    userRole,
+    userId,
+    cancelQuestMutation,
+}: QuestListProps) {
     const navigate = useNavigate();
 
     if (!quests || quests.length === 0) {
@@ -85,12 +95,27 @@ export function QuestList({ quests, sortBy, sortOrder, userRole }: QuestListProp
                             {quest.status === QuestStatus.PENDING && userRole === "ASSISTANT" && (
                                 <ValidateButton onClick={() => console.log("validate", quest.id)} />
                             )}
+                            {userRole === "ASSISTANT" &&
+                                (quest.status === QuestStatus.PENDING ||
+                                    quest.status === QuestStatus.APPROVED) && (
+                                    <CancelButton
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (
+                                                window.confirm(
+                                                    "Êtes-vous sûr de vouloir annuler cette quête ?",
+                                                )
+                                            ) {
+                                                cancelQuestMutation.mutate(quest.id);
+                                            }
+                                        }}
+                                    />
+                                )}
                             {((userRole === "CLIENT" && quest.status === QuestStatus.PENDING) ||
                                 userRole === "ASSISTANT") && (
                                 <UpdateButton onClick={() => console.log("update", quest.id)} />
                             )}
-                            {((userRole === "CLIENT" && quest.status === QuestStatus.PENDING) ||
-                                userRole === "ASSISTANT") && (
+                            {userRole === "CLIENT" && quest.requester.id === userId && (
                                 <DeleteButton onClick={() => console.log("delete", quest.id)} />
                             )}
                             <QuestStatusBanner status={quest.status} />
