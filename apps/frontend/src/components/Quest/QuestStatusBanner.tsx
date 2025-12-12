@@ -6,7 +6,7 @@ export default function QuestStatusBanner({ status }: { status: QuestStatus }) {
             {status === QuestStatus.PENDING && (
                 <span
                     className="px-2 py-1 text-xs font-medium text-yellow-500 bg-yellow-900 rounded"
-                    title="Pending"
+                    title="En attente"
                 >
                     ⏳
                 </span>
@@ -14,7 +14,7 @@ export default function QuestStatusBanner({ status }: { status: QuestStatus }) {
             {status === QuestStatus.APPROVED && (
                 <span
                     className="px-2 py-1 text-xs font-medium text-green-500 bg-green-900 rounded"
-                    title="Approved"
+                    title="Acceptée"
                 >
                     ✅
                 </span>
@@ -22,7 +22,7 @@ export default function QuestStatusBanner({ status }: { status: QuestStatus }) {
             {status === QuestStatus.IN_PROGRESS && (
                 <span
                     className="px-2 py-1 text-xs font-medium text-blue-500 bg-blue-900 rounded"
-                    title="In Progress"
+                    title="En cours"
                 >
                     🚀
                 </span>
@@ -30,7 +30,7 @@ export default function QuestStatusBanner({ status }: { status: QuestStatus }) {
             {status === QuestStatus.COMPLETED && (
                 <span
                     className="px-2 py-1 text-xs font-medium text-green-500 bg-green-900 rounded"
-                    title="Completed"
+                    title="Complétée"
                 >
                     🏆
                 </span>
@@ -38,7 +38,7 @@ export default function QuestStatusBanner({ status }: { status: QuestStatus }) {
             {status === QuestStatus.FAILED && (
                 <span
                     className="px-2 py-1 text-xs font-medium text-red-500 bg-red-900 rounded"
-                    title="Failed"
+                    title="Échouée"
                 >
                     ❌
                 </span>
@@ -46,7 +46,7 @@ export default function QuestStatusBanner({ status }: { status: QuestStatus }) {
             {status === QuestStatus.CANCELED && (
                 <span
                     className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-800 rounded"
-                    title="Canceled"
+                    title="Annulée"
                 >
                     🛑
                 </span>
