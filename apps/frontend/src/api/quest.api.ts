@@ -214,7 +214,7 @@ export const mockQuests: Quest[] = [
     },
 ];
 
-export const useQuest = () => {
+export const useQuests = () => {
     const fetchQuests = async (): Promise<Quest[]> => {
         return mockQuests;
     };

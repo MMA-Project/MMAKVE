@@ -1,18 +1,19 @@
-import { useQuest, useCancelQuest } from "../../api/quest.api";
+import { useCancelQuest } from "../../api/quest.api";
+import { useQuests } from "../../api/quest.api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CancelButton } from "../Buttons/CancelButton";
 import { useAuth } from "../../context/AuthContext";
 import { QuestFilters } from "./QuestFilters";
 import { QuestList } from "./QuestList";
 import { useFilterStore } from "../../store/useFilterStore";
+import type { AdventurerType } from "../../../../../packages/shared/src/types/adventurer.type";
 
 type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 
 type SortOrder = "asc" | "desc";
 
 export function QuestDashboard() {
-    const { getQuests } = useQuest();
+    const { getQuests } = useQuests();
     const cancelQuestMutation = useCancelQuest();
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -123,8 +124,9 @@ export function QuestDashboard() {
 
                         // Filtrage par classes d'aventurier
                         if (selectedClasses.length > 0 && quest.options?.profils) {
-                            const hasMatchingClass = selectedClasses.some((selectedClass) =>
-                                quest.options!.profils.includes(selectedClass),
+                            const hasMatchingClass = selectedClasses.some(
+                                (selectedClass: AdventurerType) =>
+                                    quest.options!.profils.includes(selectedClass),
                             );
                             if (!hasMatchingClass) return false;
                         }
