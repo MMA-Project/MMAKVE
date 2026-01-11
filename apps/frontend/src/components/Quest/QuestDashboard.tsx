@@ -1,4 +1,4 @@
-import { useQuest } from "../../api/quest.api";
+import { useQuests } from "../../api/quest.api";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
 import { QuestProgressBar } from "./QuestProgressBar";
 import { useState } from "react";
@@ -15,7 +15,7 @@ type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 type SortOrder = "asc" | "desc";
 
 export function QuestDashboard() {
-    const { getQuests } = useQuest();
+    const { getQuests } = useQuests();
     const navigate = useNavigate();
     const { user } = useAuth();
     const [sortBy, setSortBy] = useState<SortBy>("date_limit");
