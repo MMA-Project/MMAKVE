@@ -1,10 +1,13 @@
-import { useQuest, useCancelQuest } from "../../api/quest.api";
+import { useCancelQuest } from "../../api/quest.api";
+import { useQuests } from "../../api/quest.api";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CancelButton } from "../Buttons/CancelButton";
 import { useAuth } from "../../context/AuthContext";
 import { QuestFilters } from "./QuestFilters";
 import { QuestList } from "./QuestList";
 import { useFilterStore } from "../../store/useFilterStore";
+import type { AdventurerType } from "../../../../../packages/shared/src/types/adventurer.type";
 import { CreateQuestModal } from "./CreateQuestModal";
 
 type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
@@ -12,7 +15,7 @@ type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 type SortOrder = "asc" | "desc";
 
 export function QuestDashboard() {
-    const { getQuests } = useQuest();
+    const getQuests = useQuests();
     const cancelQuestMutation = useCancelQuest();
     const { user } = useAuth();
     const [sortBy, setSortBy] = useState<SortBy>("date_limit");
@@ -34,7 +37,7 @@ export function QuestDashboard() {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
+        <div className="min-h-screen flex flex-col items-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
             <h1 className="text-3xl font-bold">Tableau de bord des quêtes</h1>
 
             {/* Section de filtrage */}
@@ -123,8 +126,9 @@ export function QuestDashboard() {
 
                         // Filtrage par classes d'aventurier
                         if (selectedClasses.length > 0 && quest.options?.profils) {
-                            const hasMatchingClass = selectedClasses.some((selectedClass) =>
-                                quest.options!.profils.includes(selectedClass),
+                            const hasMatchingClass = selectedClasses.some(
+                                (selectedClass: AdventurerType) =>
+                                    quest.options!.profils.includes(selectedClass),
                             );
                             if (!hasMatchingClass) return false;
                         }

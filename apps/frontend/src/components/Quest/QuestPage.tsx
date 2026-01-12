@@ -8,10 +8,7 @@ import { DeleteButton } from "../Buttons/DeleteButton";
 import { ValidateButton } from "../Buttons/ValidateButton";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { useAuth } from "../../context/AuthContext";
-import { progressToNextLevel, XPtoLvl } from "../../utils/XPtoLvl";
-import avatarImage from "../../assets/swordsman.png";
-import { XpProgressBar } from "../Adventurer/AdventurerProgressBar";
-import { ItemCase } from "../Item/ItemCase";
+import { AdventurerDetails } from "../Adventurer/AdventurerDetails";
 
 export default function QuestPage() {
     const { id } = useParams<{ id: string }>();
@@ -82,78 +79,11 @@ export default function QuestPage() {
                         {quest.options?.assignments.length ? (
                             <ul className="space-y-4">
                                 {quest.options.assignments.map((assignment) => (
-                                    <li key={assignment.id} className="p-4 bg-slate-800 rounded-lg">
-                                        <div className="flex items-center gap-4">
-                                            <div className="relative">
-                                                <img
-                                                    src={avatarImage}
-                                                    alt="Adventurer Avatar"
-                                                    className="w-16 h-16 rounded-full border-2 border-slate-700"
-                                                />
-                                                <span
-                                                    className="absolute top-0 left-0 w-4 h-4 rounded-full border-2 border-slate-800"
-                                                    style={{
-                                                        backgroundColor:
-                                                            assignment.adventurer.status ===
-                                                            "available"
-                                                                ? "green"
-                                                                : assignment.adventurer.status ===
-                                                                    "sleeping"
-                                                                  ? "red"
-                                                                  : "gray",
-                                                    }}
-                                                    title={`Status: ${assignment.adventurer.status}`}
-                                                ></span>
-                                            </div>
-                                            <div>
-                                                <h3 className="text-xl font-semibold">
-                                                    Aventurier: {assignment.adventurer.user.name}
-                                                </h3>
-                                                <p>Type: {assignment.adventurer.type}</p>
-                                                <p>LVL: {XPtoLvl(assignment.adventurer.xp)}</p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4">
-                                            <div className="space-y-2">
-                                                <div className="flex items-center justify-between text-xs text-slate-400">
-                                                    <span>XP: {assignment.adventurer.xp}</span>
-                                                    <span>
-                                                        {
-                                                            progressToNextLevel(
-                                                                assignment.adventurer.xp,
-                                                            ).remainingXP
-                                                        }{" "}
-                                                        XP pour le niveau suivant
-                                                    </span>
-                                                </div>
-                                                <XpProgressBar
-                                                    percent={
-                                                        progressToNextLevel(
-                                                            assignment.adventurer.xp,
-                                                        ).percent
-                                                    }
-                                                />
-                                            </div>
-                                        </div>
-                                        {assignment.items.length > 0 && (
-                                            <div className="mt-4">
-                                                <div className="flex gap-2 mt-2 justify-around items-center">
-                                                    {assignment.items.map((item) => (
-                                                        <ItemCase key={item.id} item={item} />
-                                                    ))}
-                                                    {Array.from(
-                                                        { length: 5 - assignment.items.length },
-                                                        (_, index) => (
-                                                            <div
-                                                                key={`empty-${index}`}
-                                                                className="w-12 h-12 rounded bg-slate-700"
-                                                            ></div>
-                                                        ),
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </li>
+                                    <AdventurerDetails
+                                        key={assignment.id}
+                                        adventurer={assignment.adventurer}
+                                        items={assignment.items}
+                                    />
                                 ))}
                             </ul>
                         ) : (
