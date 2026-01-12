@@ -3,7 +3,6 @@ import Login from "./components/Login/Login";
 import { Protected, useAuth } from "./context/AuthContext";
 import { QuestDashboard } from "./components/Quest/QuestDashboard";
 import QuestPage from "./components/Quest/QuestPage";
-import { CreateQuestPage } from "./components/Quest/CreateQuestPage";
 import { AdventurerDashboard } from "./components/Adventurer/AdventurerDashboard";
 import { AdventurerDetails } from "./components/Adventurer/AdventurerDetails";
 import { GuildDashboard } from "./components/Guild/GuildDashboard";
@@ -56,14 +55,6 @@ export default function App() {
                     element={
                         <Protected>
                             <Dashboard />
-                        </Protected>
-                    }
-                />
-                <Route
-                    path="/create-quest"
-                    element={
-                        <Protected>
-                            <CreateQuestPage />
                         </Protected>
                     }
                 />
