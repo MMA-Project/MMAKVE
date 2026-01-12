@@ -1,11 +1,11 @@
 import { useQuest, useCancelQuest } from "../../api/quest.api";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { CancelButton } from "../Buttons/CancelButton";
 import { useAuth } from "../../context/AuthContext";
 import { QuestFilters } from "./QuestFilters";
 import { QuestList } from "./QuestList";
 import { useFilterStore } from "../../store/useFilterStore";
+import { CreateQuestModal } from "./CreateQuestModal";
 
 type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 
@@ -14,10 +14,10 @@ type SortOrder = "asc" | "desc";
 export function QuestDashboard() {
     const { getQuests } = useQuest();
     const cancelQuestMutation = useCancelQuest();
-    const navigate = useNavigate();
     const { user } = useAuth();
     const [sortBy, setSortBy] = useState<SortBy>("date_limit");
     const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const {
         minReward,
@@ -76,7 +76,7 @@ export function QuestDashboard() {
                 {user.role === "CLIENT" && (
                     <div
                         className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:cursor-pointer hover:bg-slate-800 transition"
-                        onClick={() => navigate("/create-quest")}
+                        onClick={() => setIsCreateModalOpen(true)}
                     >
                         <div className="flex items-center justify-center gap-2 text-slate-400">
                             <span>+</span>
@@ -144,6 +144,11 @@ export function QuestDashboard() {
                     );
                 })()}
             </div>
+
+            <CreateQuestModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+            />
         </div>
     );
 }
