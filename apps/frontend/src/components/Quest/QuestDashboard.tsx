@@ -13,7 +13,7 @@ type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 type SortOrder = "asc" | "desc";
 
 export function QuestDashboard() {
-    const { getQuests } = useQuests();
+    const getQuests = useQuests();
     const cancelQuestMutation = useCancelQuest();
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -35,7 +35,7 @@ export function QuestDashboard() {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
+        <div className="min-h-screen flex flex-col items-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
             <h1 className="text-3xl font-bold">Tableau de bord des quêtes</h1>
 
             {/* Section de filtrage */}

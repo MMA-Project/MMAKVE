@@ -225,7 +225,7 @@ export const useQuests = () => {
         initialData: mockQuests,
     });
 
-    return { getQuests };
+    return getQuests;
 };
 
 export const useQuestById = (id: string) => {
