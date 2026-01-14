@@ -5,9 +5,9 @@ import { Item } from "./item.type";
 export type Guild = {
     id: string;
     name: string;
-    bank?: Bank; /** Not implemented yet */
+    bank?: Bank;
     adventurers: Adventurer[];
-    inventory?: Item[]; /** Not implemented yet */
+    inventory?: Item[];
 };
 
 export type GuildCreation = Omit<Guild, "id" | "bank" | "inventory" | "adventurers">;
