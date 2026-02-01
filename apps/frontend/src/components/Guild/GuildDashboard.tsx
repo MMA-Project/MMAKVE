@@ -19,7 +19,7 @@ export function GuildDashboard() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto w-full">
                 <div className="mb-8">
                     <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
                         ⚔️ Guilde des Aventuriers

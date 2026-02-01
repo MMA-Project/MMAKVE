@@ -19,7 +19,7 @@ export function Bank({ bank }: { bank: Bank | undefined }) {
     };
 
     return (
-        <div className="bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-700 h-full">
+        <div className="bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-700">
             <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
                 <span className="text-2xl">💰</span> Banque
             </h2>
@@ -35,7 +35,7 @@ export function Bank({ bank }: { bank: Bank | undefined }) {
                     Transactions récentes
                 </h3>
                 {bank.transactions.length > 0 ? (
-                    <div className="space-y-2 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="space-y-2">
                         {bank.transactions
                             .sort((a, b) => b.date - a.date)
                             .map((transaction) => (
