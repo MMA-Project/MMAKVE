@@ -38,10 +38,8 @@ export type Item = {
     id: string;
     name: ItemName;
     description: string;
-    // Pour les items normaux (armes, armures, etc.)
     durability?: number;
     maxDurability?: number;
-    // Pour les consommables (potions, flèches, etc.)
     quantity?: number;
     isConsumable: boolean;
     price: number;
@@ -49,7 +47,7 @@ export type Item = {
     rarity: ItemRarity;
     profiles: AdventurerType[];
     status: ItemStatus;
-    questId?: string; // ID de la quête si l'item est IN_USE
+    questId?: string;
 };
 
 export type ItemCreation = Omit<Item, "id">;

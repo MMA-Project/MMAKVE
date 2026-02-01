@@ -1,6 +1,6 @@
 import type { Adventurer } from "../../../../../packages/shared/src/types/adventurer.type";
-import { AdventurerType } from "../../../../../packages/shared/src/types/adventurer.type";
 import { AdventurerCard } from "./AdventurerCard";
+import { typeLabels } from "../../utils/adventurerImages";
 
 interface AdventurerListProps {
     adventurers: Adventurer[] | undefined;
@@ -9,21 +9,6 @@ interface AdventurerListProps {
     onEdit: (adventurer: Adventurer) => void;
     onDelete: (id: string) => void;
 }
-
-const typeLabels: Record<AdventurerType, string> = {
-    [AdventurerType.ARCHER]: "Archer",
-    [AdventurerType.BARBARIAN]: "Barbare",
-    [AdventurerType.PALADIN]: "Paladin",
-    [AdventurerType.ARCANE_MAGE]: "Mage des Arcanes",
-    [AdventurerType.PRIEST]: "Prêtre",
-    [AdventurerType.GEOMANCER]: "Géomancien",
-    [AdventurerType.ALCHEMIST]: "Alchimiste",
-    [AdventurerType.BLACKSMITH]: "Forgeron",
-    [AdventurerType.ENCHANTER]: "Enchanteur",
-    [AdventurerType.MESSENGER]: "Messager",
-    [AdventurerType.ROGUE]: "Roublard",
-    [AdventurerType.WARRIOR]: "Guerrier",
-};
 
 export function AdventurerList({
     adventurers,
