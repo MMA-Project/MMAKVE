@@ -6,6 +6,7 @@ export enum QuestStatus {
     PENDING = "PENDING",
     APPROVED = "APPROVED",
     IN_PROGRESS = "IN_PROGRESS",
+    REJECTED = "REJECTED",
     COMPLETED = "COMPLETED",
     FAILED = "FAILED",
     CANCELED = "CANCELED",

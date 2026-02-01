@@ -18,11 +18,22 @@ export function GuildDashboard() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
-            <h1 className="text-3xl font-bold mb-4">Tableau de bord de la guilde</h1>
-            <div className="flex flex-row justify-between items-start gap-8">
-                <Bank bank={getGuild.data.bank} />
-                <GuildInventory inventory={getGuild.data.inventory ?? []} />
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
+            <div className="max-w-7xl mx-auto">
+                <div className="mb-8">
+                    <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+                        ⚔️ Guilde des Aventuriers
+                    </h1>
+                    <p className="text-slate-400">Gestion des ressources et de l'inventaire</p>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-1">
+                        <Bank bank={getGuild.data.bank} />
+                    </div>
+                    <div className="lg:col-span-2">
+                        <GuildInventory inventory={getGuild.data.inventory ?? []} />
+                    </div>
+                </div>
             </div>
         </div>
     );
