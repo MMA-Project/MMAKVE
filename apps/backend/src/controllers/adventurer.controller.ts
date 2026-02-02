@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as adventurerService from "../services/adventurer.service";
 import { AppError, ErrorCodes, sendError } from "../utils/error";
 import { AdventurerCreation, AdventurerType } from "@mmakve/shared";
+import { generateRandomPassword } from "../utils/adventurer";
 
 /**
  * ! Rôle: Assistant
@@ -89,13 +90,17 @@ export const createAdventurer = async (req: Request, res: Response) => {
             throw new AppError(ErrorCodes.VALIDATION_ERROR, "Adventurer data is required", 422);
         }
 
-        if (!data.name || !data.type || !data.guildId || !data.username || !data.password) {
+        if (!data.name || !data.type || !data.guildId || !data.username) {
             throw new AppError(
                 ErrorCodes.VALIDATION_ERROR,
-                "Name, type, guildId, username and password are required",
+                "Name, type, guildId, and username are required",
                 422,
             );
         }
+
+        const fake_password = generateRandomPassword();
+
+        data.password = fake_password;
 
         const adventurer = await adventurerService.create(data);
         return res.status(201).json(adventurer);
