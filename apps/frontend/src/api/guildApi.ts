@@ -17,7 +17,7 @@ const mockGuildApi: Guild = {
         transactions: [
             {
                 id: "t1",
-                name: "Récompense - Retrieve the Azure Gem",
+                name: "Récompense - Récupérer le joyau azur",
                 amount: 150,
                 date: new Date("2026-01-16T10:30:00Z").getTime(),
             },
@@ -389,7 +389,7 @@ const mockGuildApi: Guild = {
         {
             id: "301",
             name: ItemName.STAFF,
-            description: "An enchanted staff infused with arcane energy.",
+            description: "Un bâton enchanté imprégné d'énergie arcanique.",
             durability: 95,
             maxDurability: 100,
             isConsumable: false,
@@ -403,7 +403,7 @@ const mockGuildApi: Guild = {
         {
             id: "302",
             name: ItemName.ARMOR,
-            description: "Epic protective robes woven with magic resistance.",
+            description: "Des robes de protection épiques tissées pour résister à la magie.",
             durability: 88,
             maxDurability: 100,
             isConsumable: false,
@@ -417,7 +417,7 @@ const mockGuildApi: Guild = {
         {
             id: "303",
             name: ItemName.DAGGER,
-            description: "A poisoned dagger perfect for stealth attacks.",
+            description: "Une dague empoisonnée parfaite pour les attaques furtives.",
             durability: 78,
             maxDurability: 100,
             isConsumable: false,
@@ -431,7 +431,7 @@ const mockGuildApi: Guild = {
         {
             id: "304",
             name: ItemName.HEALING_POTION,
-            description: "A potent healing elixir.",
+            description: "Un puissant élixir de soin.",
             quantity: 3,
             isConsumable: true,
             price: 50,
@@ -444,7 +444,7 @@ const mockGuildApi: Guild = {
         {
             id: "305",
             name: ItemName.MAGIC_RING,
-            description: "A legendary ring that amplifies magical abilities.",
+            description: "Un anneau légendaire qui amplifie les capacités magiques.",
             durability: 100,
             maxDurability: 100,
             isConsumable: false,
@@ -458,7 +458,7 @@ const mockGuildApi: Guild = {
         {
             id: "306",
             name: ItemName.HELMET,
-            description: "A mystical helmet with protective enchantments.",
+            description: "Un casque mystique doté d'enchantements protecteurs.",
             durability: 92,
             maxDurability: 100,
             isConsumable: false,
@@ -472,7 +472,7 @@ const mockGuildApi: Guild = {
         {
             id: "307",
             name: ItemName.BOW,
-            description: "A silent crossbow for ranged precision.",
+            description: "Une arbalète silencieuse pour la précision à distance.",
             durability: 85,
             maxDurability: 100,
             isConsumable: false,
@@ -486,7 +486,7 @@ const mockGuildApi: Guild = {
         {
             id: "308",
             name: ItemName.HEALING_POTION,
-            description: "Emergency healing potion.",
+            description: "Potion de soin d'urgence.",
             quantity: 2,
             isConsumable: true,
             price: 50,
@@ -499,7 +499,7 @@ const mockGuildApi: Guild = {
         {
             id: "309",
             name: ItemName.AXE,
-            description: "A massive battle axe forged for destruction.",
+            description: "Une hache de bataille massive forgée pour la destruction.",
             durability: 92,
             maxDurability: 100,
             isConsumable: false,
@@ -513,7 +513,7 @@ const mockGuildApi: Guild = {
         {
             id: "310",
             name: ItemName.SHIELD,
-            description: "A reinforced shield for heavy combat.",
+            description: "Un bouclier renforcé pour les combats intenses.",
             durability: 88,
             maxDurability: 100,
             isConsumable: false,
@@ -527,7 +527,7 @@ const mockGuildApi: Guild = {
         {
             id: "311",
             name: ItemName.HEALING_POTION,
-            description: "A restorative potion for battle wounds.",
+            description: "Une potion réparatrice pour les blessures de bataille.",
             quantity: 5,
             isConsumable: true,
             price: 50,
@@ -540,7 +540,7 @@ const mockGuildApi: Guild = {
         {
             id: "312",
             name: ItemName.HELMET,
-            description: "A sturdy iron helmet for protection.",
+            description: "Un solide casque de fer pour la protection.",
             durability: 95,
             maxDurability: 100,
             isConsumable: false,

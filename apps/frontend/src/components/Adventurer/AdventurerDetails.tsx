@@ -19,7 +19,7 @@ export function AdventurerDetails({
                 <div className="relative">
                     <img
                         src={avatarImage}
-                        alt="Adventurer Avatar"
+                        alt="Avatar d'aventurier"
                         className="w-16 h-16 rounded-full border-2 border-slate-700"
                     />
                     <span
@@ -29,9 +29,9 @@ export function AdventurerDetails({
                 </div>
                 <div>
                     <h3 className="text-xl font-semibold">Aventurier: {adventurer.user.name}</h3>
-                    <p>Type: {adventurer.type}</p>
+                    <p>Classe: {adventurer.type}</p>
                     <p>Statut: {statusLabels[adventurer.status]}</p>
-                    <p>LVL: {XPtoLvl(adventurer.xp)}</p>
+                    <p>Niveau: {XPtoLvl(adventurer.xp)}</p>
                 </div>
             </div>
             <div className="mt-4">

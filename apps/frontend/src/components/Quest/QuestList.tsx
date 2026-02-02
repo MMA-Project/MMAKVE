@@ -91,7 +91,7 @@ export function QuestList({
 
                         <div className="flex items-center gap-2">
                             {quest.status === QuestStatus.PENDING && userRole === "ASSISTANT" && (
-                                <ValidateButton onClick={() => console.log("validate", quest.id)} />
+                                <ValidateButton onClick={() => console.log("valider", quest.id)} />
                             )}
                             {userRole === "ASSISTANT" &&
                                 (quest.status === QuestStatus.PENDING ||
@@ -111,7 +111,7 @@ export function QuestList({
                                 )}
                             {((userRole === "CLIENT" && quest.status === QuestStatus.PENDING) ||
                                 userRole === "ASSISTANT") && (
-                                <UpdateButton onClick={() => console.log("update", quest.id)} />
+                                <UpdateButton onClick={() => console.log("modifier", quest.id)} />
                             )}
                             <QuestStatusBanner status={quest.status} />
                         </div>
@@ -126,7 +126,7 @@ export function QuestList({
                             return (
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between text-xs text-slate-400">
-                                        <span>Progress</span>
+                                        <span>Progression</span>
                                         <span className="font-medium text-slate-100">
                                             {percent}%
                                         </span>

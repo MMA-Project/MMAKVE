@@ -1,6 +1,6 @@
 import type { Item } from "../../../../../packages/shared/src/types/item.type";
 import { itemRarityColors } from "../../utils/itemRarityColors";
-import { itemImages, itemEmojis } from "../../utils/itemConstants";
+import { itemImages, itemEmojis, itemNameLabels } from "../../utils/itemConstants";
 
 export function ItemCase({ item }: { item: Item }) {
     const imageSrc = itemImages[item.name];
@@ -12,7 +12,7 @@ export function ItemCase({ item }: { item: Item }) {
             style={{
                 boxShadow: `inset 0 0 10px ${itemRarityColors[item.rarity]}`,
             }}
-            title={`${item.name} - Durabilité: ${item.durability}%`}
+            title={`${itemNameLabels[item.name]} - Durabilité : ${item.durability}%`}
         >
             {imageSrc ? (
                 <img src={imageSrc} alt={item.name} className="w-8 h-8 object-contain" />

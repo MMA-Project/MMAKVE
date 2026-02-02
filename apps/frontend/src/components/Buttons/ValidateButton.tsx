@@ -1,8 +1,8 @@
 export function ValidateButton({ onClick }: any) {
     return (
         <button
-            aria-label="Validate quest"
-            title="Validate"
+            aria-label="Valider la quête"
+            title="Valider"
             className="p-2 rounded hover:bg-slate-700"
             onClick={onClick}
         >

@@ -12,7 +12,7 @@ const mockClient: User = {
 
 const mockAssistant: User = {
     id: "assistant-456",
-    name: "Assistant User",
+    name: "Utilisateur assistant",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     role: "ASSISTANT",
 };
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
     const ctx = useContext(AuthContext);
-    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+    if (!ctx) throw new Error("useAuth doit être utilisé dans AuthProvider");
     return ctx;
 }
 

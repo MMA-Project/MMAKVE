@@ -88,7 +88,7 @@ export function ItemModal({ isOpen, item, onClose, onSave }: ItemModalProps) {
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title={item ? "Modifier l'item" : "Ajouter un item"}
+            title={item ? "Modifier l'objet" : "Ajouter un objet"}
             size="md"
         >
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -109,7 +109,7 @@ export function ItemModal({ isOpen, item, onClose, onSave }: ItemModalProps) {
                         {itemImages[formData.name || ItemName.SWORD] ? (
                             <img
                                 src={itemImages[formData.name || ItemName.SWORD]!}
-                                alt={formData.name}
+                                alt={itemNameLabels[formData.name || ItemName.SWORD]}
                                 className="w-10 h-10 object-cover rounded"
                             />
                         ) : (
@@ -205,7 +205,7 @@ export function ItemModal({ isOpen, item, onClose, onSave }: ItemModalProps) {
                     </div>
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-slate-300 mb-2">
-                            Durabilité Max
+                            Durabilité max
                         </label>
                         <input
                             type="number"

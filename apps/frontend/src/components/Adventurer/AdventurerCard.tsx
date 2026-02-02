@@ -112,7 +112,7 @@ export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
                         )}
 
                         <p className="text-xs text-slate-500">
-                            Total XP: {adventurer.xp.toLocaleString()} | Créé le{" "}
+                            XP total : {adventurer.xp.toLocaleString()} | Créé le{" "}
                             {new Date(adventurer.user.createdAt).toLocaleDateString()}
                         </p>
                     </div>

@@ -35,7 +35,7 @@ export function QuestDashboard() {
     const sortOptions = [
         { value: "date_limit" as const, label: "Date limite" },
         { value: "prime" as const, label: "Prime" },
-        { value: "status" as const, label: "Status" },
+        { value: "status" as const, label: "Statut" },
         { value: "xp" as const, label: "XP requis" },
         { value: "client" as const, label: "Client" },
     ];

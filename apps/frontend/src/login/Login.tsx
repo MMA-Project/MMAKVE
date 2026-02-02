@@ -27,7 +27,7 @@ export default function Login() {
 
     function validate(next: LoginFormValues): FieldErrors {
         const e: FieldErrors = {};
-        if (!next.username.trim()) e.username = "Username requis";
+        if (!next.username.trim()) e.username = "Nom d'utilisateur requis";
         if (!next.password) e.password = "Mot de passe requis";
         else if (next.password.length < 6) e.password = "Au moins 6 caractères";
         if (mode === "register") {
@@ -54,10 +54,10 @@ export default function Login() {
             setSubmitting(true);
             await new Promise((res) => setTimeout(res, 800));
             if (mode === "login") {
-                console.log("Login OK", values);
+                console.log("Connexion OK", values);
                 setErrors({ success: "Connexion réussie ✅" });
             } else {
-                console.log("Register OK", values);
+                console.log("Inscription OK", values);
                 setErrors({ success: "Compte créé avec succès 🎉 Vous pouvez vous connecter." });
                 setMode("login");
                 setValues((v) => ({ ...v, password: "", confirmPassword: "" }));
@@ -102,7 +102,7 @@ export default function Login() {
                         htmlFor="username"
                         className="block text-xs font-medium uppercase tracking-wide text-neutral-300"
                     >
-                        Username
+                        Nom d'utilisateur
                     </label>
                     <input
                         id="username"

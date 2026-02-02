@@ -80,11 +80,11 @@ export function QuestFilters() {
             />
 
             <SelectFilter
-                label="Status"
+                label="Statut"
                 value={selectedStatus}
                 onChange={(value) => setSelectedStatus(value as QuestStatus | "")}
                 options={questStatusOptions}
-                placeholder="Tous les status"
+                placeholder="Tous les statuts"
                 icon="📊"
             />
 

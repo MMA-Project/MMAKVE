@@ -1,8 +1,8 @@
 export function AddButton({ onClick }: any) {
     return (
         <button
-            aria-label="Add quest"
-            title="Add quest"
+            aria-label="Ajouter une quête"
+            title="Ajouter une quête"
             className="p-2 rounded hover:bg-slate-700"
             onClick={onClick}
         >

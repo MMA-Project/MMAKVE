@@ -31,7 +31,7 @@ export function RangeFilter({
             <div className="flex items-center gap-2">
                 <input
                     type={type}
-                    placeholder={`Min${placeholder ? ` ${placeholder}` : ""}`}
+                    placeholder={`Min.${placeholder ? ` ${placeholder}` : ""}`}
                     value={minValue}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => onMinChange(e.target.value)}
                     className={`${maxWidth} p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none`}
@@ -40,7 +40,7 @@ export function RangeFilter({
                 <span className="text-slate-400">—</span>
                 <input
                     type={type}
-                    placeholder={`Max${placeholder ? ` ${placeholder}` : ""}`}
+                    placeholder={`Max.${placeholder ? ` ${placeholder}` : ""}`}
                     value={maxValue}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => onMaxChange(e.target.value)}
                     className={`${maxWidth} p-2 rounded bg-slate-800 text-slate-100 border border-slate-600 focus:border-slate-500 focus:outline-none`}

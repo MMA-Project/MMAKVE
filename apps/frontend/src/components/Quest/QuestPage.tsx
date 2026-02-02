@@ -22,11 +22,11 @@ export default function QuestPage() {
                     <ReturnButton />
                     <div className="absolute flex flex-col top-4 right-4 m-5">
                         {quest.status === QuestStatus.PENDING && user.role === "ASSISTANT" && (
-                            <ValidateButton onClick={() => console.log("validate", quest.id)} />
+                            <ValidateButton onClick={() => console.log("valider", quest.id)} />
                         )}
                         {((user.role === "CLIENT" && quest.status === QuestStatus.PENDING) ||
                             user.role === "ASSISTANT") && (
-                            <UpdateButton onClick={() => console.log("update", quest.id)} />
+                            <UpdateButton onClick={() => console.log("modifier", quest.id)} />
                         )}
                     </div>
                     <h1 className="text-3xl font-bold">{quest.title}</h1>
@@ -46,7 +46,7 @@ export default function QuestPage() {
                                 return (
                                     <div className="space-y-2">
                                         <div className="flex items-center justify-between text-xs text-slate-400">
-                                            <span>Progress</span>
+                                            <span>Progression</span>
                                             <span className="font-medium text-slate-100">
                                                 {percent}%
                                             </span>

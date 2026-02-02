@@ -25,9 +25,9 @@ export const mockQuests: Quest[] = [
             role: "CLIENT" as Role,
             createdAt: new Date("2024-02-20T12:00:00Z"),
         },
-        title: "Retrieve the Azure Gem",
+        title: "Récupérer le joyau azur",
         description:
-            "A precious gem was stolen by a band of river raiders. Retrieve it and return it safely.",
+            "Une gemme précieuse a été volée par une bande de pillards des rivières. Récupérez-la et ramenez-la en sécurité.",
         deadline: new Date("2026-01-15T23:59:59Z"),
         reward: 150,
         status: QuestStatus.COMPLETED,
@@ -43,7 +43,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "301",
                             name: ItemName.STAFF,
-                            description: "An enchanted staff infused with arcane energy.",
+                            description: "Un bâton enchanté imprégné d'énergie arcanique.",
                             durability: 95,
                             maxDurability: 100,
                             isConsumable: false,
@@ -57,7 +57,8 @@ export const mockQuests: Quest[] = [
                         {
                             id: "302",
                             name: ItemName.ARMOR,
-                            description: "Epic protective robes woven with magic resistance.",
+                            description:
+                                "Des robes de protection épiques tissées pour résister à la magie.",
                             durability: 88,
                             maxDurability: 100,
                             isConsumable: false,
@@ -71,7 +72,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "304",
                             name: ItemName.HEALING_POTION,
-                            description: "A potent healing elixir.",
+                            description: "Un puissant élixir de soin.",
                             quantity: 3,
                             isConsumable: true,
                             price: 50,
@@ -84,7 +85,8 @@ export const mockQuests: Quest[] = [
                         {
                             id: "305",
                             name: ItemName.MAGIC_RING,
-                            description: "A legendary ring that amplifies magical abilities.",
+                            description:
+                                "Un anneau légendaire qui amplifie les capacités magiques.",
                             durability: 100,
                             maxDurability: 100,
                             isConsumable: false,
@@ -98,7 +100,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "306",
                             name: ItemName.HELMET,
-                            description: "A mystical helmet with protective enchantments.",
+                            description: "Un casque mystique doté d'enchantements protecteurs.",
                             durability: 92,
                             maxDurability: 100,
                             isConsumable: false,
@@ -129,7 +131,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "303",
                             name: ItemName.DAGGER,
-                            description: "A poisoned dagger perfect for stealth attacks.",
+                            description: "Une dague empoisonnée parfaite pour les attaques furtives.",
                             durability: 78,
                             maxDurability: 100,
                             isConsumable: false,
@@ -143,7 +145,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "307",
                             name: ItemName.BOW,
-                            description: "A silent crossbow for ranged precision.",
+                            description: "Une arbalète silencieuse pour la précision à distance.",
                             durability: 85,
                             maxDurability: 100,
                             isConsumable: false,
@@ -157,7 +159,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "308",
                             name: ItemName.HEALING_POTION,
-                            description: "Emergency healing potion.",
+                            description: "Potion de soin d'urgence.",
                             quantity: 2,
                             isConsumable: true,
                             price: 50,
@@ -192,9 +194,9 @@ export const mockQuests: Quest[] = [
             role: "CLIENT",
             createdAt: new Date("2024-02-20T12:00:00Z"),
         },
-        title: "Clear the Forgotten Mines",
+        title: "Nettoyer les Mines Oubliées",
         description:
-            "The old mine tunnels have been infested by earth elementals. Clear them so miners can return.",
+            "Les anciens tunnels de la mine ont été infestés par des élémentaires de terre. Nettoyez-les pour que les mineurs puissent revenir.",
         deadline: new Date("2026-02-15T23:59:59Z"),
         reward: 300,
         status: QuestStatus.IN_PROGRESS,
@@ -210,7 +212,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "309",
                             name: ItemName.AXE,
-                            description: "A massive battle axe forged for destruction.",
+                            description: "Une hache de bataille massive forgée pour la destruction.",
                             durability: 92,
                             maxDurability: 100,
                             isConsumable: false,
@@ -224,7 +226,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "310",
                             name: ItemName.SHIELD,
-                            description: "A reinforced shield for heavy combat.",
+                            description: "Un bouclier renforcé pour les combats intenses.",
                             durability: 88,
                             maxDurability: 100,
                             isConsumable: false,
@@ -238,7 +240,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "311",
                             name: ItemName.HEALING_POTION,
-                            description: "A restorative potion for battle wounds.",
+                            description: "Une potion réparatrice pour les blessures de bataille.",
                             quantity: 5,
                             isConsumable: true,
                             price: 50,
@@ -251,7 +253,7 @@ export const mockQuests: Quest[] = [
                         {
                             id: "312",
                             name: ItemName.HELMET,
-                            description: "A sturdy iron helmet for protection.",
+                            description: "Un solide casque de fer pour la protection.",
                             durability: 95,
                             maxDurability: 100,
                             isConsumable: false,
@@ -287,9 +289,9 @@ export const mockQuests: Quest[] = [
             role: "CLIENT",
             createdAt: new Date("2024-02-20T12:00:00Z"),
         },
-        title: "Escort the Merchant Caravan",
+        title: "Escorter la caravane marchande",
         description:
-            "A caravan needs protection through bandit-prone passes. Ensure all wagons reach the next town.",
+            "Une caravane a besoin de protection à travers des cols infestés de bandits. Assurez-vous que tous les chariots atteignent la prochaine ville.",
         deadline: new Date("2026-03-15T23:59:59Z"),
         reward: 220,
         status: QuestStatus.APPROVED,
@@ -309,9 +311,9 @@ export const mockQuests: Quest[] = [
             role: "CLIENT",
             createdAt: new Date("2024-02-20T12:00:00Z"),
         },
-        title: "Seal the Rift at Blackfen",
+        title: "Sceller la faille de Blackfen",
         description:
-            "A magical rift is leaking corrupting energies. Seal it before the swamp spreads further.",
+            "Une faille magique laisse s'échapper des énergies corruptrices. Scellez-la avant que le marais ne s'étende davantage.",
         deadline: new Date("2026-02-20T23:59:59Z"),
         reward: 500,
         status: QuestStatus.PENDING,
@@ -324,9 +326,9 @@ export const mockQuests: Quest[] = [
             role: "CLIENT",
             createdAt: new Date("2024-02-20T12:00:00Z"),
         },
-        title: "Rescue the Lost Scouts",
+        title: "Sauver les éclaireurs perdus",
         description:
-            "A group of scouts went missing in the Darkwood Forest. Find and rescue them safely.",
+            "Un groupe d'éclaireurs a disparu dans la forêt de Darkwood. Retrouvez-les et ramenez-les sains et saufs.",
         deadline: new Date("2026-01-22T23:59:59Z"),
         reward: 350,
         status: QuestStatus.FAILED,
@@ -346,9 +348,9 @@ export const mockQuests: Quest[] = [
             role: "CLIENT",
             createdAt: new Date("2024-02-20T12:00:00Z"),
         },
-        title: "Investigate the Haunted Ruins",
+        title: "Enquêter sur les ruines hantées",
         description:
-            "Strange noises and lights have been reported in the old ruins. Investigate the source.",
+            "Des bruits et des lumières étranges ont été signalés dans les anciennes ruines. Enquêtez sur leur origine.",
         deadline: new Date("2026-03-05T23:59:59Z"),
         reward: 400,
         status: QuestStatus.PENDING,
