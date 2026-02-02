@@ -4,7 +4,6 @@ import { Protected, useAuth } from "./context/AuthContext";
 import { QuestDashboard } from "./components/Quest/QuestDashboard";
 import QuestPage from "./components/Quest/QuestPage";
 import { AdventurerDashboard } from "./components/Adventurer/AdventurerDashboard";
-import { AdventurerDetails } from "./components/Adventurer/AdventurerDetails";
 import { GuildDashboard } from "./components/Guild/GuildDashboard";
 import { Navbar } from "./components/Nav/Navbar";
 
@@ -72,14 +71,6 @@ export default function App() {
                         element={
                             <Protected>
                                 <AdventurerDashboard />
-                            </Protected>
-                        }
-                    />
-                    <Route
-                        path="/adventurer/:id"
-                        element={
-                            <Protected>
-                                <AdventurerDetails />
                             </Protected>
                         }
                     />

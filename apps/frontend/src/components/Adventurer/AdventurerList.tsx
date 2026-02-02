@@ -1,6 +1,6 @@
 import type { Adventurer } from "../../../../../packages/shared/src/types/adventurer.type";
 import { AdventurerCard } from "./AdventurerCard";
-import { typeLabels } from "../../utils/adventurerImages";
+import { adventurerTypeLabels } from "../../utils/adventurerImages";
 
 interface AdventurerListProps {
     adventurers: Adventurer[] | undefined;
@@ -34,8 +34,8 @@ export function AdventurerList({ adventurers, sortBy, sortOrder, onEdit }: Adven
                 bValue = b.xp;
                 break;
             case "type":
-                aValue = typeLabels[a.type];
-                bValue = typeLabels[b.type];
+                aValue = adventurerTypeLabels[a.type];
+                bValue = adventurerTypeLabels[b.type];
                 break;
             case "status":
                 aValue = a.status;

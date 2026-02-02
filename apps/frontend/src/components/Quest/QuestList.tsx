@@ -21,7 +21,6 @@ export function QuestList({
     sortBy,
     sortOrder,
     userRole,
-    userId,
     cancelQuestMutation,
 }: QuestListProps) {
     const navigate = useNavigate();

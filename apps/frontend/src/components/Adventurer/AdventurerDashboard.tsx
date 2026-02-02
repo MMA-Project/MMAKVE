@@ -6,9 +6,11 @@ import { AdventurerList } from "./AdventurerList";
 import { CreateAdventurerModal } from "./CreateAdventurerModal";
 import { EditAdventurerModal } from "./EditAdventurerModal";
 import { useState } from "react";
+import { SortControls } from "../common/SortControls";
+import type { SortOrder } from "../common/SortControls";
+import { CreateButton } from "../common/CreateButton";
 
 type SortBy = "name" | "xp" | "type" | "status" | "createdAt";
-type SortOrder = "asc" | "desc";
 
 export function AdventurerDashboard() {
     const getAdventurers = useAdventurers();
@@ -21,6 +23,14 @@ export function AdventurerDashboard() {
 
     const { minXp, maxXp, nameSearch, selectedStatus, selectedTypes } = useAdventurerFilterStore();
 
+    const sortOptions = [
+        { value: "name" as const, label: "Nom" },
+        { value: "xp" as const, label: "XP" },
+        { value: "type" as const, label: "Classe" },
+        { value: "status" as const, label: "Statut" },
+        { value: "createdAt" as const, label: "Date de création" },
+    ];
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
             <div className="max-w-7xl mx-auto">
@@ -31,51 +41,21 @@ export function AdventurerDashboard() {
                     <p className="text-slate-400">Gestion de votre équipe d'aventuriers</p>
                 </div>
 
-                {/* Section de tri et filtrage */}
-                <div className="mb-6 bg-slate-800 p-4 rounded-lg border border-slate-700">
-                    <div className="flex justify-between items-end gap-4">
-                        <div className="flex items-center gap-4">
-                            <label htmlFor="sort" className="text-sm font-medium text-slate-300">
-                                Trier par :
-                            </label>
-                            <select
-                                id="sort"
-                                className="px-3 py-2 rounded bg-slate-900 text-slate-100 border border-slate-600 hover:border-slate-500 transition-colors"
-                                onChange={(e) => {
-                                    setSortBy(e.target.value as SortBy);
-                                }}
-                            >
-                                <option value="name">Nom</option>
-                                <option value="xp">XP</option>
-                                <option value="type">Classe</option>
-                                <option value="status">Statut</option>
-                                <option value="createdAt">Date de création</option>
-                            </select>
-                            <button
-                                id="order"
-                                className="px-3 py-2 rounded bg-slate-900 text-slate-100 border border-slate-600 hover:border-slate-500 transition-colors"
-                                onClick={() =>
-                                    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
-                                }
-                            >
-                                {sortOrder === "asc" ? "⬆" : "⬇"}
-                            </button>
-                        </div>
-                        <AdventurerFilters />
-                    </div>
-                </div>
+                <SortControls
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    onSortByChange={setSortBy}
+                    onSortOrderChange={setSortOrder}
+                    sortOptions={sortOptions}
+                    additionalControls={<AdventurerFilters />}
+                />
 
                 <div className="space-y-4">
-                    {/* Bouton de création */}
-                    <div
-                        className="p-6 border-2 border-dashed border-slate-600 rounded-lg bg-slate-900/50 flex flex-col gap-3 hover:cursor-pointer hover:border-purple-500 hover:bg-slate-800/50 transition-all group"
+                    <CreateButton
                         onClick={() => setIsCreateModalOpen(true)}
-                    >
-                        <div className="flex items-center justify-center gap-2 text-slate-400 group-hover:text-purple-400 transition-colors">
-                            <span className="text-2xl">+</span>
-                            <span className="font-medium">Créer un nouvel aventurier</span>
-                        </div>
-                    </div>
+                        title="Créer un nouvel aventurier"
+                        hoverColor="purple"
+                    />
 
                     <AdventurerList
                         adventurers={getAdventurers.data?.filter((adventurer) => {

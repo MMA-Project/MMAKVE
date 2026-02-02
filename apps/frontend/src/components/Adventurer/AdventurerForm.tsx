@@ -66,7 +66,6 @@ export function AdventurerForm({
         e.preventDefault();
         try {
             if (adventurer) {
-                // Pour la modification, on envoie les données partielles
                 await onSubmit({
                     user: { ...adventurer.user, ...formData.user },
                     type: formData.type,
@@ -74,7 +73,6 @@ export function AdventurerForm({
                     xp: formData.xp,
                 });
             } else {
-                // Pour la création, on envoie uniquement ce qui est nécessaire
                 await onSubmit({
                     user: {
                         name: formData.user.name,
@@ -92,7 +90,6 @@ export function AdventurerForm({
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Nom */}
             <div>
                 <label className="block text-sm font-medium text-slate-100 mb-1">
                     Nom de l'aventurier *
@@ -113,7 +110,6 @@ export function AdventurerForm({
                 />
             </div>
 
-            {/* Type */}
             <div>
                 <label className="block text-sm font-medium text-slate-100 mb-1">
                     Type de classe *
@@ -138,7 +134,6 @@ export function AdventurerForm({
                 </select>
             </div>
 
-            {/* Statut */}
             {adventurer && (
                 <div>
                     <label className="block text-sm font-medium text-slate-100 mb-1">Statut</label>
@@ -162,7 +157,6 @@ export function AdventurerForm({
                 </div>
             )}
 
-            {/* XP */}
             {adventurer && (
                 <div>
                     <label className="block text-sm font-medium text-slate-100 mb-1">XP</label>
@@ -182,7 +176,6 @@ export function AdventurerForm({
                 </div>
             )}
 
-            {/* Boutons */}
             <div className="flex gap-2 pt-4">
                 <button
                     type="submit"

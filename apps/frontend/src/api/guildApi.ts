@@ -67,7 +67,6 @@ const mockGuildApi: Guild = {
     },
     adventurers: [],
     inventory: [
-        // Items disponibles dans la guilde
         {
             id: "gi1",
             name: ItemName.SWORD,
@@ -221,7 +220,6 @@ const mockGuildApi: Guild = {
             profiles: [AdventurerType.ROGUE],
             status: ItemStatus.AVAILABLE,
         },
-        // Items supplémentaires disponibles
         {
             id: "gi13",
             name: ItemName.SWORD,
@@ -388,7 +386,6 @@ const mockGuildApi: Guild = {
             profiles: [],
             status: ItemStatus.AVAILABLE,
         },
-        // Les items du mock original (déjà utilisés dans quests) - référencés dans la guilde
         {
             id: "301",
             name: ItemName.STAFF,

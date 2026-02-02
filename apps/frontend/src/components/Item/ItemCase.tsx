@@ -1,4 +1,4 @@
-import { type Item, ItemType, ItemName } from "../../../../../packages/shared/src/types/item.type";
+import type { Item } from "../../../../../packages/shared/src/types/item.type";
 import { itemRarityColors } from "../../utils/itemRarityColors";
 import { itemImages, itemEmojis } from "../../utils/itemConstants";
 

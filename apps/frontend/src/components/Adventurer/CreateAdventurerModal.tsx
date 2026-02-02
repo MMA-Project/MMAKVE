@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useCreateAdventurer } from "../../api/adventurerApi";
 import { AdventurerForm } from "./AdventurerForm";
+import { Modal } from "../common/Modal";
 import type { AdventurerCreation } from "../../../../../packages/shared/src/types/adventurer.type";
 
 interface CreateAdventurerModalProps {
@@ -22,27 +23,19 @@ export function CreateAdventurerModal({ isOpen, onClose }: CreateAdventurerModal
         }
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 w-full max-w-md">
-                <h2 className="text-2xl font-bold text-slate-100 mb-4">
-                    Créer un nouvel aventurier
-                </h2>
+        <Modal isOpen={isOpen} onClose={onClose} title="Créer un nouvel aventurier" size="md">
+            {error && (
+                <div className="mb-4 p-3 bg-red-900 border border-red-700 rounded text-red-100">
+                    {error}
+                </div>
+            )}
 
-                {error && (
-                    <div className="mb-4 p-3 bg-red-900 border border-red-700 rounded text-red-100">
-                        {error}
-                    </div>
-                )}
-
-                <AdventurerForm
-                    onSubmit={handleSubmit}
-                    onCancel={onClose}
-                    isLoading={createMutation.isPending}
-                />
-            </div>
-        </div>
+            <AdventurerForm
+                onSubmit={handleSubmit}
+                onCancel={onClose}
+                isLoading={createMutation.isPending}
+            />
+        </Modal>
     );
 }

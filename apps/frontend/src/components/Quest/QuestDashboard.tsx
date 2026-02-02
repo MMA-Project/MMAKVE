@@ -1,18 +1,16 @@
 import { useCancelQuest } from "../../api/quest.api";
 import { useQuests } from "../../api/quest.api";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { CancelButton } from "../Buttons/CancelButton";
 import { useAuth } from "../../context/AuthContext";
 import { QuestFilters } from "./QuestFilters";
 import { QuestList } from "./QuestList";
-import { useFilterStore } from "../../store/useFilterStore";
+import { useFilterStore } from "../../store/useQuestFilterStore";
 import type { AdventurerType } from "../../../../../packages/shared/src/types/adventurer.type";
 import { CreateQuestModal } from "./CreateQuestModal";
+import { SortControls, type SortOrder } from "../common/SortControls";
+import { CreateButton } from "../common/CreateButton";
 
 type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
-
-type SortOrder = "asc" | "desc";
 
 export function QuestDashboard() {
     const getQuests = useQuests();
@@ -34,6 +32,14 @@ export function QuestDashboard() {
         selectedClasses,
     } = useFilterStore();
 
+    const sortOptions = [
+        { value: "date_limit" as const, label: "Date limite" },
+        { value: "prime" as const, label: "Prime" },
+        { value: "status" as const, label: "Status" },
+        { value: "xp" as const, label: "XP requis" },
+        { value: "client" as const, label: "Client" },
+    ];
+
     if (!user) return null;
 
     return (
@@ -46,52 +52,22 @@ export function QuestDashboard() {
                     <p className="text-slate-400">Gestion et suivi des missions</p>
                 </div>
 
-                {/* Section de filtrage */}
-                <div className="mb-6 bg-slate-800 p-4 rounded-lg border border-slate-700">
-                    <div className="flex justify-between items-end gap-4">
-                        <div className="flex items-center gap-4">
-                            <label htmlFor="sort" className="text-sm font-medium text-slate-300">
-                                Trier par :
-                            </label>
-                            <select
-                                id="sort"
-                                className="px-3 py-2 rounded bg-slate-900 text-slate-100 border border-slate-600 hover:border-slate-500 transition-colors"
-                                onChange={(e) => {
-                                    const sortBy = e.target.value;
-                                    setSortBy(sortBy as SortBy);
-                                }}
-                            >
-                                <option value="date_limit">Date limite</option>
-                                <option value="prime">Prime</option>
-                                <option value="status">Status</option>
-                                <option value="xp">XP requis</option>
-                                <option value="client">Client</option>
-                            </select>
-                            <button
-                                id="order"
-                                className="px-3 py-2 rounded bg-slate-900 text-slate-100 border border-slate-600 hover:border-slate-500 transition-colors"
-                                onClick={() =>
-                                    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
-                                }
-                            >
-                                {sortOrder === "asc" ? "⬆" : "⬇"}
-                            </button>
-                        </div>
-                        <QuestFilters />
-                    </div>
-                </div>
+                <SortControls
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    onSortByChange={setSortBy}
+                    onSortOrderChange={setSortOrder}
+                    sortOptions={sortOptions}
+                    additionalControls={<QuestFilters />}
+                />
 
                 <div className="space-y-4">
                     {user.role === "CLIENT" && (
-                        <div
-                            className="p-6 border-2 border-dashed border-slate-600 rounded-lg bg-slate-900/50 flex flex-col gap-3 hover:cursor-pointer hover:border-emerald-500 hover:bg-slate-800/50 transition-all group"
+                        <CreateButton
                             onClick={() => setIsCreateModalOpen(true)}
-                        >
-                            <div className="flex items-center justify-center gap-2 text-slate-400 group-hover:text-emerald-400 transition-colors">
-                                <span className="text-2xl">+</span>
-                                <span className="font-medium">Créer une nouvelle quête</span>
-                            </div>
-                        </div>
+                            title="Créer une nouvelle quête"
+                            hoverColor="emerald"
+                        />
                     )}
                     {(() => {
                         const filteredQuests = getQuests.data?.slice().filter((quest) => {

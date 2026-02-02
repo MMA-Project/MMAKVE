@@ -8,7 +8,7 @@ import { mockGuildApi } from "../../api/guildApi";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
 import {
     adventurerImages,
-    typeLabels,
+    adventurerTypeLabels,
     statusColors,
     statusLabels,
 } from "../../utils/adventurerImages";
@@ -43,7 +43,7 @@ export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
                         <div className="relative">
                             <img
                                 src={adventurerImages[adventurer.type]}
-                                alt={typeLabels[adventurer.type]}
+                                alt={adventurerTypeLabels[adventurer.type]}
                                 className="w-16 h-16 rounded-full border-2 border-slate-700 object-cover bg-slate-800"
                             />
                             <span
@@ -54,7 +54,7 @@ export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
                         <div>
                             <h2 className="text-xl font-semibold">{adventurer.user.name}</h2>
                             <p className="text-sm text-slate-400">
-                                {typeLabels[adventurer.type]} - Niveau {level}
+                                {adventurerTypeLabels[adventurer.type]} - Niveau {level}
                             </p>
                         </div>
                     </div>

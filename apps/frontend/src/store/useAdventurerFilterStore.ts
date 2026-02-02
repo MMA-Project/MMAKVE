@@ -37,3 +37,15 @@ export const useAdventurerFilterStore = create<AdventurerFilterState>((set) => (
     setSelectedTypes: (value) => set({ selectedTypes: value }),
     resetAllFilters: () => set(initialState),
 }));
+
+// Hook utilitaire pour détecter si des filtres sont actifs
+export const useHasActiveAdventurerFilters = () => {
+    const { minXp, maxXp, nameSearch, selectedStatus, selectedTypes } = useAdventurerFilterStore();
+    return (
+        minXp !== "" ||
+        maxXp !== "" ||
+        nameSearch !== "" ||
+        selectedStatus !== "" ||
+        selectedTypes.length > 0
+    );
+};
