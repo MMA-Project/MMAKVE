@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-import { loginApi, registerApi } from "../api/AuthApi";
 import type { User } from "../../../../packages/shared/src/types/user.type";
 
 const mockClient: User = {
@@ -16,13 +15,6 @@ const mockAssistant: User = {
     name: "Assistant User",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     role: "ASSISTANT",
-};
-
-const mockAdventurer: User = {
-    id: "adventurer-789",
-    name: "Adventurer User",
-    createdAt: new Date("2024-01-01T00:00:00Z"),
-    role: "ADVENTURER",
 };
 
 interface AuthContextValue {
@@ -51,11 +43,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     const [loading, setLoading] = useState(false);
 
-    const login = useCallback(async (username: string, password: string) => {
+    const login = useCallback(async (_username: string, _password: string) => {
         setLoading(true);
         try {
-            // const data = await loginApi({ username, password });
-            // setUser(data.user);
             setUser(mockAssistant);
             localStorage.setItem("auth", JSON.stringify({ user: mockAssistant }));
         } finally {
@@ -63,10 +53,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    const register = useCallback(async (username: string, password: string) => {
+    const register = useCallback(async (_username: string, _password: string) => {
         setLoading(true);
         try {
-            // const data = await registerApi({ username, password });
             setUser(mockClient);
             localStorage.setItem("auth", JSON.stringify({ user: mockClient }));
         } finally {

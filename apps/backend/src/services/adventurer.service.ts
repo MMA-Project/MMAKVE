@@ -1,7 +1,7 @@
 import { prisma } from "../prisma-client";
 import { AppError, ErrorCodes } from "../utils/error";
 import bcrypt from "bcryptjs";
-import type { Adventurer, AdventurerType } from "@mmakve/shared";
+import type { Adventurer, AdventurerStatus, AdventurerType } from "@mmakve/shared";
 
 /**
  * ! Rôle: Assistant
@@ -13,7 +13,7 @@ export async function getAll(params?: {
     guildId?: string;
     minXp?: number;
     maxXp?: number;
-}): Promise<Adventurer[]> {
+}): Promise<Adventurer[] | []> {
     const where: any = {};
 
     if (params?.type) {
@@ -45,24 +45,19 @@ export async function getAll(params?: {
         orderBy: { xp: "desc" },
     });
 
-    return adventurers.map((a: any) => ({
-        id: a.id,
-        user: a.user
+    return adventurers.map((adventurer) => ({
+        id: adventurer.id,
+        user: adventurer.user
             ? {
-                  id: a.user.id,
-                  name: a.user.username,
-                  role: a.user.role,
-                  createdAt: new Date(a.user.createdAt),
+                  id: adventurer.user.id,
+                  name: adventurer.user.name,
+                  role: adventurer.user.role,
+                  createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
-        type: a.type as unknown as AdventurerType,
-        status: a.status.toLowerCase() as
-            | "available"
-            | "on_quest"
-            | "injured"
-            | "dead"
-            | "sleeping",
-        xp: a.xp,
+        type: adventurer.type as unknown as AdventurerType,
+        status: adventurer.status.toLowerCase() as AdventurerStatus,
+        xp: adventurer.xp,
     }));
 }
 
@@ -91,18 +86,13 @@ export async function getById(id: string): Promise<Adventurer | null> {
         user: adventurer.user
             ? {
                   id: adventurer.user.id,
-                  name: adventurer.user.username,
+                  name: adventurer.user.name,
                   role: adventurer.user.role,
                   createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
         type: adventurer.type as unknown as AdventurerType,
-        status: adventurer.status.toLowerCase() as
-            | "available"
-            | "on_quest"
-            | "injured"
-            | "dead"
-            | "sleeping",
+        status: adventurer.status.toLowerCase() as AdventurerStatus,
         xp: adventurer.xp,
     };
 }
@@ -135,12 +125,7 @@ export async function getByQuest(questId: string): Promise<Adventurer[]> {
               }
             : (null as any),
         type: assignment.adventurer.type as unknown as AdventurerType,
-        status: assignment.adventurer.status.toLowerCase() as
-            | "available"
-            | "on_quest"
-            | "injured"
-            | "dead"
-            | "sleeping",
+        status: assignment.adventurer.status.toLowerCase() as AdventurerStatus,
         xp: assignment.adventurer.xp,
     }));
 }
@@ -168,7 +153,7 @@ export async function create(data: {
 
     // Check if username already exists
     const existingUser = await prisma.user.findUnique({
-        where: { username: data.username },
+        where: { name: data.name },
     });
     if (existingUser) {
         throw new AppError(ErrorCodes.USERNAME_TAKEN, "Username already taken", 409);
@@ -215,17 +200,12 @@ export async function create(data: {
         id: result.adventurer.id,
         user: {
             id: result.user.id,
-            name: result.user.username,
+            name: result.user.name,
             role: result.user.role,
             createdAt: new Date(result.user.createdAt),
         },
         type: result.adventurer.type as unknown as AdventurerType,
-        status: result.adventurer.status.toLowerCase() as
-            | "available"
-            | "on_quest"
-            | "injured"
-            | "dead"
-            | "sleeping",
+        status: result.adventurer.status.toLowerCase() as AdventurerStatus,
         xp: result.adventurer.xp,
     };
 }
@@ -283,18 +263,13 @@ export async function modify(
         user: adventurer.user
             ? {
                   id: adventurer.user.id,
-                  name: adventurer.user.username,
+                  name: adventurer.user.name,
                   role: adventurer.user.role,
                   createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
         type: adventurer.type as unknown as AdventurerType,
-        status: adventurer.status.toLowerCase() as
-            | "available"
-            | "on_quest"
-            | "injured"
-            | "dead"
-            | "sleeping",
+        status: adventurer.status.toLowerCase() as AdventurerStatus,
         xp: adventurer.xp,
     };
 }

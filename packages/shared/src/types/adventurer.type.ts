@@ -1,3 +1,4 @@
+import { Guild } from "./guild.type";
 import { User } from "./user.type";
 
 export enum AdventurerType {
@@ -20,7 +21,8 @@ export enum AdventurerStatus {
     ON_QUEST = "on_quest",
     INJURED = "injured",
     DEAD = "dead",
-    SLEEPING = "sleeping",
+    RESTING = "resting",
+    LEAVED = "leaved",
 }
 
 export type Adventurer = {

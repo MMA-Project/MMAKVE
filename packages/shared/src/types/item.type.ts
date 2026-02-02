@@ -28,15 +28,28 @@ export enum ItemName {
     ARROW = "Arrow",
 }
 
+export enum ItemStatus {
+    AVAILABLE = "AVAILABLE",
+    IN_USE = "IN_USE",
+    CONSUMED = "CONSUMED",
+    BROKEN = "BROKEN",
+    LOST = "LOST",
+}
+
 export type Item = {
     id: string;
     name: ItemName;
     description: string;
-    durability: number;
+    durability?: number;
+    maxDurability?: number;
+    quantity?: number;
+    isConsumable: boolean;
     price: number;
     type: ItemType;
     rarity: ItemRarity;
     profiles: AdventurerType[];
+    status: ItemStatus;
+    questId?: string;
 };
 
 export type ItemCreation = Omit<Item, "id">;

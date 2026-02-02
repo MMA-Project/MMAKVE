@@ -1,24 +1,24 @@
-import { type Item, ItemType } from "../../../../../packages/shared/src/types/item.type";
+import type { Item } from "../../../../../packages/shared/src/types/item.type";
 import { itemRarityColors } from "../../utils/itemRarityColors";
+import { itemImages, itemEmojis } from "../../utils/itemConstants";
 
 export function ItemCase({ item }: { item: Item }) {
+    const imageSrc = itemImages[item.name];
+    const emoji = itemEmojis[item.name];
+
     return (
         <div
             className="w-12 h-12 flex items-center justify-center rounded bg-slate-700"
             style={{
                 boxShadow: `inset 0 0 10px ${itemRarityColors[item.rarity]}`,
             }}
+            title={`${item.name} - Durabilité: ${item.durability}%`}
         >
-            <img
-                src={
-                    item.type === ItemType.WEAPON
-                        ? "/src/assets/sword.png"
-                        : "/src/assets/chest.png"
-                }
-                alt={item.name}
-                className="w-8 h-8"
-                title={`${item.name} - Durabilité: ${item.durability}`}
-            />
+            {imageSrc ? (
+                <img src={imageSrc} alt={item.name} className="w-8 h-8 object-contain" />
+            ) : (
+                <span className="text-2xl">{emoji}</span>
+            )}
         </div>
     );
 }

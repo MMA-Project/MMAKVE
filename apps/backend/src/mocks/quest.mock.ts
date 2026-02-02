@@ -1,4 +1,4 @@
-import { AdventurerType, Quest, QuestStatus } from "@mmakve/shared";
+import { AdventurerStatus, AdventurerType, Quest, QuestStatus } from "@mmakve/shared";
 
 export const mockQuests: Quest[] = [
     {
@@ -55,7 +55,7 @@ export const mockQuests: Quest[] = [
                             createdAt: new Date("2024-01-15T14:45:00Z"),
                         },
                         type: AdventurerType.BARBARIAN,
-                        status: "available",
+                        status: AdventurerStatus.AVAILABLE,
                         xp: 2800,
                     },
                 },

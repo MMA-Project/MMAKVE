@@ -3,19 +3,19 @@ import * as AuthService from "../services/auth.service";
 import { sendError, ErrorCodes, AppError } from "../utils/error";
 
 export const register = async (req: Request, res: Response) => {
-    const { username, password, role } = req.body;
+    const { name, password, role } = req.body;
     try {
-        if (!username || !password) {
+        if (!name || !password) {
             throw new AppError(
                 ErrorCodes.VALIDATION_ERROR,
                 "Username and password are required",
                 422,
             );
         }
-        const user = await AuthService.register({ username, password, role });
-        const token = await AuthService.login({ username, password });
+        const user = await AuthService.register({ name, password, role });
+        const token = await AuthService.login({ name, password });
         return res.status(201).json({
-            user: { id: user.id, username: user.username, role: user.role },
+            user: { id: user.id, name: user.name, role: user.role },
             token,
         });
     } catch (err: any) {
@@ -35,9 +35,9 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-    const { username, password } = req.body;
+    const { name, password } = req.body;
     try {
-        if (!username || !password) {
+        if (!name || !password) {
             return sendError(
                 res,
                 ErrorCodes.VALIDATION_ERROR,
@@ -45,15 +45,15 @@ export const login = async (req: Request, res: Response) => {
                 { status: 422 },
             );
         }
-        const token = await AuthService.login({ username, password });
-        const user = await AuthService.findByUsername(username);
+        const token = await AuthService.login({ name, password });
+        const user = await AuthService.findByName(name);
         if (!user) {
             return sendError(res, ErrorCodes.AUTH_USER_NOT_FOUND, "User not found", {
                 status: 404,
             });
         }
         return res.json({
-            user: { id: user.id, username: user.username, role: user.role },
+            user: { id: user.id, username: user.name, role: user.role },
             token,
         });
     } catch (err: any) {

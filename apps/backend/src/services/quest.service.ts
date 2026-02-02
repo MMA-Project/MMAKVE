@@ -198,12 +198,9 @@ export const validate = async (id: string): Promise<Quest | null> => {
 };
 
 export const cancel = async (id: string): Promise<Quest | null> => {
-    await prisma.questAssignment.deleteMany({
-        where: { questId: id },
-    });
-
-    const quest = await prisma.quest.delete({
+    const quest = await prisma.quest.update({
         where: { id },
+        data: { status: QuestStatus.CANCELED as any },
         include: {
             assignments: true,
         },

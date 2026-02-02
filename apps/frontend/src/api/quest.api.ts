@@ -1,14 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     AdventurerStatus,
     AdventurerType,
 } from "../../../../packages/shared/src/types/adventurer.type";
 import {
+    ItemName,
+    ItemType,
+    ItemRarity,
+    ItemStatus,
+} from "../../../../packages/shared/src/types/item.type";
+import {
     type Quest,
     type QuestCreation,
     QuestStatus,
 } from "../../../../packages/shared/src/types/quest.type";
-import { ItemName, ItemRarity, ItemType } from "../../../../packages/shared/src/types/item.type";
+import { type Role } from "../../../../packages/shared/src/types/user.type";
 
 export const mockQuests: Quest[] = [
     {
@@ -16,19 +22,19 @@ export const mockQuests: Quest[] = [
         requester: {
             id: "1004",
             name: "Lyria Moonshadow",
-            role: "CLIENT",
+            role: "CLIENT" as Role,
             createdAt: new Date("2024-02-20T12:00:00Z"),
         },
         title: "Retrieve the Azure Gem",
         description:
             "A precious gem was stolen by a band of river raiders. Retrieve it and return it safely.",
-        deadline: new Date("2025-10-15T23:59:59Z"),
+        deadline: new Date("2026-01-15T23:59:59Z"),
         reward: 150,
         status: QuestStatus.COMPLETED,
         options: {
             profils: [AdventurerType.ENCHANTER, AdventurerType.PRIEST],
-            start_date: new Date("2025-10-01T10:00:00Z"),
-            end_date: new Date("2025-10-15T23:59:59Z"),
+            start_date: new Date("2026-01-01T10:00:00Z"),
+            end_date: new Date("2026-01-15T23:59:59Z"),
             xp_required: 1200,
             assignments: [
                 {
@@ -37,22 +43,71 @@ export const mockQuests: Quest[] = [
                         {
                             id: "301",
                             name: ItemName.STAFF,
-                            description: "A basic staff.",
-                            durability: 1,
-                            price: 25,
+                            description: "An enchanted staff infused with arcane energy.",
+                            durability: 95,
+                            maxDurability: 100,
+                            isConsumable: false,
+                            price: 450,
                             type: ItemType.WEAPON,
-                            rarity: ItemRarity.COMMON,
-                            profiles: [],
+                            rarity: ItemRarity.RARE,
+                            profiles: [AdventurerType.ENCHANTER, AdventurerType.ARCANE_MAGE],
+                            status: ItemStatus.IN_USE,
+                            questId: "1",
                         },
                         {
                             id: "302",
                             name: ItemName.ARMOR,
-                            description: "Epic protective gear.",
-                            durability: 1,
-                            price: 25,
+                            description: "Epic protective robes woven with magic resistance.",
+                            durability: 88,
+                            maxDurability: 100,
+                            isConsumable: false,
+                            price: 780,
                             type: ItemType.ARMOR,
                             rarity: ItemRarity.EPIC,
+                            profiles: [AdventurerType.ENCHANTER],
+                            status: ItemStatus.IN_USE,
+                            questId: "1",
+                        },
+                        {
+                            id: "304",
+                            name: ItemName.HEALING_POTION,
+                            description: "A potent healing elixir.",
+                            quantity: 3,
+                            isConsumable: true,
+                            price: 50,
+                            type: ItemType.POTION,
+                            rarity: ItemRarity.UNCOMMON,
                             profiles: [],
+                            status: ItemStatus.IN_USE,
+                            questId: "1",
+                        },
+                        {
+                            id: "305",
+                            name: ItemName.MAGIC_RING,
+                            description: "A legendary ring that amplifies magical abilities.",
+                            durability: 100,
+                            maxDurability: 100,
+                            isConsumable: false,
+                            price: 1200,
+                            type: ItemType.MISC,
+                            rarity: ItemRarity.LEGENDARY,
+                            profiles: [AdventurerType.ENCHANTER, AdventurerType.ARCANE_MAGE],
+                            status: ItemStatus.IN_USE,
+                            questId: "1",
+                        },
+                        {
+                            id: "306",
+                            name: ItemName.HELMET,
+                            description: "A mystical helmet with protective enchantments.",
+                            durability: 92,
+                            maxDurability: 100,
+                            isConsumable: false,
+                            price: 320,
+                            type: ItemType.ARMOR,
+                            rarity: ItemRarity.RARE,
+                            profiles: [],
+                            status: ItemStatus.IN_USE,
+                            questId: "1",
                         },
                     ],
                     adventurer: {
@@ -61,7 +116,7 @@ export const mockQuests: Quest[] = [
                             id: "501",
                             name: "Elara Swiftwind",
                             role: "ADVENTURER",
-                            createdAt: new Date("2024-01-10T09:30:00Z"),
+                            createdAt: new Date("2025-01-10T09:30:00Z"),
                         },
                         type: AdventurerType.ENCHANTER,
                         status: AdventurerStatus.AVAILABLE,
@@ -74,12 +129,43 @@ export const mockQuests: Quest[] = [
                         {
                             id: "303",
                             name: ItemName.DAGGER,
-                            description: "A sharp dagger.",
-                            durability: 1,
-                            price: 15,
+                            description: "A poisoned dagger perfect for stealth attacks.",
+                            durability: 78,
+                            maxDurability: 100,
+                            isConsumable: false,
+                            price: 280,
+                            type: ItemType.WEAPON,
+                            rarity: ItemRarity.RARE,
+                            profiles: [AdventurerType.ROGUE],
+                            status: ItemStatus.IN_USE,
+                            questId: "2",
+                        },
+                        {
+                            id: "307",
+                            name: ItemName.BOW,
+                            description: "A silent crossbow for ranged precision.",
+                            durability: 85,
+                            maxDurability: 100,
+                            isConsumable: false,
+                            price: 340,
                             type: ItemType.WEAPON,
                             rarity: ItemRarity.UNCOMMON,
+                            profiles: [AdventurerType.ROGUE, AdventurerType.ARCHER],
+                            status: ItemStatus.IN_USE,
+                            questId: "2",
+                        },
+                        {
+                            id: "308",
+                            name: ItemName.HEALING_POTION,
+                            description: "Emergency healing potion.",
+                            quantity: 2,
+                            isConsumable: true,
+                            price: 50,
+                            type: ItemType.POTION,
+                            rarity: ItemRarity.COMMON,
                             profiles: [],
+                            status: ItemStatus.IN_USE,
+                            questId: "2",
                         },
                     ],
                     adventurer: {
@@ -88,10 +174,10 @@ export const mockQuests: Quest[] = [
                             id: "502",
                             name: "Thalion the Swift",
                             role: "ADVENTURER",
-                            createdAt: new Date("2024-01-12T11:15:00Z"),
+                            createdAt: new Date("2025-03-12T11:15:00Z"),
                         },
                         type: AdventurerType.ROGUE,
-                        status: AdventurerStatus.AVAILABLE,
+                        status: AdventurerStatus.INJURED,
                         xp: 3000,
                     },
                 },
@@ -109,25 +195,81 @@ export const mockQuests: Quest[] = [
         title: "Clear the Forgotten Mines",
         description:
             "The old mine tunnels have been infested by earth elementals. Clear them so miners can return.",
-        deadline: new Date("2025-10-30T23:59:59Z"),
+        deadline: new Date("2026-02-15T23:59:59Z"),
         reward: 300,
         status: QuestStatus.IN_PROGRESS,
         options: {
             profils: [AdventurerType.BARBARIAN, AdventurerType.PALADIN],
-            start_date: new Date("2025-10-25T09:00:00Z"),
-            end_date: new Date("2025-10-30T17:00:00Z"),
+            start_date: new Date("2026-01-25T09:00:00Z"),
+            end_date: new Date("2026-02-15T17:00:00Z"),
             xp_required: 2400,
             assignments: [
                 {
                     id: "3",
-                    items: [],
+                    items: [
+                        {
+                            id: "309",
+                            name: ItemName.AXE,
+                            description: "A massive battle axe forged for destruction.",
+                            durability: 92,
+                            maxDurability: 100,
+                            isConsumable: false,
+                            price: 420,
+                            type: ItemType.WEAPON,
+                            rarity: ItemRarity.EPIC,
+                            profiles: [AdventurerType.BARBARIAN, AdventurerType.WARRIOR],
+                            status: ItemStatus.IN_USE,
+                            questId: "2",
+                        },
+                        {
+                            id: "310",
+                            name: ItemName.SHIELD,
+                            description: "A reinforced shield for heavy combat.",
+                            durability: 88,
+                            maxDurability: 100,
+                            isConsumable: false,
+                            price: 250,
+                            type: ItemType.ARMOR,
+                            rarity: ItemRarity.UNCOMMON,
+                            profiles: [AdventurerType.BARBARIAN, AdventurerType.PALADIN],
+                            status: ItemStatus.IN_USE,
+                            questId: "2",
+                        },
+                        {
+                            id: "311",
+                            name: ItemName.HEALING_POTION,
+                            description: "A restorative potion for battle wounds.",
+                            quantity: 5,
+                            isConsumable: true,
+                            price: 50,
+                            type: ItemType.POTION,
+                            rarity: ItemRarity.COMMON,
+                            profiles: [],
+                            status: ItemStatus.IN_USE,
+                            questId: "2",
+                        },
+                        {
+                            id: "312",
+                            name: ItemName.HELMET,
+                            description: "A sturdy iron helmet for protection.",
+                            durability: 95,
+                            maxDurability: 100,
+                            isConsumable: false,
+                            price: 180,
+                            type: ItemType.ARMOR,
+                            rarity: ItemRarity.COMMON,
+                            profiles: [],
+                            status: ItemStatus.IN_USE,
+                            questId: "2",
+                        },
+                    ],
                     adventurer: {
                         id: "503",
                         user: {
                             id: "503",
                             name: "Gorak Stonefist",
                             role: "ADVENTURER",
-                            createdAt: new Date("2024-01-15T14:45:00Z"),
+                            createdAt: new Date("2025-05-15T14:45:00Z"),
                         },
                         type: AdventurerType.BARBARIAN,
                         status: AdventurerStatus.ON_QUEST,
@@ -148,13 +290,13 @@ export const mockQuests: Quest[] = [
         title: "Escort the Merchant Caravan",
         description:
             "A caravan needs protection through bandit-prone passes. Ensure all wagons reach the next town.",
-        deadline: new Date("2025-12-01T23:59:59Z"),
+        deadline: new Date("2026-03-15T23:59:59Z"),
         reward: 220,
         status: QuestStatus.APPROVED,
         options: {
             profils: [AdventurerType.ROGUE, AdventurerType.WARRIOR, AdventurerType.PRIEST],
-            start_date: new Date("2025-11-28T08:00:00Z"),
-            end_date: new Date("2025-12-12T20:00:00Z"),
+            start_date: new Date("2026-03-10T08:00:00Z"),
+            end_date: new Date("2026-03-15T20:00:00Z"),
             xp_required: 1800,
             assignments: [],
         },
@@ -170,7 +312,7 @@ export const mockQuests: Quest[] = [
         title: "Seal the Rift at Blackfen",
         description:
             "A magical rift is leaking corrupting energies. Seal it before the swamp spreads further.",
-        deadline: new Date("2025-11-20T23:59:59Z"),
+        deadline: new Date("2026-02-20T23:59:59Z"),
         reward: 500,
         status: QuestStatus.PENDING,
     },
@@ -185,13 +327,13 @@ export const mockQuests: Quest[] = [
         title: "Rescue the Lost Scouts",
         description:
             "A group of scouts went missing in the Darkwood Forest. Find and rescue them safely.",
-        deadline: new Date("2025-10-22T23:59:59Z"),
+        deadline: new Date("2026-01-22T23:59:59Z"),
         reward: 350,
         status: QuestStatus.FAILED,
         options: {
             profils: [AdventurerType.ARCHER, AdventurerType.ROGUE],
-            start_date: new Date("2025-10-15T10:00:00Z"),
-            end_date: new Date("2025-10-22T23:59:59Z"),
+            start_date: new Date("2026-01-15T10:00:00Z"),
+            end_date: new Date("2026-01-22T23:59:59Z"),
             xp_required: 1500,
             assignments: [],
         },
@@ -207,13 +349,13 @@ export const mockQuests: Quest[] = [
         title: "Investigate the Haunted Ruins",
         description:
             "Strange noises and lights have been reported in the old ruins. Investigate the source.",
-        deadline: new Date("2025-11-05T23:59:59Z"),
+        deadline: new Date("2026-03-05T23:59:59Z"),
         reward: 400,
         status: QuestStatus.PENDING,
     },
 ];
 
-export const useQuest = () => {
+export const useQuests = () => {
     const fetchQuests = async (): Promise<Quest[]> => {
         return mockQuests;
     };
@@ -224,7 +366,7 @@ export const useQuest = () => {
         initialData: mockQuests,
     });
 
-    return { getQuests };
+    return getQuests;
 };
 
 export const useQuestById = (id: string) => {
@@ -251,4 +393,22 @@ export const useCreateQuest = () => {
     };
 
     return { createQuest };
+};
+
+export const useCancelQuest = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async (questId: string): Promise<void> => {
+            const quest = mockQuests.find((q) => q.id === questId);
+            if (quest) {
+                quest.status = QuestStatus.CANCELED;
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["quests"] });
+        },
+    });
+
+    return mutation;
 };
