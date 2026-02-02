@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Guild } from "../../../../packages/shared/src/types/guild.type";
+import type { Item } from "../../../../packages/shared/src/types/item.type";
 import {
     ItemName,
     ItemRarity,
@@ -565,6 +566,41 @@ export function useGuild() {
         queryFn: fetchGuild,
     });
     return getGuild;
+}
+
+export function useAddItem() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newItem: Item) => {
+            if (mockGuildApi.inventory) {
+                mockGuildApi.inventory.push(newItem);
+            }
+            return Promise.resolve();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["guild"] });
+        },
+    });
+}
+
+export function useUpdateItem() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (updatedItem: Item) => {
+            if (mockGuildApi.inventory) {
+                const index = mockGuildApi.inventory.findIndex(
+                    (item) => item.id === updatedItem.id,
+                );
+                if (index !== -1) {
+                    mockGuildApi.inventory[index] = updatedItem;
+                }
+            }
+            return Promise.resolve();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["guild"] });
+        },
+    });
 }
 
 export { mockGuildApi };

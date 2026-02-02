@@ -1,4 +1,7 @@
-import { AdventurerType } from "../../../../packages/shared/src/types/adventurer.type";
+import {
+    AdventurerStatus,
+    AdventurerType,
+} from "../../../../packages/shared/src/types/adventurer.type";
 
 import adventurerImg from "../assets/adventurer.png";
 import alchemyImg from "../assets/alchemy.png";
@@ -43,18 +46,20 @@ export const typeLabels: Record<AdventurerType, string> = {
     [AdventurerType.WARRIOR]: "Guerrier",
 };
 
-export const statusColors: Record<string, string> = {
-    available: "bg-green-500",
-    on_quest: "bg-blue-500",
-    injured: "bg-orange-500",
-    dead: "bg-red-500",
-    sleeping: "bg-purple-500",
+export const statusColors: Record<AdventurerStatus, string> = {
+    [AdventurerStatus.AVAILABLE]: "bg-green-500",
+    [AdventurerStatus.ON_QUEST]: "bg-blue-500",
+    [AdventurerStatus.INJURED]: "bg-orange-500",
+    [AdventurerStatus.DEAD]: "bg-red-500",
+    [AdventurerStatus.RESTING]: "bg-purple-500",
+    [AdventurerStatus.LEAVED]: "bg-slate-500",
 };
 
-export const statusLabels: Record<string, string> = {
-    available: "Disponible",
-    on_quest: "En quête",
-    injured: "Blessé",
-    dead: "Décédé",
-    sleeping: "Endormi",
+export const statusLabels: Record<AdventurerStatus, string> = {
+    [AdventurerStatus.AVAILABLE]: "Disponible",
+    [AdventurerStatus.ON_QUEST]: "En quête",
+    [AdventurerStatus.INJURED]: "Blessé",
+    [AdventurerStatus.DEAD]: "Décédé",
+    [AdventurerStatus.RESTING]: "Au repos",
+    [AdventurerStatus.LEAVED]: "Parti",
 };

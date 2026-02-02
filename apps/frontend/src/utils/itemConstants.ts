@@ -1,4 +1,4 @@
-import { ItemName } from "../../../../packages/shared/src/types/item.type";
+import { ItemName, ItemRarity, ItemType } from "../../../../packages/shared/src/types/item.type";
 
 import swordImg from "../assets/sword.png";
 import axeImg from "../assets/axe.png";
@@ -34,4 +34,33 @@ export const itemEmojis: Record<ItemName, string> = {
     [ItemName.HEALING_POTION]: "🧪",
     [ItemName.MAGIC_RING]: "💍",
     [ItemName.ARROW]: "➳",
+};
+
+export const itemNameLabels: Record<ItemName, string> = {
+    [ItemName.SWORD]: "Épée",
+    [ItemName.SHIELD]: "Bouclier",
+    [ItemName.HELMET]: "Casque",
+    [ItemName.HEALING_POTION]: "Potion de soin",
+    [ItemName.MAGIC_RING]: "Anneau magique",
+    [ItemName.BOW]: "Arc",
+    [ItemName.DAGGER]: "Dague",
+    [ItemName.STAFF]: "Bâton",
+    [ItemName.ARMOR]: "Armure",
+    [ItemName.AXE]: "Hache",
+    [ItemName.ARROW]: "Flèche",
+};
+
+export const itemTypeLabels: Record<ItemType, string> = {
+    [ItemType.WEAPON]: "Arme",
+    [ItemType.ARMOR]: "Armure",
+    [ItemType.POTION]: "Potion",
+    [ItemType.MISC]: "Divers",
+};
+
+export const itemRarityLabels: Record<ItemRarity, string> = {
+    [ItemRarity.COMMON]: "Commun",
+    [ItemRarity.UNCOMMON]: "Inhabituel",
+    [ItemRarity.RARE]: "Rare",
+    [ItemRarity.EPIC]: "Épique",
+    [ItemRarity.LEGENDARY]: "Légendaire",
 };

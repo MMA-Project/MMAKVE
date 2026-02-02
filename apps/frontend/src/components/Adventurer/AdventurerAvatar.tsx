@@ -1,4 +1,7 @@
-import { AdventurerType } from "../../../../../packages/shared/src/types/adventurer.type";
+import {
+    AdventurerStatus,
+    AdventurerType,
+} from "../../../../../packages/shared/src/types/adventurer.type";
 import {
     adventurerImages,
     typeLabels,
@@ -8,7 +11,7 @@ import {
 
 interface AdventurerAvatarProps {
     type: AdventurerType;
-    status: string;
+    status: AdventurerStatus;
     name: string;
 }
 

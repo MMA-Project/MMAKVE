@@ -32,6 +32,8 @@ export enum ItemStatus {
     AVAILABLE = "AVAILABLE",
     IN_USE = "IN_USE",
     CONSUMED = "CONSUMED",
+    BROKEN = "BROKEN",
+    LOST = "LOST",
 }
 
 export type Item = {

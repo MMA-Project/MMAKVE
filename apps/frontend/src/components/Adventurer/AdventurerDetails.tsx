@@ -4,6 +4,7 @@ import { XpProgressBar } from "./AdventurerProgressBar";
 import avatarImage from "../../assets/swordsman.png";
 import type { Adventurer } from "../../../../../packages/shared/src/types/adventurer.type";
 import type { Item } from "../../../../../packages/shared/src/types/item.type";
+import { statusColors, statusLabels } from "../../utils/adventurerImages";
 
 export function AdventurerDetails({
     adventurer,
@@ -22,21 +23,14 @@ export function AdventurerDetails({
                         className="w-16 h-16 rounded-full border-2 border-slate-700"
                     />
                     <span
-                        className="absolute top-0 left-0 w-4 h-4 rounded-full border-2 border-slate-800"
-                        style={{
-                            backgroundColor:
-                                adventurer.status === "available"
-                                    ? "green"
-                                    : adventurer.status === "sleeping"
-                                      ? "red"
-                                      : "gray",
-                        }}
-                        title={`Status: ${adventurer.status}`}
+                        className={`absolute top-0 left-0 w-4 h-4 rounded-full border-2 border-slate-800 ${statusColors[adventurer.status]}`}
+                        title={statusLabels[adventurer.status]}
                     ></span>
                 </div>
                 <div>
                     <h3 className="text-xl font-semibold">Aventurier: {adventurer.user.name}</h3>
                     <p>Type: {adventurer.type}</p>
+                    <p>Statut: {statusLabels[adventurer.status]}</p>
                     <p>LVL: {XPtoLvl(adventurer.xp)}</p>
                 </div>
             </div>

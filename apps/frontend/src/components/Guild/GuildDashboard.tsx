@@ -26,11 +26,11 @@ export function GuildDashboard() {
                     </h1>
                     <p className="text-slate-400">Gestion des ressources et de l'inventaire</p>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-1">
+                <div className="flex flex-row gap-6">
+                    <div className="w-full">
                         <Bank bank={getGuild.data.bank} />
                     </div>
-                    <div className="lg:col-span-2">
+                    <div className="w-full">
                         <GuildInventory inventory={getGuild.data.inventory ?? []} />
                     </div>
                 </div>

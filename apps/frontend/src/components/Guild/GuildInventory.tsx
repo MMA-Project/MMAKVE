@@ -1,9 +1,26 @@
+import { useState } from "react";
 import type { Item } from "../../../../../packages/shared/src/types/item.type";
 import { ItemRarity, ItemStatus } from "../../../../../packages/shared/src/types/item.type";
 import { Link } from "react-router-dom";
-import { itemImages, itemEmojis } from "../../utils/itemConstants";
+import {
+    itemEmojis,
+    itemImages,
+    itemNameLabels,
+    itemRarityLabels,
+    itemTypeLabels,
+} from "../../utils/itemConstants";
+import { ItemModal } from "./ItemModal";
+import { useAddItem, useUpdateItem } from "../../api/guildApi";
+import { UpdateButton } from "../Buttons/UpdateButton";
+import { DeleteButton } from "../Buttons/DeleteButton";
+import { ItemStatusBadge } from "../Item/ItemStatusBadge";
 
 export function GuildInventory({ inventory }: { inventory: Item[] }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState<Item | undefined>();
+    const addItem = useAddItem();
+    const updateItem = useUpdateItem();
+
     const availableItems = inventory.filter((item) => item.status === ItemStatus.AVAILABLE);
     const inUseItems = inventory.filter((item) => item.status === ItemStatus.IN_USE);
 
@@ -15,18 +32,6 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
         [ItemRarity.RARE]: "text-blue-400",
         [ItemRarity.EPIC]: "text-purple-400",
         [ItemRarity.LEGENDARY]: "text-orange-400",
-    };
-
-    const statusColors = {
-        [ItemStatus.AVAILABLE]: "bg-green-900/30 text-green-400 border-green-700",
-        [ItemStatus.IN_USE]: "bg-blue-900/30 text-blue-400 border-blue-700",
-        [ItemStatus.CONSUMED]: "bg-gray-900/30 text-gray-400 border-gray-700",
-    };
-
-    const statusLabels = {
-        [ItemStatus.AVAILABLE]: "Disponible",
-        [ItemStatus.IN_USE]: "En utilisation",
-        [ItemStatus.CONSUMED]: "Consommé",
     };
 
     return (
@@ -41,11 +46,26 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                         {inventory.length} total
                     </p>
                 </div>
-                <div className="text-right">
-                    <p className="text-sm text-slate-400">Valeur totale</p>
-                    <p className="text-xl font-bold text-amber-400">
-                        {new Intl.NumberFormat("fr-FR").format(totalValue)} po
-                    </p>
+                <div className="flex flex-col items-end gap-3">
+                    <div>
+                        <p className="text-sm text-slate-400">Valeur totale</p>
+                        <p className="text-xl font-bold text-amber-400">
+                            {new Intl.NumberFormat("fr-FR").format(totalValue)} po
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:cursor-pointer hover:bg-slate-800 transition mb-6"
+                onClick={() => {
+                    setEditingItem(undefined);
+                    setIsModalOpen(true);
+                }}
+            >
+                <div className="flex items-center justify-center gap-2 text-slate-400">
+                    <span>+</span>
+                    <span>Ajouter un nouvel objet</span>
                 </div>
             </div>
 
@@ -53,21 +73,25 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                 <table className="w-full text-sm">
                     <thead className="border-b border-slate-700">
                         <tr className="text-left text-slate-400 uppercase tracking-wide text-xs">
-                            <th className="pb-3 font-semibold">Icône</th>
-                            <th className="pb-3 font-semibold">Nom</th>
-                            <th className="pb-3 font-semibold">Type</th>
-                            <th className="pb-3 font-semibold">Rareté</th>
-                            <th className="pb-3 font-semibold">Durabilité/Qté</th>
-                            <th className="pb-3 font-semibold">Prix</th>
-                            <th className="pb-3 font-semibold">Statut</th>
-                            <th className="pb-3 font-semibold">Quête</th>
+                            <th className="pb-3 px-2 font-semibold text-center">Icône</th>
+                            <th className="pb-3 px-2 font-semibold">Nom</th>
+                            <th className="pb-3 px-2 font-semibold">Type</th>
+                            <th className="pb-3 px-2 font-semibold">Rareté</th>
+                            <th className="pb-3 px-2 font-semibold">Durabilité/Qté</th>
+                            <th className="pb-3 px-2 font-semibold text-center">Prix</th>
+                            <th className="pb-3 px-2 font-semibold text-center">Statut</th>
+                            <th className="pb-3 px-2 font-semibold text-center">Quête</th>
+                            <th className="pb-3 px-2 font-semibold text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-700/50">
                         {inventory.map((item) => (
-                            <tr key={item.id} className="hover:bg-slate-700/30 transition-colors">
-                                <td className="py-3">
-                                    <div className="flex items-center justify-center w-8 h-8">
+                            <tr
+                                key={item.id}
+                                className="hover:bg-slate-700/30 transition-colors group"
+                            >
+                                <td className="py-3 px-2">
+                                    <div className="flex items-center justify-center w-8 h-8 mx-auto">
                                         {itemImages[item.name] ? (
                                             <img
                                                 src={itemImages[item.name]!}
@@ -79,23 +103,27 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                                         )}
                                     </div>
                                 </td>
-                                <td className="py-3">
+                                <td className="py-3 px-2">
                                     <div>
-                                        <p className="font-medium text-slate-200">{item.name}</p>
+                                        <p className="font-medium text-slate-200">
+                                            {itemNameLabels[item.name]}
+                                        </p>
                                         <p className="text-xs text-slate-500 truncate max-w-xs">
                                             {item.description}
                                         </p>
                                     </div>
                                 </td>
-                                <td className="py-3">
-                                    <span className="text-slate-300 capitalize">{item.type}</span>
-                                </td>
-                                <td className="py-3">
-                                    <span className={`font-semibold ${rarityColors[item.rarity]}`}>
-                                        {item.rarity}
+                                <td className="py-3 px-2">
+                                    <span className="text-slate-300">
+                                        {itemTypeLabels[item.type]}
                                     </span>
                                 </td>
-                                <td className="py-3">
+                                <td className="py-3 px-2">
+                                    <span className={`font-semibold ${rarityColors[item.rarity]}`}>
+                                        {itemRarityLabels[item.rarity]}
+                                    </span>
+                                </td>
+                                <td className="py-3 px-2">
                                     {item.isConsumable ? (
                                         <span className="text-slate-300">x{item.quantity}</span>
                                     ) : (
@@ -114,19 +142,15 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                                         </div>
                                     )}
                                 </td>
-                                <td className="py-3">
+                                <td className="py-3 px-2 text-center whitespace-nowrap">
                                     <span className="text-amber-400 font-semibold">
                                         {item.price} po
                                     </span>
                                 </td>
-                                <td className="py-3">
-                                    <span
-                                        className={`px-2 py-1 rounded text-xs border ${statusColors[item.status]}`}
-                                    >
-                                        {statusLabels[item.status]}
-                                    </span>
+                                <td className="py-3 px-2 text-center">
+                                    <ItemStatusBadge status={item.status} />
                                 </td>
-                                <td className="py-3">
+                                <td className="py-3 px-2 text-center">
                                     {item.questId ? (
                                         <Link
                                             to={`/quest/${item.questId}`}
@@ -139,11 +163,49 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                                         <span className="text-slate-600 text-xs">-</span>
                                     )}
                                 </td>
+                                <td className="py-3 px-2 text-center">
+                                    <div className="flex items-center justify-center gap-1">
+                                        <UpdateButton
+                                            onClick={() => {
+                                                setEditingItem(item);
+                                                setIsModalOpen(true);
+                                            }}
+                                        />
+                                        <DeleteButton
+                                            onClick={() => {
+                                                if (
+                                                    confirm(`Marquer ${item.name} comme consommé ?`)
+                                                ) {
+                                                    updateItem.mutate({
+                                                        ...item,
+                                                        status: ItemStatus.CONSUMED,
+                                                    });
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
+            <ItemModal
+                isOpen={isModalOpen}
+                item={editingItem}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setEditingItem(undefined);
+                }}
+                onSave={(item) => {
+                    if (editingItem) {
+                        updateItem.mutate(item);
+                    } else {
+                        addItem.mutate(item);
+                    }
+                }}
+            />
         </div>
     );
 }

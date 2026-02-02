@@ -61,7 +61,8 @@ export function AdventurerFilters() {
         [AdventurerStatus.ON_QUEST]: "En quête",
         [AdventurerStatus.INJURED]: "Blessé",
         [AdventurerStatus.DEAD]: "Décédé",
-        [AdventurerStatus.SLEEPING]: "Endormi",
+        [AdventurerStatus.RESTING]: "Au repos",
+        [AdventurerStatus.LEAVED]: "Parti",
     };
 
     const toggleType = (typeValue: AdventurerType) => {
