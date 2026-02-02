@@ -49,51 +49,53 @@ export default function App() {
     return (
         <>
             {user && <Navbar />}
-            <Routes>
-                <Route
-                    path="/dashboard"
-                    element={
-                        <Protected>
-                            <Dashboard />
-                        </Protected>
-                    }
-                />
-                <Route
-                    path="/quest/:id"
-                    element={
-                        <Protected>
-                            <QuestPage />
-                        </Protected>
-                    }
-                />
-                <Route
-                    path="/adventurers"
-                    element={
-                        <Protected>
-                            <AdventurerDashboard />
-                        </Protected>
-                    }
-                />
-                <Route
-                    path="/adventurer/:id"
-                    element={
-                        <Protected>
-                            <AdventurerDetails />
-                        </Protected>
-                    }
-                />
-                <Route
-                    path="/guild"
-                    element={
-                        <Protected>
-                            <GuildDashboard />
-                        </Protected>
-                    }
-                />
-                <Route path="/" element={<LoginRoute />} />
-                <Route path="/logout" element={<LogoutRoute />} />
-                <Route path="*" element={<NotFound />} />
-            </Routes>
+            <div className={user ? "pt-16" : ""}>
+                <Routes>
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <Protected>
+                                <Dashboard />
+                            </Protected>
+                        }
+                    />
+                    <Route
+                        path="/quest/:id"
+                        element={
+                            <Protected>
+                                <QuestPage />
+                            </Protected>
+                        }
+                    />
+                    <Route
+                        path="/adventurers"
+                        element={
+                            <Protected>
+                                <AdventurerDashboard />
+                            </Protected>
+                        }
+                    />
+                    <Route
+                        path="/adventurer/:id"
+                        element={
+                            <Protected>
+                                <AdventurerDetails />
+                            </Protected>
+                        }
+                    />
+                    <Route
+                        path="/guild"
+                        element={
+                            <Protected>
+                                <GuildDashboard />
+                            </Protected>
+                        }
+                    />
+                    <Route path="/" element={<LoginRoute />} />
+                    <Route path="/logout" element={<LogoutRoute />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </div>
         </>
     );
 }

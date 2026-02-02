@@ -4,11 +4,10 @@ import { QuestProgressBar } from "./QuestProgressBar";
 import { computeProgress } from "../../utils/progressBar";
 import ReturnButton from "../Nav/ReturnButton";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
-import { DeleteButton } from "../Buttons/DeleteButton";
 import { ValidateButton } from "../Buttons/ValidateButton";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { useAuth } from "../../context/AuthContext";
-import { AdventurerDetails } from "../Adventurer/AdventurerDetails";
+import { AdventurerQuestCard } from "../Adventurer/AdventurerQuestCard";
 
 export default function QuestPage() {
     const { id } = useParams<{ id: string }>();
@@ -28,10 +27,6 @@ export default function QuestPage() {
                         {((user.role === "CLIENT" && quest.status === QuestStatus.PENDING) ||
                             user.role === "ASSISTANT") && (
                             <UpdateButton onClick={() => console.log("update", quest.id)} />
-                        )}
-                        {((user.role === "CLIENT" && quest.status === QuestStatus.PENDING) ||
-                            user.role === "ASSISTANT") && (
-                            <DeleteButton onClick={() => console.log("delete", quest.id)} />
                         )}
                     </div>
                     <h1 className="text-3xl font-bold">{quest.title}</h1>
@@ -75,11 +70,11 @@ export default function QuestPage() {
                             })()}
                     </div>
                     <div className="mt-6">
-                        <h2 className="text-2xl font-semibold mb-4">Affectations</h2>
+                        <h2 className="text-2xl font-semibold mb-4">Aventuriers assignés</h2>
                         {quest.options?.assignments.length ? (
-                            <ul className="space-y-4">
+                            <ul className="space-y-3">
                                 {quest.options.assignments.map((assignment) => (
-                                    <AdventurerDetails
+                                    <AdventurerQuestCard
                                         key={assignment.id}
                                         adventurer={assignment.adventurer}
                                         items={assignment.items}
@@ -87,7 +82,10 @@ export default function QuestPage() {
                                 ))}
                             </ul>
                         ) : (
-                            <p className="text-slate-400">Aucune affectation pour cette quête.</p>
+                            <div className="p-6 border border-slate-700 rounded-lg bg-slate-800/50 flex flex-col items-center justify-center gap-2 text-slate-400">
+                                <span className="text-3xl">👥</span>
+                                <p>Aucun aventurier assigné à cette quête</p>
+                            </div>
                         )}
                     </div>
                 </div>
