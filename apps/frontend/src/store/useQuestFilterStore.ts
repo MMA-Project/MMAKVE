@@ -11,6 +11,7 @@ interface FilterState {
     endDate: string;
     selectedStatus: QuestStatus | "";
     clientSearch: string;
+    nameSearch: string;
     selectedClasses: AdventurerType[];
 
     setMinReward: (value: string) => void;
@@ -21,6 +22,7 @@ interface FilterState {
     setEndDate: (value: string) => void;
     setSelectedStatus: (value: QuestStatus | "") => void;
     setClientSearch: (value: string) => void;
+    setNameSearch: (value: string) => void;
     setSelectedClasses: (value: AdventurerType[]) => void;
     resetAllFilters: () => void;
 }
@@ -34,6 +36,7 @@ const initialState = {
     endDate: "",
     selectedStatus: "" as QuestStatus | "",
     clientSearch: "",
+    nameSearch: "",
     selectedClasses: [] as AdventurerType[],
 };
 
@@ -48,6 +51,7 @@ export const useFilterStore = create<FilterState>((set) => ({
     setEndDate: (value) => set({ endDate: value }),
     setSelectedStatus: (value) => set({ selectedStatus: value }),
     setClientSearch: (value) => set({ clientSearch: value }),
+    setNameSearch: (value) => set({ nameSearch: value }),
     setSelectedClasses: (value) => set({ selectedClasses: value }),
     resetAllFilters: () => set(initialState),
 }));
@@ -63,6 +67,7 @@ export const useHasActiveQuestFilters = () => {
         endDate,
         selectedStatus,
         clientSearch,
+        nameSearch,
         selectedClasses,
     } = useFilterStore();
     return (
@@ -74,6 +79,7 @@ export const useHasActiveQuestFilters = () => {
         endDate !== "" ||
         selectedStatus !== "" ||
         clientSearch !== "" ||
+        nameSearch !== "" ||
         selectedClasses.length > 0
     );
 };

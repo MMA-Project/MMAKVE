@@ -5,20 +5,20 @@ import {
 
 import adventurerImg from "../assets/adventurer.png";
 import alchemyImg from "../assets/alchemy.png";
+import archerImg from "../assets/archer.png";
+import assasinImg from "../assets/assasin.png";
 import barbarianImg from "../assets/barbarian.png";
-import bowImg from "../assets/bow.png";
 import druidImg from "../assets/druid.png";
 import knightImg from "../assets/knight.png";
 import magicianImg from "../assets/magician.png";
 import martialImg from "../assets/martial.png";
-import ninjaImg from "../assets/ninja.png";
 import priestImg from "../assets/priest.png";
 import swordsmanImg from "../assets/swordsman.png";
 import wizardImg from "../assets/wizard.png";
 
 export const adventurerImages: Record<AdventurerType, string> = {
     [AdventurerType.WARRIOR]: swordsmanImg,
-    [AdventurerType.ARCHER]: bowImg,
+    [AdventurerType.ARCHER]: archerImg,
     [AdventurerType.BARBARIAN]: barbarianImg,
     [AdventurerType.PALADIN]: knightImg,
     [AdventurerType.ARCANE_MAGE]: wizardImg,
@@ -28,7 +28,7 @@ export const adventurerImages: Record<AdventurerType, string> = {
     [AdventurerType.BLACKSMITH]: martialImg,
     [AdventurerType.ENCHANTER]: magicianImg,
     [AdventurerType.MESSENGER]: adventurerImg,
-    [AdventurerType.ROGUE]: ninjaImg,
+    [AdventurerType.ROGUE]: assasinImg,
 };
 
 export const adventurerTypeLabels: Record<AdventurerType, string> = {
@@ -53,6 +53,7 @@ export const statusColors: Record<AdventurerStatus, string> = {
     [AdventurerStatus.DEAD]: "bg-red-500",
     [AdventurerStatus.RESTING]: "bg-purple-500",
     [AdventurerStatus.LEAVED]: "bg-slate-500",
+    [AdventurerStatus.DELETED]: "bg-gray-600",
 };
 
 export const statusLabels: Record<AdventurerStatus, string> = {
@@ -62,4 +63,5 @@ export const statusLabels: Record<AdventurerStatus, string> = {
     [AdventurerStatus.DEAD]: "Décédé",
     [AdventurerStatus.RESTING]: "Au repos",
     [AdventurerStatus.LEAVED]: "Parti",
+    [AdventurerStatus.DELETED]: "Supprimé",
 };

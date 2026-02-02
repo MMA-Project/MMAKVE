@@ -70,7 +70,7 @@ async function main() {
         data: {
             id: "501",
             type: AdventurerType.ENCHANTER,
-            status: AdventurerStatus.AVAILABLE,
+            status: AdventurerStatus.ON_QUEST,
             xp: 1800,
             guildId: guild.id,
         },
@@ -121,7 +121,7 @@ async function main() {
         data: {
             id: "503",
             type: AdventurerType.BARBARIAN,
-            status: AdventurerStatus.AVAILABLE,
+            status: AdventurerStatus.ON_QUEST,
             xp: 2800,
             guildId: guild.id,
         },
@@ -222,7 +222,7 @@ async function main() {
         data: {
             id: "507",
             type: AdventurerType.ARCANE_MAGE,
-            status: AdventurerStatus.AVAILABLE,
+            status: AdventurerStatus.ON_QUEST,
             xp: 2200,
             guildId: guild.id,
         },
@@ -323,7 +323,7 @@ async function main() {
         data: {
             id: "511",
             type: AdventurerType.GEOMANCER,
-            status: AdventurerStatus.AVAILABLE,
+            status: AdventurerStatus.ON_QUEST,
             xp: 2500,
             guildId: guild.id,
         },
@@ -384,6 +384,309 @@ async function main() {
         data: { adventurerId: adventurer513.id },
     });
 
+    // === AVENTURIERS SUPPLÉMENTAIRES DISPONIBLES ===
+    console.log("🌟 Création des aventuriers supplémentaires...");
+
+    const user514 = await prisma.user.create({
+        data: {
+            id: "514",
+            name: "Thoric Ironhammer",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-01T10:00:00Z"),
+        },
+    });
+
+    const adventurer514 = await prisma.adventurer.create({
+        data: {
+            id: "514",
+            type: AdventurerType.BARBARIAN,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1200,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user514.id },
+        data: { adventurerId: adventurer514.id },
+    });
+
+    const user515 = await prisma.user.create({
+        data: {
+            id: "515",
+            name: "Astra Starlight",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-05T14:30:00Z"),
+        },
+    });
+
+    const adventurer515 = await prisma.adventurer.create({
+        data: {
+            id: "515",
+            type: AdventurerType.ARCANE_MAGE,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1700,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user515.id },
+        data: { adventurerId: adventurer515.id },
+    });
+
+    const user516 = await prisma.user.create({
+        data: {
+            id: "516",
+            name: "Marcus Steelblade",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-10T09:00:00Z"),
+        },
+    });
+
+    const adventurer516 = await prisma.adventurer.create({
+        data: {
+            id: "516",
+            type: AdventurerType.WARRIOR,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 2100,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user516.id },
+        data: { adventurerId: adventurer516.id },
+    });
+
+    const user517 = await prisma.user.create({
+        data: {
+            id: "517",
+            name: "Lysa Shadowstrike",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-12T11:20:00Z"),
+        },
+    });
+
+    const adventurer517 = await prisma.adventurer.create({
+        data: {
+            id: "517",
+            type: AdventurerType.ROGUE,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1450,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user517.id },
+        data: { adventurerId: adventurer517.id },
+    });
+
+    const user518 = await prisma.user.create({
+        data: {
+            id: "518",
+            name: "Elysia Holylight",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-15T15:00:00Z"),
+        },
+    });
+
+    const adventurer518 = await prisma.adventurer.create({
+        data: {
+            id: "518",
+            type: AdventurerType.PRIEST,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1600,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user518.id },
+        data: { adventurerId: adventurer518.id },
+    });
+
+    const user519 = await prisma.user.create({
+        data: {
+            id: "519",
+            name: "Kael Sunbringer",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-18T12:45:00Z"),
+        },
+    });
+
+    const adventurer519 = await prisma.adventurer.create({
+        data: {
+            id: "519",
+            type: AdventurerType.PALADIN,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 2050,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user519.id },
+        data: { adventurerId: adventurer519.id },
+    });
+
+    const user520 = await prisma.user.create({
+        data: {
+            id: "520",
+            name: "Terra Earthbinder",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-20T10:30:00Z"),
+        },
+    });
+
+    const adventurer520 = await prisma.adventurer.create({
+        data: {
+            id: "520",
+            type: AdventurerType.GEOMANCER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1350,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user520.id },
+        data: { adventurerId: adventurer520.id },
+    });
+
+    const user521 = await prisma.user.create({
+        data: {
+            id: "521",
+            name: "Aldric Flamebrand",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-22T13:15:00Z"),
+        },
+    });
+
+    const adventurer521 = await prisma.adventurer.create({
+        data: {
+            id: "521",
+            type: AdventurerType.ALCHEMIST,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1550,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user521.id },
+        data: { adventurerId: adventurer521.id },
+    });
+
+    const user522 = await prisma.user.create({
+        data: {
+            id: "522",
+            name: "Smithson Hammerhand",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-25T09:45:00Z"),
+        },
+    });
+
+    const adventurer522 = await prisma.adventurer.create({
+        data: {
+            id: "522",
+            type: AdventurerType.BLACKSMITH,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1750,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user522.id },
+        data: { adventurerId: adventurer522.id },
+    });
+
+    const user523 = await prisma.user.create({
+        data: {
+            id: "523",
+            name: "Aria Swiftbow",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-28T14:20:00Z"),
+        },
+    });
+
+    const adventurer523 = await prisma.adventurer.create({
+        data: {
+            id: "523",
+            type: AdventurerType.ARCHER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1400,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user523.id },
+        data: { adventurerId: adventurer523.id },
+    });
+
+    const user524 = await prisma.user.create({
+        data: {
+            id: "524",
+            name: "Rowan Spellweaver",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-05-01T11:00:00Z"),
+        },
+    });
+
+    const adventurer524 = await prisma.adventurer.create({
+        data: {
+            id: "524",
+            type: AdventurerType.ENCHANTER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1850,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user524.id },
+        data: { adventurerId: adventurer524.id },
+    });
+
+    const user525 = await prisma.user.create({
+        data: {
+            id: "525",
+            name: "Raven Nightbringer",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-05-03T16:30:00Z"),
+        },
+    });
+
+    const adventurer525 = await prisma.adventurer.create({
+        data: {
+            id: "525",
+            type: AdventurerType.MESSENGER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 950,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user525.id },
+        data: { adventurerId: adventurer525.id },
+    });
+
     // === CLIENT POUR LES QUÊTES ===
     const clientUser = await prisma.user.create({
         data: {
@@ -404,9 +707,7 @@ async function main() {
             title: "Récupérer le joyau azur",
             description:
                 "Une gemme précieuse a été volée par une bande de pillards des rivières. Récupérez-la et ramenez-la en sécurité.",
-            deadline: new Date("2025-10-15T23:59:59Z"),
-            start_date: new Date("2025-10-01T10:00:00Z"),
-            end_date: new Date("2025-10-15T23:59:59Z"),
+            deadline: new Date("2026-02-15T23:59:59Z"),
             xp_required: 1200,
             reward: 150,
             status: QuestStatus.PENDING,
@@ -421,10 +722,11 @@ async function main() {
             title: "Nettoyer les Mines Oubliées",
             description:
                 "Les anciens tunnels de la mine ont été infestés par des élémentaires de terre. Nettoyez-les pour que les mineurs puissent revenir.",
-            deadline: new Date("2025-10-30T23:59:59Z"),
-            start_date: new Date("2025-10-25T09:00:00Z"),
-            end_date: new Date("2025-10-30T17:00:00Z"),
+            deadline: new Date("2026-02-10T23:59:59Z"),
+            start_date: new Date("2026-01-28T09:00:00Z"),
+            end_date: new Date("2026-02-10T17:00:00Z"),
             xp_required: 2400,
+            xp_reward: 1200,
             reward: 300,
             status: QuestStatus.IN_PROGRESS,
             createdBy: clientUser.id,
@@ -438,10 +740,11 @@ async function main() {
             title: "Escorter la caravane marchande",
             description:
                 "Une caravane a besoin de protection à travers des cols infestés de bandits. Assurez-vous que tous les chariots atteignent la prochaine ville.",
-            deadline: new Date("2025-12-01T23:59:59Z"),
-            start_date: new Date("2025-11-28T08:00:00Z"),
-            end_date: new Date("2025-12-12T20:00:00Z"),
+            deadline: new Date("2026-02-20T23:59:59Z"),
+            start_date: new Date("2026-02-05T08:00:00Z"),
+            end_date: new Date("2026-02-20T20:00:00Z"),
             xp_required: 1800,
+            xp_reward: 900,
             reward: 220,
             status: QuestStatus.APPROVED,
             createdBy: clientUser.id,
@@ -455,10 +758,11 @@ async function main() {
             title: "Chasse au Basilic",
             description:
                 "Un basilic terrorise les voyageurs sur la route du nord. Éliminez-le avant qu'il ne fasse plus de victimes.",
-            deadline: new Date("2025-11-20T23:59:59Z"),
-            start_date: new Date("2025-11-10T08:00:00Z"),
-            end_date: new Date("2025-11-18T18:00:00Z"),
+            deadline: new Date("2026-01-20T23:59:59Z"),
+            start_date: new Date("2026-01-10T08:00:00Z"),
+            end_date: new Date("2026-01-18T18:00:00Z"),
             xp_required: 2200,
+            xp_reward: 1100,
             reward: 400,
             status: QuestStatus.COMPLETED,
             createdBy: clientUser.id,
@@ -472,7 +776,7 @@ async function main() {
             title: "Livraison de parchemins secrets",
             description:
                 "Transportez discrètement des parchemins importants jusqu'à la citadelle sans vous faire repérer.",
-            deadline: new Date("2026-01-05T23:59:59Z"),
+            deadline: new Date("2026-02-25T23:59:59Z"),
             xp_required: 800,
             reward: 180,
             status: QuestStatus.PENDING,
@@ -488,8 +792,10 @@ async function main() {
             description:
                 "Explorez les anciennes catacombes sous la ville et cartographiez les passages secrets.",
             deadline: new Date("2026-02-15T23:59:59Z"),
-            start_date: new Date("2026-02-01T10:00:00Z"),
+            start_date: new Date("2026-01-28T10:00:00Z"),
+            end_date: new Date("2026-02-15T17:00:00Z"),
             xp_required: 1500,
+            xp_reward: 750,
             reward: 350,
             status: QuestStatus.IN_PROGRESS,
             createdBy: clientUser.id,
@@ -503,8 +809,11 @@ async function main() {
             title: "Défendre le village contre les gobelins",
             description:
                 "Une horde de gobelins menace un village isolé. Protégez les habitants et repoussez l'invasion.",
-            deadline: new Date("2025-12-20T23:59:59Z"),
+            deadline: new Date("2026-03-05T23:59:59Z"),
+            start_date: new Date("2026-02-10T08:00:00Z"),
+            end_date: new Date("2026-03-05T18:00:00Z"),
             xp_required: 2000,
+            xp_reward: 1000,
             reward: 500,
             status: QuestStatus.APPROVED,
             createdBy: clientUser.id,
@@ -518,10 +827,11 @@ async function main() {
             title: "Collecter des herbes rares",
             description:
                 "Récoltez des plantes médicinales rares dans les marais maudits pour préparer des potions de guérison.",
-            deadline: new Date("2025-11-30T23:59:59Z"),
-            start_date: new Date("2025-11-05T08:00:00Z"),
-            end_date: new Date("2025-11-25T17:00:00Z"),
+            deadline: new Date("2026-01-25T23:59:59Z"),
+            start_date: new Date("2026-01-05T08:00:00Z"),
+            end_date: new Date("2026-01-25T17:00:00Z"),
             xp_required: 1000,
+            xp_reward: 500,
             reward: 250,
             status: QuestStatus.COMPLETED,
             createdBy: clientUser.id,
@@ -535,7 +845,7 @@ async function main() {
             title: "Enquête sur la secte interdite",
             description:
                 "Infiltrez une secte mystérieuse et découvrez leurs plans. Discrétion absolue requise.",
-            deadline: new Date("2026-03-01T23:59:59Z"),
+            deadline: new Date("2026-03-15T23:59:59Z"),
             xp_required: 3000,
             reward: 600,
             status: QuestStatus.PENDING,
@@ -550,9 +860,11 @@ async function main() {
             title: "Forger l'armure du champion",
             description:
                 "Rassemblez les matériaux nécessaires et forgez une armure légendaire pour le champion du royaume.",
-            deadline: new Date("2026-01-25T23:59:59Z"),
-            start_date: new Date("2026-01-10T09:00:00Z"),
+            deadline: new Date("2026-02-25T23:59:59Z"),
+            start_date: new Date("2026-01-25T09:00:00Z"),
+            end_date: new Date("2026-02-25T17:00:00Z"),
             xp_required: 2800,
+            xp_reward: 1400,
             reward: 750,
             status: QuestStatus.IN_PROGRESS,
             createdBy: clientUser.id,
@@ -566,8 +878,11 @@ async function main() {
             title: "Bannir l'esprit maléfique",
             description:
                 "Un esprit maléfique hante le manoir abandonné. Utilisez vos pouvoirs pour le bannir définitivement.",
-            deadline: new Date("2025-12-10T23:59:59Z"),
+            deadline: new Date("2026-03-10T23:59:59Z"),
+            start_date: new Date("2026-02-15T09:00:00Z"),
+            end_date: new Date("2026-03-10T17:00:00Z"),
             xp_required: 2600,
+            xp_reward: 1300,
             reward: 550,
             status: QuestStatus.APPROVED,
             createdBy: clientUser.id,
@@ -581,10 +896,11 @@ async function main() {
             title: "Récupération de reliques anciennes",
             description:
                 "Des reliques sacrées ont été volées du temple. Retrouvez-les et rapportez-les avant qu'elles ne soient vendues.",
-            deadline: new Date("2026-02-28T23:59:59Z"),
-            start_date: new Date("2026-02-10T10:00:00Z"),
-            end_date: new Date("2026-02-25T16:00:00Z"),
+            deadline: new Date("2026-01-28T23:59:59Z"),
+            start_date: new Date("2026-01-10T10:00:00Z"),
+            end_date: new Date("2026-01-25T16:00:00Z"),
             xp_required: 1900,
+            xp_reward: 950,
             reward: 450,
             status: QuestStatus.FAILED,
             createdBy: clientUser.id,
@@ -967,7 +1283,7 @@ async function main() {
     // Quest 8 (COMPLETED) - Collecter des herbes rares [ALCHEMIST, GEOMANCER]
     const assignment7 = await prisma.questAssignment.create({
         data: {
-            adventurerId: adventurer511.id, // Selene Frostweaver (GEOMANCER)
+            adventurerId: adventurer513.id, // Kara Windrunner (ENCHANTER, RESTING)
             questId: quest8.id,
         },
     });
@@ -983,7 +1299,7 @@ async function main() {
     // Quest 11 (APPROVED) - Bannir l'esprit maléfique [PRIEST, ARCANE_MAGE, ENCHANTER]
     const assignment9 = await prisma.questAssignment.create({
         data: {
-            adventurerId: adventurer507.id, // Liora Dawnspark (ARCANE_MAGE)
+            adventurerId: adventurer506.id, // Elandra Whisperwind (ENCHANTER)
             questId: quest11.id,
         },
     });
@@ -998,7 +1314,7 @@ async function main() {
     // Quest 12 (FAILED) - Récupération de reliques anciennes [PRIEST, PALADIN, WARRIOR]
     const assignment11 = await prisma.questAssignment.create({
         data: {
-            adventurerId: adventurer502.id, // Kaela Stormshield (PRIEST)
+            adventurerId: adventurer509.id, // Seren Willowglade (PRIEST)
             questId: quest12.id,
         },
     });
@@ -1061,13 +1377,13 @@ async function main() {
     // === MISE À JOUR DU STATUT DES ITEMS EN UTILISATION ===
     console.log("📝 Mise à jour du statut des items utilisés dans les quêtes actives...");
 
-    // Récupérer tous les items utilisés dans les quêtes actives (PENDING, IN_PROGRESS, APPROVED)
+    // Récupérer tous les items utilisés dans les quêtes EN COURS et APPROUVÉES (IN_PROGRESS, APPROVED)
     const itemsInActiveQuests = await prisma.itemOnQuestAssignment.findMany({
         where: {
             questAssignment: {
                 quest: {
                     status: {
-                        in: [QuestStatus.PENDING, QuestStatus.IN_PROGRESS, QuestStatus.APPROVED],
+                        in: [QuestStatus.IN_PROGRESS, QuestStatus.APPROVED],
                     },
                 },
             },
@@ -1098,77 +1414,71 @@ async function main() {
             // Transactions de revenus (quêtes complétées)
             {
                 amount: 400,
-                date: Math.floor(new Date("2025-11-18T18:00:00Z").getTime() / 1000),
+                date: Math.floor(new Date("2026-01-18T18:00:00Z").getTime() / 1000),
                 name: "Récompense - Chasse au Basilic",
                 bankId: bank!.id,
             },
             {
                 amount: 250,
-                date: Math.floor(new Date("2025-11-25T17:00:00Z").getTime() / 1000),
+                date: Math.floor(new Date("2026-01-25T17:00:00Z").getTime() / 1000),
                 name: "Récompense - Collecter des herbes rares",
                 bankId: bank!.id,
             },
-            // Transactions de revenus (quêtes en cours - anticipation)
+            // Transactions de revenus (quêtes en cours - acomptes 20% au démarrage)
             {
-                amount: 300,
-                date: Math.floor(new Date("2025-10-25T09:00:00Z").getTime() / 1000),
-                name: "Avance - Nettoyer les Mines Oubliées",
+                amount: 60,
+                date: Math.floor(new Date("2026-01-28T09:00:00Z").getTime() / 1000),
+                name: "Acompte quête - Nettoyer les Mines Oubliées",
                 bankId: bank!.id,
             },
             {
-                amount: 220,
-                date: Math.floor(new Date("2025-11-28T08:00:00Z").getTime() / 1000),
-                name: "Avance - Escorter la caravane marchande",
+                amount: 70,
+                date: Math.floor(new Date("2026-01-28T10:00:00Z").getTime() / 1000),
+                name: "Acompte quête - Exploration des Catacombes",
                 bankId: bank!.id,
             },
             {
-                amount: 350,
-                date: Math.floor(new Date("2026-02-01T10:00:00Z").getTime() / 1000),
-                name: "Avance - Exploration des Catacombes",
-                bankId: bank!.id,
-            },
-            {
-                amount: 750,
-                date: Math.floor(new Date("2026-01-10T09:00:00Z").getTime() / 1000),
-                name: "Avance - Forger l'armure du champion",
+                amount: 150,
+                date: Math.floor(new Date("2026-01-25T09:00:00Z").getTime() / 1000),
+                name: "Acompte quête - Forger l'armure du champion",
                 bankId: bank!.id,
             },
             // Dépenses (équipement et fournitures)
             {
                 amount: -150,
-                date: Math.floor(new Date("2025-10-20T14:30:00Z").getTime() / 1000),
+                date: Math.floor(new Date("2026-01-10T14:30:00Z").getTime() / 1000),
                 name: "Achat - Équipement de base pour aventuriers",
                 bankId: bank!.id,
             },
             {
                 amount: -200,
-                date: Math.floor(new Date("2025-10-22T10:00:00Z").getTime() / 1000),
+                date: Math.floor(new Date("2026-01-12T10:00:00Z").getTime() / 1000),
                 name: "Achat - Potions de soin (stock)",
                 bankId: bank!.id,
             },
             {
                 amount: -300,
-                date: Math.floor(new Date("2025-11-05T09:00:00Z").getTime() / 1000),
+                date: Math.floor(new Date("2026-01-15T09:00:00Z").getTime() / 1000),
                 name: "Réparation - Équipements endommagés",
                 bankId: bank!.id,
             },
             {
                 amount: -100,
-                date: Math.floor(new Date("2025-11-15T16:00:00Z").getTime() / 1000),
+                date: Math.floor(new Date("2026-01-20T16:00:00Z").getTime() / 1000),
                 name: "Approvisionnement - Fournitures générales",
                 bankId: bank!.id,
             },
             // Pénalités et pertes
             {
                 amount: -450,
-                date: Math.floor(new Date("2026-02-25T16:00:00Z").getTime() / 1000),
+                date: Math.floor(new Date("2026-01-25T16:00:00Z").getTime() / 1000),
                 name: "Perte - Échec de la mission (Récupération reliques)",
                 bankId: bank!.id,
             },
             // Revenus divers
             {
                 amount: 80,
-                date: Math.floor(new Date("2025-12-01T15:00:00Z").getTime() / 1000),
+                date: Math.floor(new Date("2026-01-30T15:00:00Z").getTime() / 1000),
                 name: "Vente - Objets de rebut et équipements usagés",
                 bankId: bank!.id,
             },

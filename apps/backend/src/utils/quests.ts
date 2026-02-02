@@ -22,7 +22,8 @@ export const calculateTeamWinProbability = (individualRates: number[]): number =
  * ∑(Jactuel​×Durée_mission​)+Consommables+Réparations est < Prime = Rentable
  */
 export const calculateRewardDistribution = (xp_player: number, j_base: number) => {
-    const rate = j_base * (1 + 0.5 * Math.log(Math.max(xp_player, 1)));
+    if (xp_player <= 0) return j_base;
+    const rate = j_base * (1 + 0.5 * Math.log10(xp_player));
     return Math.round(rate * 100) / 100;
 };
 

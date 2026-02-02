@@ -60,6 +60,7 @@ export function AdventurerForm({
         [AdventurerStatus.DEAD]: "Décédé",
         [AdventurerStatus.RESTING]: "Au repos",
         [AdventurerStatus.LEAVED]: "Parti",
+        [AdventurerStatus.DELETED]: "Supprimé",
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

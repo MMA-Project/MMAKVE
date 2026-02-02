@@ -144,6 +144,11 @@ export async function getGuildInventory(guildId: string): Promise<Item[]> {
         where: { id: guildId },
         include: {
             inventory: {
+                where: {
+                    item: {
+                        status: { not: "DELETED" }, // Exclure les items supprimés
+                    },
+                },
                 include: {
                     item: {
                         include: {
@@ -312,30 +317,27 @@ export async function deleteGuildInventoryItem(guildId: string, itemId: string):
                 itemId: itemId,
             },
         },
+        include: {
+            item: true,
+        },
     });
 
     if (!itemOnGuild) {
         throw new AppError(ErrorCodes.NOT_FOUND, "Item not found in guild inventory", 404);
     }
 
-    // Supprimer la relation
-    await prisma.itemOnGuild.delete({
-        where: {
-            guildId_itemId: {
-                guildId: guildId,
-                itemId: itemId,
-            },
-        },
-    });
-
-    // Optionnel : supprimer l'item lui-même si plus utilisé
-    const itemUsage = await prisma.itemOnGuild.findMany({
-        where: { itemId: itemId },
-    });
-
-    if (itemUsage.length === 0) {
-        await prisma.item.delete({
-            where: { id: itemId },
-        });
+    // Only allow deletion if status is AVAILABLE
+    if (itemOnGuild.item.status !== "AVAILABLE") {
+        throw new AppError(
+            ErrorCodes.VALIDATION_ERROR,
+            "Cannot delete item: must be available (not in use, consumed, etc.)",
+            422,
+        );
     }
+
+    // Soft delete: update status to DELETED
+    await prisma.item.update({
+        where: { id: itemId },
+        data: { status: "DELETED" },
+    });
 }

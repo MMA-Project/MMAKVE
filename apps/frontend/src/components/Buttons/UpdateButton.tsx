@@ -1,10 +1,17 @@
-export function UpdateButton({ onClick }: any) {
+interface UpdateButtonProps {
+    onClick?: () => void;
+    disabled?: boolean;
+    title?: string;
+}
+
+export function UpdateButton({ onClick, disabled = false, title = "Modifier" }: UpdateButtonProps) {
     return (
         <button
             aria-label="Modifier la quête"
-            title="Modifier"
-            className="p-2 rounded hover:bg-slate-700"
-            onClick={onClick}
+            title={title}
+            className={`p-2 rounded ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-700"}`}
+            onClick={disabled ? undefined : onClick}
+            disabled={disabled}
         >
             <svg
                 className="w-5 h-5 text-slate-200"

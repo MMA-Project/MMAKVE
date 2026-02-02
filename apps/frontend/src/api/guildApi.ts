@@ -112,3 +112,22 @@ export function useUpdateItem() {
         },
     });
 }
+
+export function useDeleteItem() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (itemId: string): Promise<void> => {
+            const response = await fetch(`${API_BASE}/guilds/inventory/${itemId}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Erreur lors de la suppression de l'item");
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["guild-items"] });
+        },
+    });
+}

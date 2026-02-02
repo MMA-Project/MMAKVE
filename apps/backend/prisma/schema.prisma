@@ -40,10 +40,12 @@ enum Role {
 enum QuestStatus {
   PENDING
   APPROVED
+  REJECTED
   IN_PROGRESS
   COMPLETED
   FAILED
   CANCELED
+  DELETED
 }
 
 enum AdventurerStatus {
@@ -53,6 +55,7 @@ enum AdventurerStatus {
   DEAD
   RESTING
   LEAVED
+  DELETED
 }
 
 enum ItemType {
@@ -90,17 +93,19 @@ enum ItemStatus {
   CONSUMED
   BROKEN
   LOST
+  DELETED
 }
 
 /**
  * Traité
  */
 model User {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  password  String
-  role      Role     @default(CLIENT)
-  createdAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  name        String   @unique
+  displayName String   @default("")
+  password    String
+  role        Role     @default(CLIENT)
+  createdAt   DateTime @default(now())
 
   adventurer   Adventurer? @relation(fields: [adventurerId], references: [id])
   adventurerId String?     @unique
@@ -116,6 +121,7 @@ model Quest {
   start_date  DateTime?
   end_date    DateTime?
   xp_required Int?
+  xp_reward   Int?
   reward      Int
   status      QuestStatus       @default(PENDING)
   createdBy   String
@@ -173,7 +179,7 @@ model Guild {
 
 model Bank {
   id      String        @id @default(uuid())
-  amount  Int
+  amount  Float
   history Transaction[]
   guild   Guild         @relation(fields: [guildId], references: [id])
   guildId String        @unique
@@ -181,7 +187,7 @@ model Bank {
 
 model Transaction {
   id     String @id @default(uuid())
-  amount Int
+  amount Float
   date   Int
   name   String
   bank   Bank   @relation(fields: [bankId], references: [id])

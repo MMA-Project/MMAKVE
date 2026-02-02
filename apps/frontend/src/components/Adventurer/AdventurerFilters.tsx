@@ -48,7 +48,8 @@ export function AdventurerFilters() {
                 label="Nom"
                 value={nameSearch}
                 onChange={setNameSearch}
-                placeholder="Rechercher par nom..."
+                placeholder="Rechercher un aventurier..."
+                icon="👤"
             />
 
             <RangeFilter
@@ -57,7 +58,8 @@ export function AdventurerFilters() {
                 maxValue={maxXp}
                 onMinChange={setMinXp}
                 onMaxChange={setMaxXp}
-                maxWidth="flex-1"
+                icon="⭐"
+                maxWidth="w-20"
             />
 
             <SelectFilter
@@ -66,17 +68,18 @@ export function AdventurerFilters() {
                 onChange={(value) => setSelectedStatus(value as any)}
                 options={adventurerStatusOptions}
                 placeholder="Tous les statuts"
-                width="flex-1"
+                icon="📊"
             />
 
             <MultiSelectFilter
-                label="Types"
+                label="Classes"
                 selectedItems={selectedTypes}
                 onToggleItem={toggleType}
                 options={adventurerTypeOptions}
-                placeholder="Sélectionner des types..."
+                placeholder="Sélectionner des classes..."
                 isOpen={isTypeDropdownOpen}
                 onToggleOpen={setIsTypeDropdownOpen}
+                icon="⚔️"
             />
         </AdvancedFiltersContainer>
     );

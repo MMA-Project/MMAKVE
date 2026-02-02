@@ -2,11 +2,14 @@ import { ItemName, ItemRarity, ItemType } from "../../../../packages/shared/src/
 
 import swordImg from "../assets/sword.png";
 import axeImg from "../assets/axe.png";
+import arrowImg from "../assets/arrow.png";
 import bowImg from "../assets/bow.png";
 import daggerImg from "../assets/dagger.png";
+import potionImg from "../assets/potion.png";
 import shieldImg from "../assets/shield.png";
 import helmetImg from "../assets/helmet.png";
 import chestImg from "../assets/chest.png";
+import staffImg from "../assets/staff.png";
 
 export const itemImages: Record<ItemName, string | null> = {
     [ItemName.SWORD]: swordImg,
@@ -16,10 +19,10 @@ export const itemImages: Record<ItemName, string | null> = {
     [ItemName.SHIELD]: shieldImg,
     [ItemName.HELMET]: helmetImg,
     [ItemName.ARMOR]: chestImg,
-    [ItemName.STAFF]: null,
-    [ItemName.HEALING_POTION]: null,
+    [ItemName.STAFF]: staffImg,
+    [ItemName.HEALING_POTION]: potionImg,
     [ItemName.MAGIC_RING]: null,
-    [ItemName.ARROW]: null,
+    [ItemName.ARROW]: arrowImg,
 };
 
 export const itemEmojis: Record<ItemName, string> = {

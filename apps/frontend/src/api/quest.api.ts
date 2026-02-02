@@ -1,5 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { type Quest, type QuestCreation } from "../../../../packages/shared/src/types/quest.type";
+import {
+    type Quest,
+    type QuestCreation,
+    type QuestProcessingData,
+} from "../../../../packages/shared/src/types/quest.type";
+import type { AdventurerType } from "../../../../packages/shared/src/types/adventurer.type";
 
 const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
@@ -151,111 +156,30 @@ export const useProcessQuest = () => {
             questId: string;
             data: QuestProcessingData;
         }): Promise<Quest> => {
-            // TODO: Remplacer par un vrai appel API
-            // const response = await fetch(`/api/quests/process/${questId}`, {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(data),
-            // });
-            // return response.json();
+            const response = await fetch(`${API_BASE}/quests/process/${questId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
 
-            const quest = mockQuests.find((q) => q.id === questId);
-            if (!quest) {
-                throw new Error("Quest not found");
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Erreur lors du traitement de la quête");
             }
 
-            if (!data.approved) {
-                quest.status = QuestStatus.REJECTED;
-            } else {
-                quest.status = QuestStatus.APPROVED;
+            const quest = await response.json();
 
-                // Créer ou mettre à jour les options
-                if (!quest.options) {
-                    quest.options = {
-                        profils: data.profils,
-                        start_date: new Date(),
-                        end_date: new Date(),
-                        xp_required: data.xpRequired,
-                        assignments: [],
-                    };
-                } else {
-                    quest.options.profils = data.profils;
-                    quest.options.xp_required = data.xpRequired;
+            // Convertir les dates
+            if (typeof quest.deadline === "string") {
+                quest.deadline = new Date(quest.deadline);
+            }
+            if (quest.options) {
+                if (typeof quest.options.start_date === "string") {
+                    quest.options.start_date = new Date(quest.options.start_date);
                 }
-
-                // Créer les assignments pour les aventuriers sélectionnés
-                const mockSuggestedAdventurers = [
-                    {
-                        id: "504",
-                        user: {
-                            id: "504",
-                            name: "Aria Flameheart",
-                            role: "ADVENTURER" as const,
-                            createdAt: new Date("2025-02-10T10:00:00Z"),
-                        },
-                        type: AdventurerType.ARCANE_MAGE,
-                        status: AdventurerStatus.AVAILABLE,
-                        xp: 5500,
-                    },
-                    {
-                        id: "505",
-                        user: {
-                            id: "505",
-                            name: "Brother Cedric",
-                            role: "ADVENTURER" as const,
-                            createdAt: new Date("2025-04-05T08:20:00Z"),
-                        },
-                        type: AdventurerType.PRIEST,
-                        status: AdventurerStatus.AVAILABLE,
-                        xp: 4200,
-                    },
-                    {
-                        id: "506",
-                        user: {
-                            id: "506",
-                            name: "Thrain Ironforge",
-                            role: "ADVENTURER" as const,
-                            createdAt: new Date("2025-06-12T14:30:00Z"),
-                        },
-                        type: AdventurerType.BLACKSMITH,
-                        status: AdventurerStatus.AVAILABLE,
-                        xp: 3800,
-                    },
-                    {
-                        id: "507",
-                        user: {
-                            id: "507",
-                            name: "Lyanna Swiftarrow",
-                            role: "ADVENTURER" as const,
-                            createdAt: new Date("2025-07-20T11:45:00Z"),
-                        },
-                        type: AdventurerType.ARCHER,
-                        status: AdventurerStatus.AVAILABLE,
-                        xp: 6100,
-                    },
-                    {
-                        id: "508",
-                        user: {
-                            id: "508",
-                            name: "Kael Shadowstep",
-                            role: "ADVENTURER" as const,
-                            createdAt: new Date("2025-08-15T16:10:00Z"),
-                        },
-                        type: AdventurerType.ROGUE,
-                        status: AdventurerStatus.AVAILABLE,
-                        xp: 4900,
-                    },
-                ];
-
-                // Créer les assignments
-                quest.options.assignments = data.adventurers.map((adventurerId) => {
-                    const adventurer = mockSuggestedAdventurers.find((a) => a.id === adventurerId);
-                    return {
-                        id: `assignment-${questId}-${adventurerId}`,
-                        items: [],
-                        adventurer: adventurer || mockSuggestedAdventurers[0],
-                    };
-                });
+                if (typeof quest.options.end_date === "string") {
+                    quest.options.end_date = new Date(quest.options.end_date);
+                }
             }
 
             return quest;
@@ -269,86 +193,132 @@ export const useProcessQuest = () => {
     return mutation;
 };
 
-export const useSuggestAdventurers = (questId: string) => {
+export const useSuggestAdventurers = (
+    questId: string,
+    options?: {
+        xpRequired?: number;
+        profils?: AdventurerType[];
+        enabled?: boolean;
+    },
+) => {
     const query = useQuery({
-        queryKey: ["quests", "suggest", questId],
+        queryKey: ["quests", "suggest", questId, options?.xpRequired, options?.profils],
         queryFn: async () => {
-            // TODO: Remplacer par un vrai appel API
-            // const response = await fetch(`/api/quests/suggest/${questId}`);
-            // return response.json();
+            if (!questId) return { bestTeammates: [], teamRates: [], winRate: 0 };
 
-            // Mock data avec des aventuriers suggérés
-            const mockSuggestedAdventurers = [
-                {
-                    id: "504",
-                    user: {
-                        id: "504",
-                        name: "Aria Flameheart",
-                        role: "ADVENTURER" as const,
-                        createdAt: new Date("2025-02-10T10:00:00Z"),
-                    },
-                    type: AdventurerType.ARCANE_MAGE,
-                    status: AdventurerStatus.AVAILABLE,
-                    xp: 5500,
-                },
-                {
-                    id: "505",
-                    user: {
-                        id: "505",
-                        name: "Brother Cedric",
-                        role: "ADVENTURER" as const,
-                        createdAt: new Date("2025-04-05T08:20:00Z"),
-                    },
-                    type: AdventurerType.PRIEST,
-                    status: AdventurerStatus.AVAILABLE,
-                    xp: 4200,
-                },
-                {
-                    id: "506",
-                    user: {
-                        id: "506",
-                        name: "Thrain Ironforge",
-                        role: "ADVENTURER" as const,
-                        createdAt: new Date("2025-06-12T14:30:00Z"),
-                    },
-                    type: AdventurerType.BLACKSMITH,
-                    status: AdventurerStatus.AVAILABLE,
-                    xp: 3800,
-                },
-                {
-                    id: "507",
-                    user: {
-                        id: "507",
-                        name: "Lyanna Swiftarrow",
-                        role: "ADVENTURER" as const,
-                        createdAt: new Date("2025-07-20T11:45:00Z"),
-                    },
-                    type: AdventurerType.ARCHER,
-                    status: AdventurerStatus.AVAILABLE,
-                    xp: 6100,
-                },
-                {
-                    id: "508",
-                    user: {
-                        id: "508",
-                        name: "Kael Shadowstep",
-                        role: "ADVENTURER" as const,
-                        createdAt: new Date("2025-08-15T16:10:00Z"),
-                    },
-                    type: AdventurerType.ROGUE,
-                    status: AdventurerStatus.AVAILABLE,
-                    xp: 4900,
-                },
-            ];
+            const params = new URLSearchParams();
+            if (options?.xpRequired !== undefined) {
+                params.set("xpRequired", String(options.xpRequired));
+            }
+            if (options?.profils && options.profils.length > 0) {
+                options.profils.forEach((profil) => params.append("profils", profil));
+            }
 
-            return {
-                bestTeammates: mockSuggestedAdventurers,
-                teamRates: [0.75, 0.68, 0.62, 0.82, 0.71],
-                winRate: 0.72,
-            };
+            const url = `${API_BASE}/quests/suggest/${questId}${
+                params.toString() ? `?${params.toString()}` : ""
+            }`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("Erreur lors de la récupération des suggestions");
+            }
+
+            return response.json();
         },
-        enabled: !!questId,
+        enabled: options?.enabled ?? !!questId,
     });
 
     return query;
+};
+export const useStartQuest = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async (questId: string): Promise<Quest> => {
+            const response = await fetch(`${API_BASE}/quests/start/${questId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Erreur lors du démarrage de la quête");
+            }
+
+            return response.json();
+        },
+        onSuccess: (data: Quest) => {
+            queryClient.invalidateQueries({ queryKey: ["quests"] });
+            queryClient.invalidateQueries({ queryKey: ["quest", data.id] });
+        },
+    });
+
+    return mutation;
+};
+
+export const useCompleteQuestSuccess = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async (questId: string): Promise<Quest> => {
+            const response = await fetch(`${API_BASE}/quests/success/${questId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Erreur lors de la complétion de la quête");
+            }
+
+            return response.json();
+        },
+        onSuccess: (data: Quest) => {
+            queryClient.invalidateQueries({ queryKey: ["quests"] });
+            queryClient.invalidateQueries({ queryKey: ["quest", data.id] });
+            queryClient.invalidateQueries({ queryKey: ["adventurers"] });
+            queryClient.invalidateQueries({ queryKey: ["guild"] });
+            queryClient.invalidateQueries({ queryKey: ["guild-bank"] });
+            queryClient.invalidateQueries({ queryKey: ["guild-items"] });
+        },
+    });
+
+    return mutation;
+};
+
+export const useCompleteQuestFail = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async (questId: string): Promise<Quest> => {
+            const response = await fetch(`${API_BASE}/quests/fail/${questId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Erreur lors de l'échec de la quête");
+            }
+
+            return response.json();
+        },
+        onSuccess: (data: Quest) => {
+            queryClient.invalidateQueries({ queryKey: ["quests"] });
+            queryClient.invalidateQueries({ queryKey: ["quest", data.id] });
+            queryClient.invalidateQueries({ queryKey: ["adventurers"] });
+            queryClient.invalidateQueries({ queryKey: ["guild"] });
+            queryClient.invalidateQueries({ queryKey: ["guild-bank"] });
+            queryClient.invalidateQueries({ queryKey: ["guild-items"] });
+        },
+    });
+
+    return mutation;
 };

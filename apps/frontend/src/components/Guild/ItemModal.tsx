@@ -101,7 +101,7 @@ export function ItemModal({ isOpen, item, onClose, onSave }: ItemModalProps) {
                     >
                         {Object.values(ItemName).map((name) => (
                             <option key={name} value={name}>
-                                {itemEmojis[name] || "📦"} {itemNameLabels[name]}
+                                {itemEmojis[name] ?? "📦"} {itemNameLabels[name] ?? name}
                             </option>
                         ))}
                     </select>
@@ -109,16 +109,22 @@ export function ItemModal({ isOpen, item, onClose, onSave }: ItemModalProps) {
                         {itemImages[formData.name || ItemName.SWORD] ? (
                             <img
                                 src={itemImages[formData.name || ItemName.SWORD]!}
-                                alt={itemNameLabels[formData.name || ItemName.SWORD]}
+                                alt={
+                                    itemNameLabels[formData.name || ItemName.SWORD] ??
+                                    formData.name ??
+                                    ItemName.SWORD
+                                }
                                 className="w-10 h-10 object-cover rounded"
                             />
                         ) : (
                             <span className="text-2xl">
-                                {itemEmojis[formData.name || ItemName.SWORD]}
+                                {itemEmojis[formData.name || ItemName.SWORD] ?? "📦"}
                             </span>
                         )}
                         <span className="text-slate-300 font-medium">
-                            {itemNameLabels[formData.name || ItemName.SWORD]}
+                            {itemNameLabels[formData.name || ItemName.SWORD] ??
+                                formData.name ??
+                                ItemName.SWORD}
                         </span>
                     </div>
                 </div>

@@ -91,3 +91,23 @@ export const useUpdateAdventurer = () => {
     });
     return updateAdventurerMutation;
 };
+
+export const useDeleteAdventurer = () => {
+    const queryClient = useQueryClient();
+    const deleteAdventurerMutation = useMutation({
+        mutationFn: async (id: string): Promise<void> => {
+            const response = await fetch(`${API_BASE}/adventurers/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Erreur lors de la suppression de l'aventurier");
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["adventurers"] });
+        },
+    });
+    return deleteAdventurerMutation;
+};

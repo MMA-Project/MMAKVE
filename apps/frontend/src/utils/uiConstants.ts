@@ -10,6 +10,7 @@ export const adventurerStatusLabels: Record<AdventurerStatus, string> = {
     [AdventurerStatus.DEAD]: "Décédé",
     [AdventurerStatus.RESTING]: "Au repos",
     [AdventurerStatus.LEAVED]: "Parti",
+    [AdventurerStatus.DELETED]: "Supprimé",
 };
 
 export const questStatusLabels: Record<QuestStatus, string> = {

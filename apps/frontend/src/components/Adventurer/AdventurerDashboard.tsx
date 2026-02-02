@@ -1,5 +1,5 @@
 import type { Adventurer } from "../../../../../packages/shared/src/types/adventurer.type";
-import { useAdventurers } from "../../api/adventurerApi";
+import { useAdventurers, useDeleteAdventurer } from "../../api/adventurerApi";
 import { useAdventurerFilterStore } from "../../store/useAdventurerFilterStore";
 import { AdventurerFilters } from "./AdventurerFilters";
 import { AdventurerList } from "./AdventurerList";
@@ -15,6 +15,7 @@ type SortBy = "name" | "xp" | "type" | "status" | "createdAt";
 
 export function AdventurerDashboard() {
     const getAdventurers = useAdventurers();
+    const deleteAdventurer = useDeleteAdventurer();
     const [sortBy, setSortBy] = useState<SortBy>("name");
     const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -31,6 +32,10 @@ export function AdventurerDashboard() {
         { value: "status" as const, label: "Statut" },
         { value: "createdAt" as const, label: "Date de création" },
     ];
+
+    const handleDelete = (adventurerId: string) => {
+        deleteAdventurer.mutate(adventurerId);
+    };
 
     if (getAdventurers.isLoading) {
         return <LoadingState message="Chargement des aventuriers..." />;
@@ -110,6 +115,7 @@ export function AdventurerDashboard() {
                         sortBy={sortBy}
                         sortOrder={sortOrder}
                         onEdit={setSelectedAdventurerForEdit}
+                        onDelete={handleDelete}
                     />
                 </div>
 

@@ -14,7 +14,9 @@ export async function getAll(params?: {
     minXp?: number;
     maxXp?: number;
 }): Promise<Adventurer[] | []> {
-    const where: any = {};
+    const where: any = {
+        status: { not: "DELETED" }, // Exclure les aventuriers supprimés
+    };
 
     if (params?.type) {
         where.type = params.type;
@@ -50,13 +52,13 @@ export async function getAll(params?: {
         user: adventurer.user
             ? {
                   id: adventurer.user.id,
-                  name: adventurer.user.name,
+                  name: adventurer.user.displayName || adventurer.user.name,
                   role: adventurer.user.role,
                   createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
         type: adventurer.type as unknown as AdventurerType,
-        status: adventurer.status.toLowerCase() as AdventurerStatus,
+        status: adventurer.status as AdventurerStatus,
         xp: adventurer.xp,
     }));
 }
@@ -86,13 +88,13 @@ export async function getById(id: string): Promise<Adventurer | null> {
         user: adventurer.user
             ? {
                   id: adventurer.user.id,
-                  name: adventurer.user.name,
+                  name: adventurer.user.displayName || adventurer.user.name,
                   role: adventurer.user.role,
                   createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
         type: adventurer.type as unknown as AdventurerType,
-        status: adventurer.status.toLowerCase() as AdventurerStatus,
+        status: adventurer.status as AdventurerStatus,
         xp: adventurer.xp,
     };
 }
@@ -129,13 +131,13 @@ export async function getByUserId(userId: string) {
         user: adventurer.user
             ? {
                   id: adventurer.user.id,
-                  name: adventurer.user.name,
+                  name: adventurer.user.displayName || adventurer.user.name,
                   role: adventurer.user.role,
                   createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
         type: adventurer.type as unknown as AdventurerType,
-        status: adventurer.status.toLowerCase() as AdventurerStatus,
+        status: adventurer.status as AdventurerStatus,
         xp: adventurer.xp,
     };
 }
@@ -162,13 +164,13 @@ export async function getByQuest(questId: string): Promise<Adventurer[]> {
         user: assignment.adventurer.user
             ? {
                   id: assignment.adventurer.user.id,
-                  name: assignment.adventurer.user.username,
+                  name: assignment.adventurer.user.displayName || assignment.adventurer.user.name,
                   role: assignment.adventurer.user.role,
                   createdAt: new Date(assignment.adventurer.user.createdAt),
               }
             : (null as any),
         type: assignment.adventurer.type as unknown as AdventurerType,
-        status: assignment.adventurer.status.toLowerCase() as AdventurerStatus,
+        status: assignment.adventurer.status as AdventurerStatus,
         xp: assignment.adventurer.xp,
     }));
 }
@@ -229,6 +231,7 @@ export async function create(data: {
         const user = await tx.user.create({
             data: {
                 name: data.username,
+                displayName: data.name,
                 password: hashedPassword,
                 role: "ADVENTURER",
                 adventurerId: adventurer.id,
@@ -242,12 +245,12 @@ export async function create(data: {
         id: result.adventurer.id,
         user: {
             id: result.user.id,
-            name: result.user.name,
+            name: result.user.displayName || result.user.name,
             role: result.user.role,
             createdAt: new Date(result.user.createdAt),
         },
         type: result.adventurer.type as unknown as AdventurerType,
-        status: result.adventurer.status.toLowerCase() as AdventurerStatus,
+        status: result.adventurer.status as AdventurerStatus,
         xp: result.adventurer.xp,
     };
 }
@@ -328,20 +331,21 @@ export async function modify(
         user: adventurer.user
             ? {
                   id: adventurer.user.id,
-                  name: adventurer.user.name,
+                  name: adventurer.user.displayName || adventurer.user.name,
                   role: adventurer.user.role,
                   createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
         type: adventurer.type as unknown as AdventurerType,
-        status: adventurer.status.toLowerCase() as AdventurerStatus,
+        status: adventurer.status as AdventurerStatus,
         xp: adventurer.xp,
     };
 }
 
 /**
  * ! Rôle: Assistant
- * Delete an adventurer and associated user
+ * Soft delete an adventurer (set status to DELETED)
+ * Only allowed if adventurer is AVAILABLE
  */
 export async function remove(id: string): Promise<void> {
     // Check if adventurer exists
@@ -357,6 +361,15 @@ export async function remove(id: string): Promise<void> {
         throw new AppError(ErrorCodes.NOT_FOUND, "Adventurer not found", 404);
     }
 
+    // Only allow deletion if status is AVAILABLE
+    if (existing.status !== "AVAILABLE") {
+        throw new AppError(
+            ErrorCodes.VALIDATION_ERROR,
+            "Cannot delete adventurer: must be available (not on quest, injured, etc.)",
+            422,
+        );
+    }
+
     // Check if adventurer has active quests
     if (existing.assignments.length > 0) {
         throw new AppError(
@@ -366,18 +379,9 @@ export async function remove(id: string): Promise<void> {
         );
     }
 
-    // Delete in transaction
-    await prisma.$transaction(async (tx: any) => {
-        // Delete the associated user if exists
-        if (existing.user) {
-            await tx.user.delete({
-                where: { id: existing.user.id },
-            });
-        }
-
-        // Delete the adventurer
-        await tx.adventurer.delete({
-            where: { id },
-        });
+    // Soft delete: update status to DELETED
+    await prisma.adventurer.update({
+        where: { id },
+        data: { status: "DELETED" },
     });
 }

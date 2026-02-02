@@ -11,7 +11,7 @@ import { SortControls, type SortOrder } from "../common/SortControls";
 import { CreateButton } from "../common/CreateButton";
 import { LoadingState, ErrorState, EmptyState } from "../common";
 
-type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
+type SortBy = "date_limit" | "prime" | "status" | "xp" | "client" | "name";
 
 export function QuestDashboard() {
     const getQuests = useQuests();
@@ -30,6 +30,7 @@ export function QuestDashboard() {
         endDate,
         selectedStatus,
         clientSearch,
+        nameSearch,
         selectedClasses,
     } = useFilterStore();
 
@@ -39,6 +40,7 @@ export function QuestDashboard() {
         { value: "status" as const, label: "Statut" },
         { value: "xp" as const, label: "XP requis" },
         { value: "client" as const, label: "Client" },
+        { value: "name" as const, label: "Nom" },
     ];
 
     if (!user) return null;
@@ -123,6 +125,13 @@ export function QuestDashboard() {
                                 return false;
                             }
 
+                            if (
+                                nameSearch &&
+                                !quest.title.toLowerCase().includes(nameSearch.toLowerCase())
+                            ) {
+                                return false;
+                            }
+
                             if (selectedClasses.length > 0 && quest.options?.profils) {
                                 const hasMatchingClass = selectedClasses.some(
                                     (selectedClass: AdventurerType) =>
@@ -142,6 +151,9 @@ export function QuestDashboard() {
                                 userRole={user.role}
                                 userId={user.id}
                                 cancelQuestMutation={cancelQuestMutation}
+                                onProcessingFormOpen={() => {
+                                    // Le formulaire est géré directement par QuestList
+                                }}
                             />
                         );
                     })()}

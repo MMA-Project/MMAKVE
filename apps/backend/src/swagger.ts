@@ -79,8 +79,16 @@ const options: swaggerJsdoc.Options = {
                         },
                         status: {
                             type: "string",
-                            enum: ["available", "on_quest", "injured", "dead", "sleeping"],
-                            example: "available",
+                            enum: [
+                                "AVAILABLE",
+                                "ON_QUEST",
+                                "INJURED",
+                                "DEAD",
+                                "RESTING",
+                                "LEAVED",
+                                "DELETED",
+                            ],
+                            example: "AVAILABLE",
                         },
                         xp: { type: "integer", example: 150 },
                     },

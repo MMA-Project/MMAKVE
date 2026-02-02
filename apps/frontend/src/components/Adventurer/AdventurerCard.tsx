@@ -1,6 +1,7 @@
 import type { Adventurer } from "../../../../../packages/shared/src/types/adventurer.type";
 import type { Item } from "../../../../../packages/shared/src/types/item.type";
 import { UpdateButton } from "../Buttons/UpdateButton";
+import { DeleteButton } from "../Buttons/DeleteButton";
 import { ItemCase } from "../Item/ItemCase";
 import { Link } from "react-router-dom";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
@@ -15,13 +16,10 @@ import { useQuests } from "../../api/quest.api";
 interface AdventurerCardProps {
     adventurer: Adventurer;
     onEdit: (adventurer: Adventurer) => void;
+    onDelete: (adventurerId: string) => void;
 }
 
-export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
-    const level = Math.floor(adventurer.xp / 1000);
-    const xpInCurrentLevel = adventurer.xp % 1000;
-    const progressPercent = (xpInCurrentLevel / 1000) * 100;
-
+export function AdventurerCard({ adventurer, onEdit, onDelete }: AdventurerCardProps) {
     const quests = useQuests();
 
     const activeQuest = quests.data?.find(
@@ -31,7 +29,18 @@ export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
     );
 
     const usedItems: Item[] =
-        activeQuest?.options?.assignments?.flatMap((a) => a?.items ?? []) ?? [];
+        activeQuest?.options?.assignments?.find((a) => a?.adventurer?.id === adventurer.id)
+            ?.items ?? [];
+
+    const isAvailable = adventurer.status === "AVAILABLE";
+
+    const handleDelete = () => {
+        if (!isAvailable) return;
+
+        if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${adventurer.user.name} ?`)) {
+            onDelete(adventurer.id);
+        }
+    };
 
     return (
         <div className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:bg-slate-800 transition">
@@ -52,21 +61,17 @@ export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
                         <div>
                             <h2 className="text-xl font-semibold">{adventurer.user.name}</h2>
                             <p className="text-sm text-slate-400">
-                                {adventurerTypeLabels[adventurer.type]} - Niveau {level}
+                                {adventurerTypeLabels[adventurer.type]}
                             </p>
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs text-slate-400">
-                            <span>Statut: {statusLabels[adventurer.status]}</span>
-                            <span>{xpInCurrentLevel} / 1000 XP</span>
+                            <span>XP: {adventurer.xp.toLocaleString("fr-FR")}</span>
                         </div>
-                        <div className="w-full bg-slate-700 rounded-full h-2">
-                            <div
-                                className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${progressPercent}%` }}
-                            ></div>
+                        <div className="flex items-center justify-between text-xs text-slate-400">
+                            <span>Statut: {statusLabels[adventurer.status]}</span>
                         </div>
 
                         {activeQuest && (
@@ -83,7 +88,7 @@ export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
 
                         {usedItems.length > 0 && (
                             <div className="mt-3 pt-3 border-t border-slate-700">
-                                <p className="text-xs text-slate-500 mb-2">Inventaire:</p>
+                                <p className="text-xs text-slate-500 mb-2">Items assignés:</p>
                                 <div className="flex gap-1.5 flex-wrap">
                                     {usedItems.map((item: Item, index: number) => (
                                         <div
@@ -100,27 +105,35 @@ export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
                                                 )}
                                         </div>
                                     ))}
-                                    {Array.from({ length: 5 - usedItems.length }, (_, index) => (
-                                        <div
-                                            key={`empty-${index}`}
-                                            className="w-12 h-12 rounded bg-slate-700/30 border border-slate-600/50 flex items-center justify-center"
-                                        >
-                                            <span className="text-slate-600 text-xs">-</span>
-                                        </div>
-                                    ))}
                                 </div>
                             </div>
                         )}
 
                         <p className="text-xs text-slate-500">
-                            XP total : {adventurer.xp.toLocaleString()} | Créé le{" "}
-                            {new Date(adventurer.user.createdAt).toLocaleDateString()}
+                            Créé le {new Date(adventurer.user.createdAt).toLocaleDateString()}
                         </p>
                     </div>
                 </div>
 
                 <div className="flex gap-2">
-                    <UpdateButton onClick={() => onEdit(adventurer)} />
+                    <UpdateButton
+                        onClick={() => onEdit(adventurer)}
+                        disabled={adventurer.status === "ON_QUEST"}
+                        title={
+                            adventurer.status === "ON_QUEST"
+                                ? "Les aventuriers en quête ne peuvent pas être modifiés"
+                                : "Modifier l'aventurier"
+                        }
+                    />
+                    <DeleteButton
+                        onClick={handleDelete}
+                        disabled={!isAvailable}
+                        title={
+                            isAvailable
+                                ? "Supprimer l'aventurier"
+                                : "Seuls les aventuriers disponibles peuvent être supprimés"
+                        }
+                    />
                 </div>
             </div>
         </div>

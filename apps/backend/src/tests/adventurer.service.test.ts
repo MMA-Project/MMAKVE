@@ -64,7 +64,7 @@ describe("Adventurer Service - create", () => {
 
         expect(adventurer.id).toBeDefined();
         expect(adventurer.type).toBe($Enums.AdventurerType.ARCHER);
-        expect(adventurer.status).toBe("available");
+        expect(adventurer.status).toBe("AVAILABLE");
         expect(adventurer.xp).toBe(0);
 
         // Verify user was created
@@ -326,12 +326,12 @@ describe("Adventurer Service - modify", () => {
         const updated = await modify(adventurer.id, {
             name: "Meriadoc",
             xp: 150,
-            status: "injured",
+            status: "INJURED",
         });
 
         expect(updated).toBeDefined();
         expect(updated?.xp).toBe(150);
-        expect(updated?.status).toBe("injured");
+        expect(updated?.status).toBe("INJURED");
     });
 
     it("rejects update for non-existent adventurer", async () => {

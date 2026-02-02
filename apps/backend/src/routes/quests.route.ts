@@ -23,6 +23,125 @@ router.get("/", QuestController.getAllQuests);
 
 /**
  * @openapi
+ * /quests/process/{id}:
+ *   post:
+ *     tags: [Quests]
+ *     summary: Traiter une quête (approuver ou rejeter avec assignments)
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la quête
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               profils:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               xpRequired:
+ *                 type: number
+ *               xpGained:
+ *                 type: number
+ *               adventurers:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               approved:
+ *                 type: boolean
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *               endDate:
+ *                 type: string
+ *                 format: date-time
+ *     responses:
+ *       200:
+ *         description: Quête traitée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Quest'
+ */
+router.post("/process/:id", QuestController.processQuestController);
+
+/**
+ * @openapi
+ * /quests/start/{id}:
+ *   post:
+ *     tags: [Quests]
+ *     summary: Démarrer une quête approuvée
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la quête
+ *     responses:
+ *       200:
+ *         description: Quête démarrée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Quest'
+ */
+router.post("/start/:id", QuestController.startQuestController);
+
+/**
+ * @openapi
+ * /quests/success/{id}:
+ *   post:
+ *     tags: [Quests]
+ *     summary: Compléter une quête avec succès
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la quête
+ *     responses:
+ *       200:
+ *         description: Quête complétée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Quest'
+ */
+router.post("/success/:id", QuestController.completeQuestSuccessController);
+
+/**
+ * @openapi
+ * /quests/fail/{id}:
+ *   post:
+ *     tags: [Quests]
+ *     summary: Compléter une quête avec échec
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la quête
+ *     responses:
+ *       200:
+ *         description: Quête complétée avec échec
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Quest'
+ */
+router.post("/fail/:id", QuestController.completeQuestFailController);
+
+/**
+ * @openapi
  * /quests/suggest/{id}:
  *   get:
  *     tags: [Quests]
