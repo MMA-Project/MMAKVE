@@ -13,6 +13,7 @@ import {
     type Quest,
     type QuestCreation,
     QuestStatus,
+    type QuestProcessingData,
 } from "../../../../packages/shared/src/types/quest.type";
 import { type Role } from "../../../../packages/shared/src/types/user.type";
 
@@ -413,4 +414,216 @@ export const useCancelQuest = () => {
     });
 
     return mutation;
+};
+export const useProcessQuest = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async ({
+            questId,
+            data,
+        }: {
+            questId: string;
+            data: QuestProcessingData;
+        }): Promise<Quest> => {
+            // TODO: Remplacer par un vrai appel API
+            // const response = await fetch(`/api/quests/process/${questId}`, {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(data),
+            // });
+            // return response.json();
+
+            const quest = mockQuests.find((q) => q.id === questId);
+            if (!quest) {
+                throw new Error("Quest not found");
+            }
+
+            if (!data.approved) {
+                quest.status = QuestStatus.REJECTED;
+            } else {
+                quest.status = QuestStatus.APPROVED;
+
+                // Créer ou mettre à jour les options
+                if (!quest.options) {
+                    quest.options = {
+                        profils: data.profils,
+                        start_date: new Date(),
+                        end_date: new Date(),
+                        xp_required: data.xpRequired,
+                        assignments: [],
+                    };
+                } else {
+                    quest.options.profils = data.profils;
+                    quest.options.xp_required = data.xpRequired;
+                }
+
+                // Créer les assignments pour les aventuriers sélectionnés
+                const mockSuggestedAdventurers = [
+                    {
+                        id: "504",
+                        user: {
+                            id: "504",
+                            name: "Aria Flameheart",
+                            role: "ADVENTURER" as const,
+                            createdAt: new Date("2025-02-10T10:00:00Z"),
+                        },
+                        type: AdventurerType.ARCANE_MAGE,
+                        status: AdventurerStatus.AVAILABLE,
+                        xp: 5500,
+                    },
+                    {
+                        id: "505",
+                        user: {
+                            id: "505",
+                            name: "Brother Cedric",
+                            role: "ADVENTURER" as const,
+                            createdAt: new Date("2025-04-05T08:20:00Z"),
+                        },
+                        type: AdventurerType.PRIEST,
+                        status: AdventurerStatus.AVAILABLE,
+                        xp: 4200,
+                    },
+                    {
+                        id: "506",
+                        user: {
+                            id: "506",
+                            name: "Thrain Ironforge",
+                            role: "ADVENTURER" as const,
+                            createdAt: new Date("2025-06-12T14:30:00Z"),
+                        },
+                        type: AdventurerType.BLACKSMITH,
+                        status: AdventurerStatus.AVAILABLE,
+                        xp: 3800,
+                    },
+                    {
+                        id: "507",
+                        user: {
+                            id: "507",
+                            name: "Lyanna Swiftarrow",
+                            role: "ADVENTURER" as const,
+                            createdAt: new Date("2025-07-20T11:45:00Z"),
+                        },
+                        type: AdventurerType.ARCHER,
+                        status: AdventurerStatus.AVAILABLE,
+                        xp: 6100,
+                    },
+                    {
+                        id: "508",
+                        user: {
+                            id: "508",
+                            name: "Kael Shadowstep",
+                            role: "ADVENTURER" as const,
+                            createdAt: new Date("2025-08-15T16:10:00Z"),
+                        },
+                        type: AdventurerType.ROGUE,
+                        status: AdventurerStatus.AVAILABLE,
+                        xp: 4900,
+                    },
+                ];
+
+                // Créer les assignments
+                quest.options.assignments = data.adventurers.map((adventurerId) => {
+                    const adventurer = mockSuggestedAdventurers.find((a) => a.id === adventurerId);
+                    return {
+                        id: `assignment-${questId}-${adventurerId}`,
+                        items: [],
+                        adventurer: adventurer || mockSuggestedAdventurers[0],
+                    };
+                });
+            }
+
+            return quest;
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["quests"] });
+            queryClient.invalidateQueries({ queryKey: ["quest", variables.questId] });
+        },
+    });
+
+    return mutation;
+};
+
+export const useSuggestAdventurers = (questId: string) => {
+    const query = useQuery({
+        queryKey: ["quests", "suggest", questId],
+        queryFn: async () => {
+            // TODO: Remplacer par un vrai appel API
+            // const response = await fetch(`/api/quests/suggest/${questId}`);
+            // return response.json();
+
+            // Mock data avec des aventuriers suggérés
+            const mockSuggestedAdventurers = [
+                {
+                    id: "504",
+                    user: {
+                        id: "504",
+                        name: "Aria Flameheart",
+                        role: "ADVENTURER" as const,
+                        createdAt: new Date("2025-02-10T10:00:00Z"),
+                    },
+                    type: AdventurerType.ARCANE_MAGE,
+                    status: AdventurerStatus.AVAILABLE,
+                    xp: 5500,
+                },
+                {
+                    id: "505",
+                    user: {
+                        id: "505",
+                        name: "Brother Cedric",
+                        role: "ADVENTURER" as const,
+                        createdAt: new Date("2025-04-05T08:20:00Z"),
+                    },
+                    type: AdventurerType.PRIEST,
+                    status: AdventurerStatus.AVAILABLE,
+                    xp: 4200,
+                },
+                {
+                    id: "506",
+                    user: {
+                        id: "506",
+                        name: "Thrain Ironforge",
+                        role: "ADVENTURER" as const,
+                        createdAt: new Date("2025-06-12T14:30:00Z"),
+                    },
+                    type: AdventurerType.BLACKSMITH,
+                    status: AdventurerStatus.AVAILABLE,
+                    xp: 3800,
+                },
+                {
+                    id: "507",
+                    user: {
+                        id: "507",
+                        name: "Lyanna Swiftarrow",
+                        role: "ADVENTURER" as const,
+                        createdAt: new Date("2025-07-20T11:45:00Z"),
+                    },
+                    type: AdventurerType.ARCHER,
+                    status: AdventurerStatus.AVAILABLE,
+                    xp: 6100,
+                },
+                {
+                    id: "508",
+                    user: {
+                        id: "508",
+                        name: "Kael Shadowstep",
+                        role: "ADVENTURER" as const,
+                        createdAt: new Date("2025-08-15T16:10:00Z"),
+                    },
+                    type: AdventurerType.ROGUE,
+                    status: AdventurerStatus.AVAILABLE,
+                    xp: 4900,
+                },
+            ];
+
+            return {
+                bestTeammates: mockSuggestedAdventurers,
+                teamRates: [0.75, 0.68, 0.62, 0.82, 0.71],
+                winRate: 0.72,
+            };
+        },
+        enabled: !!questId,
+    });
+
+    return query;
 };

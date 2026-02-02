@@ -1,32 +1,101 @@
 import { useParams } from "react-router-dom";
-import { useQuestById } from "../../api/quest.api";
+import { useQuestById, useProcessQuest, useSuggestAdventurers } from "../../api/quest.api";
 import { QuestProgressBar } from "./QuestProgressBar";
 import { computeProgress } from "../../utils/progressBar";
 import ReturnButton from "../Nav/ReturnButton";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
 import { ValidateButton } from "../Buttons/ValidateButton";
 import { UpdateButton } from "../Buttons/UpdateButton";
+import { CancelButton } from "../Buttons/CancelButton";
 import { useAuth } from "../../context/AuthContext";
 import { AdventurerQuestCard } from "../Adventurer/AdventurerQuestCard";
+import AssistantQuestProcessingForm from "./AssistantQuestProcessingForm";
+import { useState } from "react";
 
 export default function QuestPage() {
     const { id } = useParams<{ id: string }>();
     const { user } = useAuth();
     const { getQuestById } = useQuestById(id!);
     const quest = getQuestById.data;
+    const [showProcessingForm, setShowProcessingForm] = useState(false);
+    const processQuestMutation = useProcessQuest();
+    const suggestQuery = useSuggestAdventurers(id || "");
+
     if (!user) return null;
+
+    if (showProcessingForm && quest) {
+        const initialData = quest.options
+            ? {
+                  profils: quest.options.profils || [],
+                  xpRequired: quest.options.xp_required || 0,
+                  xpGained: 0,
+                  adventurers: quest.options.assignments?.map((a) => a.adventurer.id) || [],
+                  approved: true,
+              }
+            : undefined;
+
+        return (
+            <div className="min-h-screen flex flex-col items-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
+                <div className="max-w-3xl w-full">
+                    <ReturnButton />
+                    <div className="mt-6">
+                        <AssistantQuestProcessingForm
+                            questId={quest.id}
+                            suggestedAdventurers={suggestQuery.data?.bestTeammates || []}
+                            initialData={initialData}
+                            onSubmit={(data) => {
+                                processQuestMutation.mutate(
+                                    { questId: quest.id, data },
+                                    {
+                                        onSuccess: () => {
+                                            setShowProcessingForm(false);
+                                        },
+                                    },
+                                );
+                            }}
+                            onCancel={() => setShowProcessingForm(false)}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen flex flex-col items-center gap-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
             {quest && (
                 <div className="max-w-3xl w-full">
                     <ReturnButton />
-                    <div className="absolute flex flex-col top-4 right-4 m-5">
+                    <div className="absolute flex flex-col top-4 right-4 m-5 gap-2">
                         {quest.status === QuestStatus.PENDING && user.role === "ASSISTANT" && (
-                            <ValidateButton onClick={() => console.log("valider", quest.id)} />
+                            <ValidateButton onClick={() => setShowProcessingForm(true)} />
+                        )}
+                        {quest.status === QuestStatus.PENDING && user.role === "ASSISTANT" && (
+                            <CancelButton
+                                onClick={() => {
+                                    if (
+                                        window.confirm(
+                                            "Êtes-vous sûr de vouloir rejeter cette demande ?",
+                                        )
+                                    ) {
+                                        processQuestMutation.mutate({
+                                            questId: quest.id,
+                                            data: {
+                                                profils: [],
+                                                xpRequired: 0,
+                                                xpGained: 0,
+                                                adventurers: [],
+                                                approved: false,
+                                            },
+                                        });
+                                    }
+                                }}
+                            />
                         )}
                         {((user.role === "CLIENT" && quest.status === QuestStatus.PENDING) ||
-                            user.role === "ASSISTANT") && (
-                            <UpdateButton onClick={() => console.log("modifier", quest.id)} />
+                            (user.role === "ASSISTANT" &&
+                                quest.status === QuestStatus.APPROVED)) && (
+                            <UpdateButton onClick={() => setShowProcessingForm(true)} />
                         )}
                     </div>
                     <h1 className="text-3xl font-bold">{quest.title}</h1>

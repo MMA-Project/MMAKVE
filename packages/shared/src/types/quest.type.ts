@@ -36,3 +36,10 @@ export type QuestAssignement = {
     items: Item[];
     adventurer: Adventurer;
 };
+export type QuestProcessingData = {
+    profils: AdventurerType[];
+    xpRequired: number;
+    xpGained: number;
+    adventurers: string[];
+    approved: boolean;
+};

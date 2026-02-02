@@ -6,6 +6,9 @@ import { computeProgress } from "../../utils/progressBar";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { ValidateButton } from "../Buttons/ValidateButton";
 import { CancelButton } from "../Buttons/CancelButton";
+import AssistantQuestProcessingForm from "./AssistantQuestProcessingForm";
+import { useState } from "react";
+import { useProcessQuest, useSuggestAdventurers } from "../../api/quest.api";
 
 interface QuestListProps {
     quests: Quest[] | undefined;
@@ -24,6 +27,9 @@ export function QuestList({
     cancelQuestMutation,
 }: QuestListProps) {
     const navigate = useNavigate();
+    const [processingQuestId, setProcessingQuestId] = useState<string | null>(null);
+    const processQuestMutation = useProcessQuest();
+    const suggestQuery = useSuggestAdventurers(processingQuestId || "");
 
     if (!quests || quests.length === 0) {
         return (
@@ -61,6 +67,40 @@ export function QuestList({
         }
     });
 
+    const questBeingProcessed = sortedQuests.find((q) => q.id === processingQuestId);
+
+    if (processingQuestId && questBeingProcessed) {
+        const initialData = questBeingProcessed.options
+            ? {
+                  profils: questBeingProcessed.options.profils || [],
+                  xpRequired: questBeingProcessed.options.xp_required || 0,
+                  xpGained: 0,
+                  adventurers:
+                      questBeingProcessed.options.assignments?.map((a) => a.adventurer.id) || [],
+                  approved: true,
+              }
+            : undefined;
+
+        return (
+            <AssistantQuestProcessingForm
+                questId={processingQuestId}
+                suggestedAdventurers={suggestQuery.data?.bestTeammates || []}
+                initialData={initialData}
+                onSubmit={(data) => {
+                    processQuestMutation.mutate(
+                        { questId: processingQuestId, data },
+                        {
+                            onSuccess: () => {
+                                setProcessingQuestId(null);
+                            },
+                        },
+                    );
+                }}
+                onCancel={() => setProcessingQuestId(null)}
+            />
+        );
+    }
+
     return (
         <>
             {sortedQuests.map((quest) => (
@@ -91,27 +131,45 @@ export function QuestList({
 
                         <div className="flex items-center gap-2">
                             {quest.status === QuestStatus.PENDING && userRole === "ASSISTANT" && (
-                                <ValidateButton onClick={() => console.log("valider", quest.id)} />
+                                <ValidateButton
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setProcessingQuestId(quest.id);
+                                    }}
+                                />
                             )}
-                            {userRole === "ASSISTANT" &&
-                                (quest.status === QuestStatus.PENDING ||
-                                    quest.status === QuestStatus.APPROVED) && (
-                                    <CancelButton
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (
-                                                window.confirm(
-                                                    "Êtes-vous sûr de vouloir annuler cette quête ?",
-                                                )
-                                            ) {
-                                                cancelQuestMutation.mutate(quest.id);
-                                            }
-                                        }}
-                                    />
-                                )}
+                            {userRole === "ASSISTANT" && quest.status === QuestStatus.PENDING && (
+                                <CancelButton
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (
+                                            window.confirm(
+                                                "Êtes-vous sûr de vouloir rejeter cette demande ?",
+                                            )
+                                        ) {
+                                            processQuestMutation.mutate({
+                                                questId: quest.id,
+                                                data: {
+                                                    profils: [],
+                                                    xpRequired: 0,
+                                                    xpGained: 0,
+                                                    adventurers: [],
+                                                    approved: false,
+                                                },
+                                            });
+                                        }
+                                    }}
+                                />
+                            )}
                             {((userRole === "CLIENT" && quest.status === QuestStatus.PENDING) ||
-                                userRole === "ASSISTANT") && (
-                                <UpdateButton onClick={() => console.log("modifier", quest.id)} />
+                                (userRole === "ASSISTANT" &&
+                                    quest.status === QuestStatus.APPROVED)) && (
+                                <UpdateButton
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setProcessingQuestId(quest.id);
+                                    }}
+                                />
                             )}
                             <QuestStatusBanner status={quest.status} />
                         </div>
