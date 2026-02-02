@@ -51,12 +51,13 @@ enum AdventurerStatus {
   ON_QUEST
   INJURED
   DEAD
-  SLEEPING
+  RESTING
+  LEAVED
 }
 
 enum ItemType {
   WEAPON
-  EQUIPMENT
+  ARMOR
   POTION
   MISC
 }
@@ -83,6 +84,14 @@ enum ItemName {
   ARROW
 }
 
+enum ItemStatus {
+  AVAILABLE
+  IN_USE
+  CONSUMED
+  BROKEN
+  LOST
+}
+
 /**
  * Traité
  */
@@ -106,7 +115,7 @@ model Quest {
   deadline    DateTime
   start_date  DateTime?
   end_date    DateTime?
-  xp_required Int
+  xp_required Int?
   reward      Int
   status      QuestStatus       @default(PENDING)
   createdBy   String
@@ -140,11 +149,14 @@ model Item {
   id               String                  @id @default(uuid())
   name             ItemName
   description      String
-  durability       Int
+  durability       Int?
+  maxDurability    Int?
+  quantity         Int?
+  isConsumable     Boolean                 @default(false)
   price            Int
   type             ItemType
-  stats            String?
   rarity           ItemRarity              @default(COMMON)
+  status           ItemStatus              @default(AVAILABLE)
   profiles         AdventurerType[]
   questAssignments ItemOnQuestAssignment[]
   guilds           ItemOnGuild[]
@@ -168,11 +180,11 @@ model Bank {
 }
 
 model Transaction {
-  id     String   @id @default(uuid())
+  id     String @id @default(uuid())
   amount Int
-  date   DateTime
+  date   Int
   name   String
-  bank   Bank     @relation(fields: [bankId], references: [id])
+  bank   Bank   @relation(fields: [bankId], references: [id])
   bankId String
 }
 

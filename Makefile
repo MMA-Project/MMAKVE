@@ -2,7 +2,7 @@
 
 # Variables
 PNPM := pnpm
-DOCKER_COMPOSE := docker-compose -f docker-compose.dev.yml
+DOCKER_COMPOSE := $(shell command -v docker-compose >/dev/null 2>&1 && echo docker-compose || echo docker) compose -f docker-compose.dev.yml
 BACKEND_DIR := apps/backend
 FRONTEND_DIR := apps/frontend
 
