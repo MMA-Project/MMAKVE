@@ -9,6 +9,7 @@ import type { AdventurerType } from "../../../../../packages/shared/src/types/ad
 import { CreateQuestModal } from "./CreateQuestModal";
 import { SortControls, type SortOrder } from "../common/SortControls";
 import { CreateButton } from "../common/CreateButton";
+import { LoadingState, ErrorState, EmptyState } from "../common";
 
 type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
 
@@ -41,6 +42,25 @@ export function QuestDashboard() {
     ];
 
     if (!user) return null;
+
+    if (getQuests.isLoading) {
+        return <LoadingState message="Chargement des quêtes..." />;
+    }
+
+    if (getQuests.isError) {
+        const errorMessage =
+            getQuests.error instanceof Error ? getQuests.error.message : "Une erreur est survenue.";
+        return <ErrorState title="Impossible de charger les quêtes" message={errorMessage} />;
+    }
+
+    if (!getQuests.data) {
+        return (
+            <EmptyState
+                title="Aucune donnée disponible"
+                message="Les quêtes ne sont pas disponibles pour le moment."
+            />
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">

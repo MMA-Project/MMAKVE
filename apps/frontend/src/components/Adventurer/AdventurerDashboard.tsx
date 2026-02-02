@@ -9,6 +9,7 @@ import { useState } from "react";
 import { SortControls } from "../common/SortControls";
 import type { SortOrder } from "../common/SortControls";
 import { CreateButton } from "../common/CreateButton";
+import { LoadingState, ErrorState, EmptyState } from "../common";
 
 type SortBy = "name" | "xp" | "type" | "status" | "createdAt";
 
@@ -30,6 +31,27 @@ export function AdventurerDashboard() {
         { value: "status" as const, label: "Statut" },
         { value: "createdAt" as const, label: "Date de création" },
     ];
+
+    if (getAdventurers.isLoading) {
+        return <LoadingState message="Chargement des aventuriers..." />;
+    }
+
+    if (getAdventurers.isError) {
+        const errorMessage =
+            getAdventurers.error instanceof Error
+                ? getAdventurers.error.message
+                : "Une erreur est survenue.";
+        return <ErrorState title="Impossible de charger les aventuriers" message={errorMessage} />;
+    }
+
+    if (!getAdventurers.data) {
+        return (
+            <EmptyState
+                title="Aucune donnée disponible"
+                message="Les aventuriers ne sont pas disponibles pour le moment."
+            />
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">

@@ -1,33 +1,29 @@
 import { useAllGuilds, useGuildBank, useGuildItems } from "../../api/guildApi";
 import { Bank } from "./Bank";
 import { GuildInventory } from "./GuildInventory";
+import { LoadingState, ErrorState, EmptyState } from "../common";
 
 export function GuildDashboard() {
-    const { data: guilds, isLoading: guildsLoading, isError: guildsError } = useAllGuilds();
+    const { data: guilds, isLoading, isError, error } = useAllGuilds();
+    const getGuildBank = useGuildBank(guilds?.[0]?.id || "");
+    const getGuildItems = useGuildItems(guilds?.[0]?.id || "");
 
-    // Utiliser la première guilde disponible
-    const guildId = guilds?.[0]?.id;
-
-    const getGuildBank = useGuildBank(guildId || "");
-    const getGuildItems = useGuildItems(guildId || "");
-
-    const isLoading = guildsLoading || getGuildBank.isLoading || getGuildItems.isLoading;
-    const isError = guildsError || getGuildBank.isError || getGuildItems.isError;
-
-    if (isLoading) {
-        return <div>Chargement des données de la guilde...</div>;
+    if (isLoading || getGuildBank.isLoading || getGuildItems.isLoading) {
+        return <LoadingState message="Chargement des données de la guilde..." />;
     }
 
-    if (isError) {
-        return <div>Erreur lors du chargement des données de la guilde.</div>;
+    if (isError || getGuildBank.isError || getGuildItems.isError) {
+        const errorMessage = error instanceof Error ? error.message : "Une erreur est survenue.";
+        return <ErrorState title="Impossible de charger la guilde" message={errorMessage} />;
     }
 
     if (!guilds || guilds.length === 0) {
-        return <div>Aucune guilde trouvée.</div>;
-    }
-
-    if (!getGuildBank.data || !getGuildItems.data) {
-        return <div>Les données de la guilde ne sont pas disponibles.</div>;
+        return (
+            <EmptyState
+                title="Aucune donnée disponible"
+                message="Les données de la guilde ne sont pas disponibles."
+            />
+        );
     }
 
     const guild = guilds[0];
