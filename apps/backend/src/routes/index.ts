@@ -1,6 +1,7 @@
 import { Router } from "express";
 import quests from "./quests.route.js";
 import adventurers from "./adventurer.route.js";
+import guilds from "./guild.route.js";
 
 import authRoutes from "./auth.route";
 
@@ -41,5 +42,7 @@ router.use("/auth", authRoutes);
 router.use("/quests", quests);
 
 router.use("/adventurers", adventurers);
+
+router.use("/guilds", guilds);
 
 export default router;

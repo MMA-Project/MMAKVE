@@ -3,8 +3,6 @@ import type { Item } from "../../../../../packages/shared/src/types/item.type";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { ItemCase } from "../Item/ItemCase";
 import { Link } from "react-router-dom";
-import { mockQuests } from "../../api/quest.api";
-import { mockGuildApi } from "../../api/guildApi";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
 import {
     adventurerImages,
@@ -12,6 +10,7 @@ import {
     statusColors,
     statusLabels,
 } from "../../utils/adventurerImages";
+import { useQuests } from "../../api/quest.api";
 
 interface AdventurerCardProps {
     adventurer: Adventurer;
@@ -23,17 +22,16 @@ export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
     const xpInCurrentLevel = adventurer.xp % 1000;
     const progressPercent = (xpInCurrentLevel / 1000) * 100;
 
-    const activeQuest = mockQuests.find(
+    const quests = useQuests();
+
+    const activeQuest = quests.data?.find(
         (quest) =>
             quest.status === QuestStatus.IN_PROGRESS &&
-            quest.options?.assignments?.some((a) => a.adventurer.id === adventurer.id),
+            quest.options?.assignments?.some((a) => a?.adventurer?.id === adventurer.id),
     );
 
-    const usedItems: Item[] = (mockGuildApi.inventory || []).filter((item) =>
-        activeQuest?.options?.assignments?.some(
-            (a) => a.adventurer.id === adventurer.id && a.items.some((i) => i.id === item.id),
-        ),
-    );
+    const usedItems: Item[] =
+        activeQuest?.options?.assignments?.flatMap((a) => a?.items ?? []) ?? [];
 
     return (
         <div className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:bg-slate-800 transition">

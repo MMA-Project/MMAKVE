@@ -46,7 +46,7 @@ export function QuestList({
 
         switch (sortBy) {
             case "date_limit":
-                return compare(a.deadline.getTime(), b.deadline.getTime());
+                return compare(new Date(a.deadline).getTime(), new Date(b.deadline).getTime());
             case "prime":
                 return compare(a.reward, b.reward);
             case "status":
@@ -81,7 +81,7 @@ export function QuestList({
                             <p className="text-sm text-slate-300 mt-1">{quest.description}</p>
                             <div className="mt-2 text-xs text-slate-400">
                                 <p>Client : {quest.requester.name}</p>
-                                <p>Date limite : {quest.deadline.toLocaleDateString()}</p>
+                                <p>Date limite : {new Date(quest.deadline).toLocaleDateString()}</p>
                                 <p>Prime : {quest.reward} 💰</p>
                                 {quest.options && (
                                     <p>{quest.options?.xp_required ?? 0} XP requis</p>

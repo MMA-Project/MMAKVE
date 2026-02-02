@@ -26,7 +26,7 @@ interface CreateQuestModalProps {
 
 export function CreateQuestModal({ isOpen, onClose }: CreateQuestModalProps) {
     const { user } = useAuth();
-    const { createQuest } = useCreateQuest();
+    const createQuestMutation = useCreateQuest();
     const navigate = useNavigate();
 
     const formik = useFormik({
@@ -37,7 +37,7 @@ export function CreateQuestModal({ isOpen, onClose }: CreateQuestModalProps) {
             reward: "",
         },
         validationSchema,
-        onSubmit: async (values) => {
+        onSubmit: (values) => {
             const questData: QuestCreation = {
                 requester: user!,
                 title: values.title,
@@ -45,10 +45,13 @@ export function CreateQuestModal({ isOpen, onClose }: CreateQuestModalProps) {
                 deadline: new Date(values.deadline),
                 reward: Number(values.reward),
             };
-            const quest = await createQuest(questData);
-            formik.resetForm();
-            onClose();
-            navigate("/quest/" + quest.id);
+            createQuestMutation.mutate(questData, {
+                onSuccess: (quest) => {
+                    formik.resetForm();
+                    onClose();
+                    navigate("/quest/" + quest.id);
+                },
+            });
         },
     });
 
