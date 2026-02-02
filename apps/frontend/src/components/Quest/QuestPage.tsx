@@ -22,11 +22,11 @@ export default function QuestPage() {
                     <ReturnButton />
                     <div className="absolute flex flex-col top-4 right-4 m-5">
                         {quest.status === QuestStatus.PENDING && user.role === "ASSISTANT" && (
-                            <ValidateButton onClick={() => console.log("validate", quest.id)} />
+                            <ValidateButton onClick={() => console.log("valider", quest.id)} />
                         )}
                         {((user.role === "CLIENT" && quest.status === QuestStatus.PENDING) ||
                             user.role === "ASSISTANT") && (
-                            <UpdateButton onClick={() => console.log("update", quest.id)} />
+                            <UpdateButton onClick={() => console.log("modifier", quest.id)} />
                         )}
                     </div>
                     <h1 className="text-3xl font-bold">{quest.title}</h1>

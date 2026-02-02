@@ -84,7 +84,7 @@ export function AdventurerForm({
                 });
             }
         } catch (error) {
-            console.error("Error submitting form:", error);
+            console.error("Erreur lors de l'envoi du formulaire :", error);
         }
     };
 

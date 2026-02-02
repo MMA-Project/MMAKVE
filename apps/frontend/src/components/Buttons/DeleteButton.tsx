@@ -1,8 +1,8 @@
 export function DeleteButton({ onClick }: any) {
     return (
         <button
-            aria-label="Delete quest"
-            title="Delete"
+            aria-label="Supprimer la quête"
+            title="Supprimer"
             className="p-2 rounded hover:bg-slate-700"
             onClick={onClick}
         >

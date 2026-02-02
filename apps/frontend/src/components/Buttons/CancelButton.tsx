@@ -1,7 +1,7 @@
 export function CancelButton({ onClick }: { onClick: (e: React.MouseEvent) => void }) {
     return (
         <button
-            aria-label="Cancel quest"
+            aria-label="Annuler la quête"
             title="Annuler"
             className="p-2 rounded hover:bg-slate-700"
             onClick={onClick}

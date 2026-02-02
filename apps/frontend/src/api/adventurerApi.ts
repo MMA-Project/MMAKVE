@@ -87,7 +87,7 @@ export const useUpdateAdventurer = () => {
             updates: Partial<Adventurer>;
         }): Promise<Adventurer> => {
             const index = mockAdventurers.findIndex((a) => a.id === id);
-            if (index === -1) throw new Error("Adventurer not found");
+            if (index === -1) throw new Error("Aventurier introuvable");
 
             const updatedAdventurer = {
                 ...mockAdventurers[index],
