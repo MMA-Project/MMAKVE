@@ -35,7 +35,6 @@ export function Navbar() {
         <nav className="bg-slate-900 border-b border-slate-700 fixed top-0 inset-x-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    {/* Logo / Brand */}
                     <div className="flex items-center">
                         <Link
                             to="/dashboard"
@@ -45,7 +44,6 @@ export function Navbar() {
                         </Link>
                     </div>
 
-                    {/* Navigation Links - Only for Assistants */}
                     {user.role === "ASSISTANT" && (
                         <div className="hidden md:flex items-center space-x-4">
                             <Link
@@ -69,7 +67,6 @@ export function Navbar() {
                         </div>
                     )}
 
-                    {/* Profile Dropdown */}
                     <div className="relative" ref={profileRef}>
                         <button
                             onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -103,7 +100,6 @@ export function Navbar() {
                                         {user.role === "ADVENTURER" && "Aventurier"}
                                     </div>
 
-                                    {/* Mobile navigation for assistants */}
                                     {user.role === "ASSISTANT" && (
                                         <div className="md:hidden border-b border-slate-700">
                                             <Link

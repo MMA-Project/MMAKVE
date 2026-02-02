@@ -1,6 +1,10 @@
 import { useState } from "react";
 import type { Item } from "../../../../../packages/shared/src/types/item.type";
-import { ItemRarity, ItemStatus } from "../../../../../packages/shared/src/types/item.type";
+import {
+    ItemRarity,
+    ItemStatus,
+    ItemType,
+} from "../../../../../packages/shared/src/types/item.type";
 import { Link } from "react-router-dom";
 import {
     itemEmojis,
@@ -13,17 +17,125 @@ import { ItemModal } from "./ItemModal";
 import { useAddItem, useUpdateItem } from "../../api/guildApi";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { ItemStatusBadge } from "../Item/ItemStatusBadge";
+import { SortControls } from "../common/SortControls";
+import { SearchFilter } from "../common/SearchFilter";
+import { SelectFilter } from "../common/SelectFilter";
+import { RangeFilter } from "../common/RangeFilter";
+import { AdvancedFiltersContainer } from "../common/AdvancedFiltersContainer";
+import { CreateButton } from "../common/CreateButton";
+import { useSorting } from "../../hooks/useSorting";
 
 export function GuildInventory({ inventory }: { inventory: Item[] }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<Item | undefined>();
+
+    // Filtres
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedType, setSelectedType] = useState("");
+    const [selectedRarity, setSelectedRarity] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState("");
+    const [minPrice, setMinPrice] = useState<string>("");
+    const [maxPrice, setMaxPrice] = useState<string>("");
+
+    // Tri
+    const sortConfig = {
+        name: { label: "Nom", getValue: (item: Item) => itemNameLabels[item.name] },
+        type: { label: "Type", getValue: (item: Item) => itemTypeLabels[item.type] },
+        rarity: { label: "Rareté", getValue: (item: Item) => item.rarity },
+        price: { label: "Prix", getValue: (item: Item) => item.price },
+        status: { label: "Statut", getValue: (item: Item) => item.status },
+    };
+
+    const { sortBy, sortOrder, setSortBy, setSortOrder } = useSorting("name", "asc");
+
+    // Logique de tri manuelle
+    const sortedItems = [...inventory].sort((a, b) => {
+        const aValue = sortConfig[sortBy as keyof typeof sortConfig]?.getValue(a);
+        const bValue = sortConfig[sortBy as keyof typeof sortConfig]?.getValue(b);
+
+        if (aValue === undefined || bValue === undefined) return 0;
+
+        if (typeof aValue === "number" && typeof bValue === "number") {
+            return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+        }
+
+        const aStr = String(aValue).toLowerCase();
+        const bStr = String(bValue).toLowerCase();
+
+        if (sortOrder === "asc") {
+            return aStr.localeCompare(bStr);
+        } else {
+            return bStr.localeCompare(aStr);
+        }
+    });
+
     const addItem = useAddItem();
     const updateItem = useUpdateItem();
 
-    const availableItems = inventory.filter((item) => item.status === ItemStatus.AVAILABLE);
-    const inUseItems = inventory.filter((item) => item.status === ItemStatus.IN_USE);
+    // Filtrage
+    const filteredAndSortedItems = sortedItems.filter((item: Item) => {
+        const matchesSearch =
+            !searchTerm ||
+            itemNameLabels[item.name].toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesType = !selectedType || item.type === selectedType;
+        const matchesRarity = !selectedRarity || item.rarity === selectedRarity;
+        const matchesStatus = !selectedStatus || item.status === selectedStatus;
+        const matchesMinPrice = !minPrice || item.price >= parseInt(minPrice);
+        const matchesMaxPrice = !maxPrice || item.price <= parseInt(maxPrice);
+
+        return (
+            matchesSearch &&
+            matchesType &&
+            matchesRarity &&
+            matchesStatus &&
+            matchesMinPrice &&
+            matchesMaxPrice
+        );
+    });
+
+    const availableItems = filteredAndSortedItems.filter(
+        (item) => item.status === ItemStatus.AVAILABLE,
+    );
+    const inUseItems = filteredAndSortedItems.filter((item) => item.status === ItemStatus.IN_USE);
 
     const totalValue = inventory.reduce((sum, item) => sum + item.price, 0);
+
+    // Options pour les selects
+    const typeOptions = Object.values(ItemType).map((type) => ({
+        value: type,
+        label: itemTypeLabels[type],
+    }));
+
+    const rarityOptions = Object.values(ItemRarity).map((rarity) => ({
+        value: rarity,
+        label: itemRarityLabels[rarity],
+    }));
+
+    const statusOptions = Object.values(ItemStatus).map((status) => ({
+        value: status,
+        label:
+            status === ItemStatus.AVAILABLE
+                ? "Disponible"
+                : status === ItemStatus.IN_USE
+                  ? "En utilisation"
+                  : status === ItemStatus.BROKEN
+                    ? "Cassé"
+                    : "Inconnu",
+    }));
+
+    const hasActiveFilters = Boolean(
+        searchTerm || selectedType || selectedRarity || selectedStatus || minPrice || maxPrice,
+    );
+
+    const resetFilters = () => {
+        setSearchTerm("");
+        setSelectedType("");
+        setSelectedRarity("");
+        setSelectedStatus("");
+        setMinPrice("");
+        setMaxPrice("");
+    };
 
     const rarityColors = {
         [ItemRarity.COMMON]: "text-gray-400",
@@ -42,30 +154,93 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                     </h2>
                     <p className="text-sm text-slate-400 mt-1">
                         {availableItems.length} disponibles / {inUseItems.length} en utilisation /{" "}
-                        {inventory.length} total
+                        {filteredAndSortedItems.length} affichés / {inventory.length} total
                     </p>
                 </div>
-                <div className="flex flex-col items-end gap-3">
-                    <div>
-                        <p className="text-sm text-slate-400">Valeur totale</p>
-                        <p className="text-xl font-bold text-amber-400">
-                            {new Intl.NumberFormat("fr-FR").format(totalValue)} po
-                        </p>
-                    </div>
+                <div>
+                    <p className="text-sm text-slate-400">Valeur totale</p>
+                    <p className="text-xl font-bold text-amber-400">
+                        {new Intl.NumberFormat("fr-FR").format(totalValue)} po
+                    </p>
                 </div>
             </div>
 
-            <div
-                className="p-4 border border-slate-700 rounded bg-slate-900 flex flex-col gap-3 hover:cursor-pointer hover:bg-slate-800 transition mb-6"
-                onClick={() => {
-                    setEditingItem(undefined);
-                    setIsModalOpen(true);
-                }}
-            >
-                <div className="flex items-center justify-center gap-2 text-slate-400">
-                    <span>+</span>
-                    <span>Ajouter un nouvel objet</span>
-                </div>
+            <div className="mb-6">
+                <SortControls
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    onSortByChange={(value: string) => setSortBy(value as any)}
+                    onSortOrderChange={setSortOrder}
+                    sortOptions={Object.entries(sortConfig).map(([value, { label }]) => ({
+                        value,
+                        label,
+                    }))}
+                    additionalControls={
+                        <AdvancedFiltersContainer
+                            hasActiveFilters={hasActiveFilters}
+                            onResetFilters={resetFilters}
+                        >
+                            <div className="grid grid-cols-1 gap-4">
+                                <SearchFilter
+                                    label="Recherche"
+                                    value={searchTerm}
+                                    onChange={setSearchTerm}
+                                    placeholder="Rechercher un objet..."
+                                    icon="🔍"
+                                />
+
+                                <SelectFilter
+                                    label="Type"
+                                    value={selectedType}
+                                    onChange={setSelectedType}
+                                    options={typeOptions}
+                                    placeholder="Tous les types"
+                                    icon="⚔️"
+                                />
+
+                                <SelectFilter
+                                    label="Rareté"
+                                    value={selectedRarity}
+                                    onChange={setSelectedRarity}
+                                    options={rarityOptions}
+                                    placeholder="Toutes les raretés"
+                                    icon="✨"
+                                />
+
+                                <SelectFilter
+                                    label="Statut"
+                                    value={selectedStatus}
+                                    onChange={setSelectedStatus}
+                                    options={statusOptions}
+                                    placeholder="Tous les statuts"
+                                    icon="📊"
+                                />
+
+                                <RangeFilter
+                                    label="Prix (po)"
+                                    minValue={minPrice}
+                                    maxValue={maxPrice}
+                                    onMinChange={setMinPrice}
+                                    onMaxChange={setMaxPrice}
+                                    placeholder="Prix"
+                                    icon="💰"
+                                    type="number"
+                                />
+                            </div>
+                        </AdvancedFiltersContainer>
+                    }
+                />
+            </div>
+
+            <div className="mb-6">
+                <CreateButton
+                    onClick={() => {
+                        setEditingItem(undefined);
+                        setIsModalOpen(true);
+                    }}
+                    title="Ajouter un nouvel objet"
+                    hoverColor="amber"
+                />
             </div>
 
             <div className="overflow-x-auto">
@@ -84,7 +259,7 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-700/50">
-                        {inventory.map((item) => (
+                        {filteredAndSortedItems.map((item: Item) => (
                             <tr
                                 key={item.id}
                                 className="hover:bg-slate-700/30 transition-colors group"

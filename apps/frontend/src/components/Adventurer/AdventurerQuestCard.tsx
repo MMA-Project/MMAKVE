@@ -4,7 +4,7 @@ import { ItemCase } from "../Item/ItemCase";
 import { XPtoLvl, progressToNextLevel } from "../../utils/XPtoLvl";
 import {
     adventurerImages,
-    typeLabels,
+    adventurerTypeLabels,
     statusColors,
     statusLabels,
 } from "../../utils/adventurerImages";
@@ -21,12 +21,11 @@ export function AdventurerQuestCard({ adventurer, items }: AdventurerQuestCardPr
     return (
         <li className="p-4 border border-slate-700 rounded-lg bg-slate-800 hover:bg-slate-750 transition">
             <div className="flex items-start gap-4">
-                {/* Avatar et info principale */}
                 <div className="flex items-center gap-3 flex-1">
                     <div className="relative">
                         <img
                             src={adventurerImages[adventurer.type]}
-                            alt={typeLabels[adventurer.type]}
+                            alt={adventurerTypeLabels[adventurer.type]}
                             className="w-16 h-16 rounded-full border-2 border-slate-700 object-cover bg-slate-800"
                         />
                         <span
@@ -39,7 +38,7 @@ export function AdventurerQuestCard({ adventurer, items }: AdventurerQuestCardPr
                             {adventurer.user.name}
                         </h3>
                         <p className="text-sm text-slate-400">
-                            {typeLabels[adventurer.type]} - Niveau {level}
+                            {adventurerTypeLabels[adventurer.type]} - Niveau {level}
                         </p>
                         <div className="mt-2 space-y-1">
                             <div className="flex items-center justify-between text-xs text-slate-500">
@@ -56,7 +55,6 @@ export function AdventurerQuestCard({ adventurer, items }: AdventurerQuestCardPr
                     </div>
                 </div>
 
-                {/* Inventaire */}
                 <div className="flex flex-col gap-2">
                     <span className="text-xs text-slate-400 font-medium text-center">
                         Inventaire

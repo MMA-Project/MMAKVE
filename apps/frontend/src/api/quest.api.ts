@@ -406,7 +406,6 @@ export const useCancelQuest = () => {
             }
         },
         onSuccess: () => {
-            // Invalider et refetch les quêtes
             queryClient.invalidateQueries({ queryKey: ["quests"] });
         },
     });

@@ -31,7 +31,7 @@ export const adventurerImages: Record<AdventurerType, string> = {
     [AdventurerType.ROGUE]: ninjaImg,
 };
 
-export const typeLabels: Record<AdventurerType, string> = {
+export const adventurerTypeLabels: Record<AdventurerType, string> = {
     [AdventurerType.ARCHER]: "Archer",
     [AdventurerType.BARBARIAN]: "Barbare",
     [AdventurerType.PALADIN]: "Paladin",

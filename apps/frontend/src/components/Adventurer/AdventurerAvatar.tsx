@@ -4,7 +4,7 @@ import {
 } from "../../../../../packages/shared/src/types/adventurer.type";
 import {
     adventurerImages,
-    typeLabels,
+    adventurerTypeLabels,
     statusColors,
     statusLabels,
 } from "../../utils/adventurerImages";
@@ -20,7 +20,7 @@ export function AdventurerAvatar({ type, status }: AdventurerAvatarProps) {
         <div className="relative">
             <img
                 src={adventurerImages[type]}
-                alt={typeLabels[type]}
+                alt={adventurerTypeLabels[type]}
                 className="w-16 h-16 rounded-full border-2 border-slate-700 object-cover bg-slate-800"
             />
             <span

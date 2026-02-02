@@ -1,10 +1,10 @@
-import { ItemName } from "../../../../../packages/shared/src/types/item.type";
+import { ItemName, ItemRarity } from "../../../../../packages/shared/src/types/item.type";
 import { itemImages, itemEmojis } from "../../utils/itemConstants";
 import { itemRarityColors } from "../../utils/itemRarityColors";
 
 interface ItemIconProps {
     name: ItemName;
-    rarity: string;
+    rarity: ItemRarity;
 }
 
 export function ItemIcon({ name, rarity }: ItemIconProps) {
