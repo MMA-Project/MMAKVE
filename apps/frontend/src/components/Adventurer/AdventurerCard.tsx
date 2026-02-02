@@ -1,7 +1,6 @@
 import type { Adventurer } from "../../../../../packages/shared/src/types/adventurer.type";
 import type { Item } from "../../../../../packages/shared/src/types/item.type";
 import { UpdateButton } from "../Buttons/UpdateButton";
-import { DeleteButton } from "../Buttons/DeleteButton";
 import { ItemCase } from "../Item/ItemCase";
 import { Link } from "react-router-dom";
 import { mockQuests } from "../../api/quest.api";
@@ -17,10 +16,9 @@ import {
 interface AdventurerCardProps {
     adventurer: Adventurer;
     onEdit: (adventurer: Adventurer) => void;
-    onDelete: (id: string) => void;
 }
 
-export function AdventurerCard({ adventurer, onEdit, onDelete }: AdventurerCardProps) {
+export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
     const level = Math.floor(adventurer.xp / 1000);
     const xpInCurrentLevel = adventurer.xp % 1000;
     const progressPercent = (xpInCurrentLevel / 1000) * 100;
@@ -122,7 +120,6 @@ export function AdventurerCard({ adventurer, onEdit, onDelete }: AdventurerCardP
 
                 <div className="flex gap-2">
                     <UpdateButton onClick={() => onEdit(adventurer)} />
-                    <DeleteButton onClick={() => onDelete(adventurer.id)} />
                 </div>
             </div>
         </div>

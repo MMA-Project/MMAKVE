@@ -103,18 +103,3 @@ export const useUpdateAdventurer = () => {
     });
     return updateAdventurerMutation;
 };
-
-export const useDeleteAdventurer = () => {
-    const queryClient = useQueryClient();
-    const deleteAdventurerMutation = useMutation({
-        mutationFn: async (id: string): Promise<void> => {
-            const index = mockAdventurers.findIndex((a) => a.id === id);
-            if (index === -1) throw new Error("Adventurer not found");
-            mockAdventurers.splice(index, 1);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["adventurers"] });
-        },
-    });
-    return deleteAdventurerMutation;
-};

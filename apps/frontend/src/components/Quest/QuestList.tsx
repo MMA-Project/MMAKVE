@@ -3,7 +3,6 @@ import { type Quest, QuestStatus } from "../../../../../packages/shared/src/type
 import { QuestProgressBar } from "./QuestProgressBar";
 import QuestStatusBanner from "./QuestStatusBanner";
 import { computeProgress } from "../../utils/progressBar";
-import { DeleteButton } from "../Buttons/DeleteButton";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { ValidateButton } from "../Buttons/ValidateButton";
 import { CancelButton } from "../Buttons/CancelButton";
@@ -114,9 +113,6 @@ export function QuestList({
                             {((userRole === "CLIENT" && quest.status === QuestStatus.PENDING) ||
                                 userRole === "ASSISTANT") && (
                                 <UpdateButton onClick={() => console.log("update", quest.id)} />
-                            )}
-                            {userRole === "CLIENT" && quest.requester.id === userId && (
-                                <DeleteButton onClick={() => console.log("delete", quest.id)} />
                             )}
                             <QuestStatusBanner status={quest.status} />
                         </div>

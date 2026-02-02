@@ -12,7 +12,6 @@ import {
 import { ItemModal } from "./ItemModal";
 import { useAddItem, useUpdateItem } from "../../api/guildApi";
 import { UpdateButton } from "../Buttons/UpdateButton";
-import { DeleteButton } from "../Buttons/DeleteButton";
 import { ItemStatusBadge } from "../Item/ItemStatusBadge";
 
 export function GuildInventory({ inventory }: { inventory: Item[] }) {
@@ -169,18 +168,6 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                                             onClick={() => {
                                                 setEditingItem(item);
                                                 setIsModalOpen(true);
-                                            }}
-                                        />
-                                        <DeleteButton
-                                            onClick={() => {
-                                                if (
-                                                    confirm(`Marquer ${item.name} comme consommé ?`)
-                                                ) {
-                                                    updateItem.mutate({
-                                                        ...item,
-                                                        status: ItemStatus.CONSUMED,
-                                                    });
-                                                }
                                             }}
                                         />
                                     </div>

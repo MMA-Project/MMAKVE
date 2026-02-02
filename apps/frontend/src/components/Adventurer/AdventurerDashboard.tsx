@@ -1,5 +1,5 @@
 import type { Adventurer } from "../../../../../packages/shared/src/types/adventurer.type";
-import { useAdventurers, useDeleteAdventurer } from "../../api/adventurerApi";
+import { useAdventurers } from "../../api/adventurerApi";
 import { useAdventurerFilterStore } from "../../store/useAdventurerFilterStore";
 import { AdventurerFilters } from "./AdventurerFilters";
 import { AdventurerList } from "./AdventurerList";
@@ -12,7 +12,6 @@ type SortOrder = "asc" | "desc";
 
 export function AdventurerDashboard() {
     const getAdventurers = useAdventurers();
-    const deleteAdventurerMutation = useDeleteAdventurer();
     const [sortBy, setSortBy] = useState<SortBy>("name");
     const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -21,16 +20,6 @@ export function AdventurerDashboard() {
     );
 
     const { minXp, maxXp, nameSearch, selectedStatus, selectedTypes } = useAdventurerFilterStore();
-
-    const handleDelete = async (id: string) => {
-        if (confirm("Êtes-vous sûr de vouloir supprimer cet aventurier ?")) {
-            try {
-                await deleteAdventurerMutation.mutateAsync(id);
-            } catch (error) {
-                console.error("Error deleting adventurer:", error);
-            }
-        }
-    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
@@ -119,7 +108,6 @@ export function AdventurerDashboard() {
                         sortBy={sortBy}
                         sortOrder={sortOrder}
                         onEdit={setSelectedAdventurerForEdit}
-                        onDelete={handleDelete}
                     />
                 </div>
 

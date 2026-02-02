@@ -7,16 +7,9 @@ interface AdventurerListProps {
     sortBy: "name" | "xp" | "type" | "status" | "createdAt";
     sortOrder: "asc" | "desc";
     onEdit: (adventurer: Adventurer) => void;
-    onDelete: (id: string) => void;
 }
 
-export function AdventurerList({
-    adventurers,
-    sortBy,
-    sortOrder,
-    onEdit,
-    onDelete,
-}: AdventurerListProps) {
+export function AdventurerList({ adventurers, sortBy, sortOrder, onEdit }: AdventurerListProps) {
     if (!adventurers || adventurers.length === 0) {
         return (
             <div className="p-8 border border-slate-700 rounded bg-slate-900/50 flex flex-col items-center justify-center gap-3 text-slate-400">
@@ -65,12 +58,7 @@ export function AdventurerList({
     return (
         <>
             {sortedAdventurers.map((adventurer) => (
-                <AdventurerCard
-                    key={adventurer.id}
-                    adventurer={adventurer}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                />
+                <AdventurerCard key={adventurer.id} adventurer={adventurer} onEdit={onEdit} />
             ))}
         </>
     );

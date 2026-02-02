@@ -4,7 +4,6 @@ import { QuestProgressBar } from "./QuestProgressBar";
 import { computeProgress } from "../../utils/progressBar";
 import ReturnButton from "../Nav/ReturnButton";
 import { QuestStatus } from "../../../../../packages/shared/src/types/quest.type";
-import { DeleteButton } from "../Buttons/DeleteButton";
 import { ValidateButton } from "../Buttons/ValidateButton";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { useAuth } from "../../context/AuthContext";
@@ -28,10 +27,6 @@ export default function QuestPage() {
                         {((user.role === "CLIENT" && quest.status === QuestStatus.PENDING) ||
                             user.role === "ASSISTANT") && (
                             <UpdateButton onClick={() => console.log("update", quest.id)} />
-                        )}
-                        {((user.role === "CLIENT" && quest.status === QuestStatus.PENDING) ||
-                            user.role === "ASSISTANT") && (
-                            <DeleteButton onClick={() => console.log("delete", quest.id)} />
                         )}
                     </div>
                     <h1 className="text-3xl font-bold">{quest.title}</h1>
