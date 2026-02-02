@@ -6,21 +6,24 @@ import {
 
 const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
-const getAuthToken = () => localStorage.getItem("auth_token");
+// Fonction utilitaire pour convertir les dates d'un adventurer
+const convertAdventurerDates = (adventurer: any): Adventurer => {
+    if (adventurer?.user?.createdAt && typeof adventurer.user.createdAt === "string") {
+        adventurer.user.createdAt = new Date(adventurer.user.createdAt);
+    }
+    return adventurer;
+};
 
 export const useAdventurers = () => {
     const fetchAdventurers = async (): Promise<Adventurer[]> => {
-        const response = await fetch(`${API_BASE}/adventurers`, {
-            headers: {
-                Authorization: `Bearer ${getAuthToken()}`,
-            },
-        });
+        const response = await fetch(`${API_BASE}/adventurers`);
 
         if (!response.ok) {
             throw new Error("Erreur lors de la récupération des aventuriers");
         }
 
-        return response.json();
+        const data = await response.json();
+        return data.map(convertAdventurerDates);
     };
     const getAdventurers = useQuery({
         queryKey: ["adventurers"],
@@ -37,7 +40,6 @@ export const useCreateAdventurer = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${getAuthToken()}`,
                 },
                 body: JSON.stringify(newAdventurer),
             });
@@ -47,7 +49,8 @@ export const useCreateAdventurer = () => {
                 throw new Error(error.message || "Erreur lors de la création de l'aventurier");
             }
 
-            return response.json();
+            const data = await response.json();
+            return convertAdventurerDates(data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["adventurers"] });
@@ -70,7 +73,6 @@ export const useUpdateAdventurer = () => {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${getAuthToken()}`,
                 },
                 body: JSON.stringify(updates),
             });
@@ -80,7 +82,8 @@ export const useUpdateAdventurer = () => {
                 throw new Error(error.message || "Erreur lors de la mise à jour de l'aventurier");
             }
 
-            return response.json();
+            const data = await response.json();
+            return convertAdventurerDates(data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["adventurers"] });

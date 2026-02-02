@@ -3,21 +3,31 @@ import { type Quest, type QuestCreation } from "../../../../packages/shared/src/
 
 const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
-const getAuthToken = () => localStorage.getItem("auth_token");
-
 export const useQuests = () => {
     const fetchQuests = async (): Promise<Quest[]> => {
-        const response = await fetch(`${API_BASE}/quests`, {
-            headers: {
-                Authorization: `Bearer ${getAuthToken()}`,
-            },
-        });
+        const response = await fetch(`${API_BASE}/quests`);
 
         if (!response.ok) {
             throw new Error("Erreur lors de la récupération des quêtes");
         }
 
-        return response.json();
+        const data = await response.json();
+
+        // Convertir les strings de dates en objets Date
+        return data.map((quest: any) => {
+            if (typeof quest.deadline === "string") {
+                quest.deadline = new Date(quest.deadline);
+            }
+            if (quest.options) {
+                if (typeof quest.options.start_date === "string") {
+                    quest.options.start_date = new Date(quest.options.start_date);
+                }
+                if (typeof quest.options.end_date === "string") {
+                    quest.options.end_date = new Date(quest.options.end_date);
+                }
+            }
+            return quest;
+        });
     };
 
     const getQuests = useQuery({
@@ -30,17 +40,30 @@ export const useQuests = () => {
 
 export const useQuestById = (id: string) => {
     const fetchQuestById = async (questId: string): Promise<Quest | undefined> => {
-        const response = await fetch(`${API_BASE}/quests/${questId}`, {
-            headers: {
-                Authorization: `Bearer ${getAuthToken()}`,
-            },
-        });
+        const response = await fetch(`${API_BASE}/quests/${questId}`);
 
         if (!response.ok) {
             throw new Error("Erreur lors de la récupération de la quête");
         }
 
-        return response.json();
+        const data = await response.json();
+
+        // Convertir les strings de dates en objets Date
+        if (data) {
+            if (typeof data.deadline === "string") {
+                data.deadline = new Date(data.deadline);
+            }
+            if (data.options) {
+                if (typeof data.options.start_date === "string") {
+                    data.options.start_date = new Date(data.options.start_date);
+                }
+                if (typeof data.options.end_date === "string") {
+                    data.options.end_date = new Date(data.options.end_date);
+                }
+            }
+        }
+
+        return data;
     };
 
     const getQuestById = useQuery({
@@ -60,7 +83,6 @@ export const useCreateQuest = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${getAuthToken()}`,
                 },
                 body: JSON.stringify(questData),
             });
@@ -70,7 +92,24 @@ export const useCreateQuest = () => {
                 throw new Error(error.message || "Erreur lors de la création de la quête");
             }
 
-            return response.json();
+            const data = await response.json();
+
+            // Convertir les strings de dates en objets Date
+            if (data) {
+                if (typeof data.deadline === "string") {
+                    data.deadline = new Date(data.deadline);
+                }
+                if (data.options) {
+                    if (typeof data.options.start_date === "string") {
+                        data.options.start_date = new Date(data.options.start_date);
+                    }
+                    if (typeof data.options.end_date === "string") {
+                        data.options.end_date = new Date(data.options.end_date);
+                    }
+                }
+            }
+
+            return data;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["quests"] });
@@ -87,9 +126,6 @@ export const useCancelQuest = () => {
         mutationFn: async (questId: string): Promise<void> => {
             const response = await fetch(`${API_BASE}/quests/${questId}/cancel`, {
                 method: "PUT",
-                headers: {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                },
             });
 
             if (!response.ok) {

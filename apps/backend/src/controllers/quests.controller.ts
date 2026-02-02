@@ -4,6 +4,7 @@ import {
     create,
     getAll,
     getAllByUser,
+    getById,
     suggestQuestTeammates,
     update,
     validate,
@@ -48,8 +49,24 @@ export const getAllQuestsByUser = async (req: Request, res: Response) => {
     }
 };
 
+export const getQuestById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        if (!id) throw new AppError(ErrorCodes.VALIDATION_ERROR, "Quest ID is required", 422);
+        const quest = await getById(id);
+        if (!quest) {
+            return sendError(res, ErrorCodes.NOT_FOUND, "Quest not found", { status: 404 });
+        }
+        return res.status(200).json(quest);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            return sendError(res, error.code, error.message, { status: error.status });
+        }
+    }
+};
+
 export const createQuest = async (req: Request, res: Response) => {
-    const data: QuestCreation = req.body;
+    const data: any = req.body;
     try {
         if (!data) throw new AppError(ErrorCodes.VALIDATION_ERROR, "Quest data is required", 422);
         if (!data.title || !data.description || !data.deadline || !data.reward)
@@ -58,7 +75,20 @@ export const createQuest = async (req: Request, res: Response) => {
                 "Title, description, deadline and reward are required",
                 422,
             );
-        const quest = await create(data);
+
+        // MOCK: Since auth is mocked, we need to provide requester data
+        // The frontend should include requester in the data, or we use a default mock
+        const questData: QuestCreation = {
+            ...data,
+            requester: data.requester || {
+                id: "1004",
+                name: "Lyria Moonshadow",
+                role: "CLIENT" as const,
+                createdAt: new Date(),
+            },
+        };
+
+        const quest = await create(questData);
         return res.status(201).json(quest);
     } catch (error: any) {
         if (error instanceof AppError) {

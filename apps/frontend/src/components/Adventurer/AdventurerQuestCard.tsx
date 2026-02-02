@@ -60,8 +60,8 @@ export function AdventurerQuestCard({ adventurer, items }: AdventurerQuestCardPr
                         Inventaire
                     </span>
                     <div className="flex gap-1.5">
-                        {items.map((item) => (
-                            <div key={item.id} className="relative">
+                        {items.map((item, index) => (
+                            <div key={`${adventurer.id}-${item.id}-${index}`} className="relative">
                                 <ItemCase item={item} />
                                 {item.isConsumable && item.quantity && item.quantity > 1 && (
                                     <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center font-bold">

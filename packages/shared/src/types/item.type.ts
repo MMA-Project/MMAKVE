@@ -1,31 +1,31 @@
 import { AdventurerType } from "./adventurer.type";
 
 export enum ItemType {
-    WEAPON = "weapon",
-    ARMOR = "armor",
-    POTION = "potion",
-    MISC = "misc",
+    WEAPON = "WEAPON",
+    ARMOR = "ARMOR",
+    POTION = "POTION",
+    MISC = "MISC",
 }
 export enum ItemRarity {
-    COMMON = "common",
-    UNCOMMON = "uncommon",
-    RARE = "rare",
-    EPIC = "epic",
-    LEGENDARY = "legendary",
+    COMMON = "COMMON",
+    UNCOMMON = "UNCOMMON",
+    RARE = "RARE",
+    EPIC = "EPIC",
+    LEGENDARY = "LEGENDARY",
 }
 
 export enum ItemName {
-    SWORD = "Sword",
-    SHIELD = "Shield",
-    HELMET = "Helmet",
-    HEALING_POTION = "Healing Potion",
-    MAGIC_RING = "Magic Ring",
-    BOW = "Bow",
-    DAGGER = "Dagger",
-    STAFF = "Staff",
-    ARMOR = "Armor",
-    AXE = "Axe",
-    ARROW = "Arrow",
+    SWORD = "SWORD",
+    SHIELD = "SHIELD",
+    HELMET = "HELMET",
+    HEALING_POTION = "HEALING_POTION",
+    MAGIC_RING = "MAGIC_RING",
+    BOW = "BOW",
+    DAGGER = "DAGGER",
+    STAFF = "STAFF",
+    ARMOR = "ARMOR",
+    AXE = "AXE",
+    ARROW = "ARROW",
 }
 
 export enum ItemStatus {

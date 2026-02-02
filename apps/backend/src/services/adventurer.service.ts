@@ -99,6 +99,49 @@ export async function getById(id: string): Promise<Adventurer | null> {
 
 /**
  * ! Rôle: Assistant
+ * Get adventurer by User ID
+ */
+export async function getByUserId(userId: string) {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+            adventurer: {
+                include: {
+                    user: true,
+                    guild: true,
+                    assignments: {
+                        include: {
+                            quest: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    if (!user?.adventurer) return null;
+
+    const adventurer = user.adventurer;
+
+    return {
+        id: adventurer.id,
+        guildId: adventurer.guildId,
+        user: adventurer.user
+            ? {
+                  id: adventurer.user.id,
+                  name: adventurer.user.name,
+                  role: adventurer.user.role,
+                  createdAt: new Date(adventurer.user.createdAt),
+              }
+            : (null as any),
+        type: adventurer.type as unknown as AdventurerType,
+        status: adventurer.status.toLowerCase() as AdventurerStatus,
+        xp: adventurer.xp,
+    };
+}
+
+/**
+ * ! Rôle: Assistant
  * Get adventurers by quest ID
  */
 export async function getByQuest(questId: string): Promise<Adventurer[]> {
@@ -151,9 +194,9 @@ export async function create(data: {
         );
     }
 
-    // Check if username already exists
+    // Check if username already exists (checking the 'name' field in User model)
     const existingUser = await prisma.user.findUnique({
-        where: { name: data.name },
+        where: { name: data.username },
     });
     if (existingUser) {
         throw new AppError(ErrorCodes.USERNAME_TAKEN, "Username already taken", 409);
@@ -172,10 +215,9 @@ export async function create(data: {
 
     // Create adventurer and user in a transaction
     const result = await prisma.$transaction(async (tx: any) => {
-        // Create the adventurer first
+        // Create the adventurer first (without name, it goes into User)
         const adventurer = await tx.adventurer.create({
             data: {
-                name: data.name,
                 type: data.type as string,
                 status: "AVAILABLE",
                 xp: 0,
@@ -186,9 +228,9 @@ export async function create(data: {
         // Create the user linked to the adventurer
         const user = await tx.user.create({
             data: {
-                username: data.username,
+                name: data.username,
                 password: hashedPassword,
-                role: "AVENTURIER",
+                role: "ADVENTURER",
                 adventurerId: adventurer.id,
             },
         });
@@ -217,6 +259,7 @@ export async function create(data: {
 export async function modify(
     id: string,
     data: Partial<{
+        user: Partial<{ name: string; role: string }>;
         name: string;
         type: AdventurerType | string;
         status: string;
@@ -227,6 +270,7 @@ export async function modify(
     // Check if adventurer exists
     const existing = await prisma.adventurer.findUnique({
         where: { id },
+        include: { user: true },
     });
     if (!existing) {
         throw new AppError(ErrorCodes.NOT_FOUND, "Adventurer not found", 404);
@@ -243,11 +287,32 @@ export async function modify(
     }
 
     const updateData: any = {};
-    if (data.name !== undefined) updateData.name = data.name;
     if (data.type !== undefined) updateData.type = data.type as string;
     if (data.status !== undefined) updateData.status = data.status.toUpperCase();
     if (data.xp !== undefined) updateData.xp = data.xp;
     if (data.guildId !== undefined) updateData.guildId = data.guildId;
+
+    // Update User if user data is provided
+    if (data.user && existing.user) {
+        const userUpdateData: any = {};
+        if (data.user.name !== undefined) userUpdateData.name = data.user.name;
+        if (data.user.role !== undefined) userUpdateData.role = data.user.role;
+
+        if (Object.keys(userUpdateData).length > 0) {
+            await prisma.user.update({
+                where: { id: existing.user.id },
+                data: userUpdateData,
+            });
+        }
+    }
+
+    // Handle legacy 'name' field (for direct updates)
+    if (data.name !== undefined && existing.user) {
+        await prisma.user.update({
+            where: { id: existing.user.id },
+            data: { name: data.name },
+        });
+    }
 
     const adventurer = await prisma.adventurer.update({
         where: { id },

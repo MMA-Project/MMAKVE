@@ -85,8 +85,11 @@ export function AdventurerCard({ adventurer, onEdit }: AdventurerCardProps) {
                             <div className="mt-3 pt-3 border-t border-slate-700">
                                 <p className="text-xs text-slate-500 mb-2">Inventaire:</p>
                                 <div className="flex gap-1.5 flex-wrap">
-                                    {usedItems.map((item: Item) => (
-                                        <div key={item.id} className="relative">
+                                    {usedItems.map((item: Item, index: number) => (
+                                        <div
+                                            key={`${adventurer.id}-${item.id}-${index}`}
+                                            className="relative"
+                                        >
                                             <ItemCase item={item} />
                                             {item.isConsumable &&
                                                 item.quantity &&

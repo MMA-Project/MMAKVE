@@ -4,15 +4,9 @@ import type { Item } from "../../../../packages/shared/src/types/item.type";
 
 const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
-const getAuthToken = () => localStorage.getItem("auth_token");
-
 export function useAllGuilds() {
     const fetchGuilds = async (): Promise<Guild[]> => {
-        const response = await fetch(`${API_BASE}/guilds`, {
-            headers: {
-                Authorization: `Bearer ${getAuthToken()}`,
-            },
-        });
+        const response = await fetch(`${API_BASE}/guilds`);
 
         if (!response.ok) {
             throw new Error("Erreur lors de la récupération des guildes");
@@ -31,11 +25,7 @@ export function useAllGuilds() {
 
 export function useGuildBank(guildId: string) {
     const fetchGuildBank = async () => {
-        const response = await fetch(`${API_BASE}/guilds/${guildId}/bank`, {
-            headers: {
-                Authorization: `Bearer ${getAuthToken()}`,
-            },
-        });
+        const response = await fetch(`${API_BASE}/guilds/${guildId}/bank`);
 
         if (!response.ok) {
             throw new Error("Erreur lors de la récupération de la banque de guilde");
@@ -55,11 +45,7 @@ export function useGuildBank(guildId: string) {
 
 export function useGuildItems(guildId: string) {
     const fetchGuildItems = async () => {
-        const response = await fetch(`${API_BASE}/guilds/${guildId}/inventory`, {
-            headers: {
-                Authorization: `Bearer ${getAuthToken()}`,
-            },
-        });
+        const response = await fetch(`${API_BASE}/guilds/${guildId}/inventory`);
 
         if (!response.ok) {
             throw new Error("Erreur lors de la récupération de l'inventaire");
@@ -85,7 +71,6 @@ export function useAddItem() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${getAuthToken()}`,
                 },
                 body: JSON.stringify(newItem),
             });
@@ -111,7 +96,6 @@ export function useUpdateItem() {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${getAuthToken()}`,
                 },
                 body: JSON.stringify(updatedItem),
             });

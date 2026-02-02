@@ -33,7 +33,7 @@ export default function QuestPage() {
                     <p className="text-lg text-slate-300 mt-4">{quest.description}</p>
                     <div className="mt-6 text-sm text-slate-400">
                         <p>Date limite: {quest.deadline?.toLocaleDateString() || "—"}</p>
-                        <p>Demandé par: {quest.requester.name}</p>
+                        <p>Demandé par: {quest.requester?.name}</p>
                         <p>Prime: {quest.reward} 💰</p>
                         {quest.options && <p>XP requis: {quest.options.xp_required ?? 0}</p>}
                         {quest.options &&

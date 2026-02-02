@@ -1058,6 +1058,34 @@ async function main() {
         ],
     });
 
+    // === MISE À JOUR DU STATUT DES ITEMS EN UTILISATION ===
+    console.log("📝 Mise à jour du statut des items utilisés dans les quêtes actives...");
+
+    // Récupérer tous les items utilisés dans les quêtes actives (PENDING, IN_PROGRESS, APPROVED)
+    const itemsInActiveQuests = await prisma.itemOnQuestAssignment.findMany({
+        where: {
+            questAssignment: {
+                quest: {
+                    status: {
+                        in: [QuestStatus.PENDING, QuestStatus.IN_PROGRESS, QuestStatus.APPROVED],
+                    },
+                },
+            },
+        },
+        select: { itemId: true },
+    });
+
+    // Extraire les IDs uniques
+    const itemIdsToUpdate = [...new Set(itemsInActiveQuests.map((item) => item.itemId))];
+
+    // Mettre à jour le statut à IN_USE pour ces items
+    if (itemIdsToUpdate.length > 0) {
+        await prisma.item.updateMany({
+            where: { id: { in: itemIdsToUpdate } },
+            data: { status: ItemStatus.IN_USE },
+        });
+    }
+
     // === TRANSACTIONS BANCAIRES ===
     console.log("💳 Création des transactions bancaires...");
 

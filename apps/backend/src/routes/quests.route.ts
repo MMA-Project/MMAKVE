@@ -23,6 +23,64 @@ router.get("/", QuestController.getAllQuests);
 
 /**
  * @openapi
+ * /quests/suggest/{id}:
+ *   get:
+ *     tags: [Quests]
+ *     summary: Suggérer des coéquipiers pour une quête
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la quête
+ *     responses:
+ *       200:
+ *         description: Suggestions de coéquipiers avec leurs taux de réussite
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 teamRates:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       adventurerId:
+ *                         type: string
+ *                       winRate:
+ *                         type: number
+ *                 winRate:
+ *                   type: number
+ */
+router.get("/suggest/:id", QuestController.suggestTeammates);
+
+/**
+ * @openapi
+ * /quests/{id}:
+ *   get:
+ *     tags: [Quests]
+ *     summary: Récupérer une quête par son ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la quête
+ *     responses:
+ *       200:
+ *         description: Détails de la quête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Quest'
+ */
+router.get("/:id", QuestController.getQuestById);
+
+/**
+ * @openapi
  * /quests/{userId}:
  *   get:
  *     tags: [Quests]
@@ -125,8 +183,8 @@ router.put("/:id", QuestController.validateQuest);
 
 /**
  * @openapi
- * /quests/{id}:
- *   delete:
+ * /quests/{id}/cancel:
+ *   put:
  *     tags: [Quests]
  *     summary: Annuler une quête
  *     parameters:
@@ -140,14 +198,14 @@ router.put("/:id", QuestController.validateQuest);
  *       204:
  *         description: Quête annulée
  */
-router.delete("/:id", QuestController.cancelQuest);
+router.put("/:id/cancel", QuestController.cancelQuest);
 
 /**
  * @openapi
- * /quests/suggest/{id}:
- *   get:
+ * /quests/{id}:
+ *   delete:
  *     tags: [Quests]
- *     summary: Suggérer des coéquipiers pour une quête
+ *     summary: Annuler une quête (legacy)
  *     parameters:
  *       - in: path
  *         name: id
@@ -156,25 +214,9 @@ router.delete("/:id", QuestController.cancelQuest);
  *           type: string
  *         description: ID de la quête
  *     responses:
- *       200:
- *         description: Suggestions de coéquipiers avec leurs taux de réussite
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 teamRates:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       adventurerId:
- *                         type: string
- *                       winRate:
- *                         type: number
- *                 winRate:
- *                   type: number
+ *       204:
+ *         description: Quête annulée
  */
-router.get("/suggest/:id", QuestController.suggestTeammates);
+router.delete("/:id", QuestController.cancelQuest);
 
 export default router;

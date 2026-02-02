@@ -55,14 +55,28 @@ export async function getAll(params?: {
     const quests = await prisma.quest.findMany({
         where,
         include: {
-            assignments: true,
+            assignments: {
+                include: {
+                    items: {
+                        include: {
+                            item: true,
+                        },
+                    },
+                    adventurer: {
+                        include: {
+                            user: true,
+                        },
+                    },
+                },
+            },
+            requester: true,
         },
         orderBy: { start_date: "desc" },
     });
 
     return quests.map((q) => ({
         id: q.id,
-        requester: q.createdBy ? (getUserById(q.createdBy) as any) : null,
+        requester: q.requester,
         title: q.title,
         description: q.description ?? "",
         deadline: q.deadline ? new Date(q.deadline) : new Date(),
@@ -73,23 +87,87 @@ export async function getAll(params?: {
             start_date: q.start_date ? new Date(q.start_date) : new Date(),
             end_date: q.end_date ? new Date(q.end_date) : new Date(),
             xp_required: q.xp_required ?? 0,
-            assignments: (q.assignments ?? []) as unknown as QuestAssignement[],
+            assignments: (q.assignments ?? []).map((a) => ({
+                id: a.id,
+                adventurer: a.adventurer as unknown as Adventurer,
+                items: a.items.map((itemOnAssignment) => itemOnAssignment.item) as any[],
+            })) as unknown as QuestAssignement[],
         },
     }));
 }
+
+export const getById = async (id: string): Promise<Quest | null> => {
+    const quest = await prisma.quest.findUnique({
+        where: { id },
+        include: {
+            assignments: {
+                include: {
+                    items: {
+                        include: {
+                            item: true,
+                        },
+                    },
+                    adventurer: {
+                        include: {
+                            user: true,
+                        },
+                    },
+                },
+            },
+            requester: true,
+        },
+    });
+
+    if (!quest) return null;
+
+    return {
+        id: quest.id,
+        requester: quest.requester,
+        title: quest.title,
+        description: quest.description ?? "",
+        deadline: quest.deadline ? new Date(quest.deadline) : new Date(),
+        reward: quest.reward ?? 0,
+        status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
+        options: {
+            profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
+            start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
+            end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
+            xp_required: quest.xp_required ?? 0,
+            assignments: (quest.assignments ?? []).map((a) => ({
+                id: a.id,
+                adventurer: a.adventurer as unknown as Adventurer,
+                items: a.items.map((itemOnAssignment) => itemOnAssignment.item) as any[],
+            })) as unknown as QuestAssignement[],
+        },
+    };
+};
 
 export const getAllByUser = async (userId: string): Promise<Quest[]> => {
     const quests = await prisma.quest.findMany({
         where: { createdBy: userId },
         include: {
-            assignments: true,
+            assignments: {
+                include: {
+                    items: {
+                        include: {
+                            item: true,
+                        },
+                    },
+                    adventurer: {
+                        include: {
+                            user: true,
+                        },
+                    },
+                },
+            },
+            requester: true,
         },
         orderBy: { end_date: "desc" },
     });
 
     return quests.map((q) => ({
         id: q.id,
-        requester: q.createdBy ? (getUserById(q.createdBy) as any) : null,
+        requester: q.requester,
         title: q.title,
         description: q.description ?? "",
         deadline: q.deadline ? new Date(q.deadline) : new Date(),
@@ -100,7 +178,11 @@ export const getAllByUser = async (userId: string): Promise<Quest[]> => {
             start_date: q.start_date ? new Date(q.start_date) : new Date(),
             end_date: q.end_date ? new Date(q.end_date) : new Date(),
             xp_required: q.xp_required ?? 0,
-            assignments: (q.assignments ?? []) as unknown as QuestAssignement[],
+            assignments: (q.assignments ?? []).map((a) => ({
+                id: a.id,
+                adventurer: a.adventurer as unknown as Adventurer,
+                items: a.items.map((itemOnAssignment) => itemOnAssignment.item) as any[],
+            })) as unknown as QuestAssignement[],
         },
     }));
 };
@@ -116,20 +198,47 @@ export const create = async (data: QuestCreation): Promise<Quest> => {
             status: QuestStatus.PENDING as any,
             createdBy: data.requester.id,
             xp_required: data.options?.xp_required ?? 0,
+            profils: data.options?.profils ?? [],
+            start_date: data.options?.start_date,
+            end_date: data.options?.end_date,
         },
         include: {
-            assignments: true,
+            assignments: {
+                include: {
+                    items: {
+                        include: {
+                            item: true,
+                        },
+                    },
+                    adventurer: {
+                        include: {
+                            user: true,
+                        },
+                    },
+                },
+            },
         },
     });
 
     return {
         id: quest.id,
-        requester: quest.createdBy ? (getUserById(quest.createdBy) as any) : null,
+        requester: data.requester,
         title: quest.title,
         description: quest.description ?? "",
         deadline: quest.deadline ? new Date(quest.deadline) : new Date(),
         reward: quest.reward ?? 0,
         status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
+        options: {
+            profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
+            start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
+            end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
+            xp_required: quest.xp_required ?? 0,
+            assignments: (quest.assignments ?? []).map((a) => ({
+                id: a.id,
+                adventurer: a.adventurer as unknown as Adventurer,
+                items: a.items.map((itemOnAssignment) => itemOnAssignment.item) as any[],
+            })) as unknown as QuestAssignement[],
+        },
     };
 };
 
@@ -144,7 +253,21 @@ export const update = async (id: string, data: Partial<Quest>): Promise<Quest | 
             status: data.status as any,
         },
         include: {
-            assignments: true,
+            assignments: {
+                include: {
+                    items: {
+                        include: {
+                            item: true,
+                        },
+                    },
+                    adventurer: {
+                        include: {
+                            user: true,
+                        },
+                    },
+                },
+            },
+            requester: true,
         },
     });
 
@@ -152,7 +275,7 @@ export const update = async (id: string, data: Partial<Quest>): Promise<Quest | 
 
     return {
         id: quest.id,
-        requester: quest.createdBy ? (getUserById(quest.createdBy) as any) : null,
+        requester: quest.requester,
         title: quest.title,
         description: quest.description ?? "",
         deadline: quest.deadline ? new Date(quest.deadline) : new Date(),
@@ -163,7 +286,11 @@ export const update = async (id: string, data: Partial<Quest>): Promise<Quest | 
             start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
             end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
             xp_required: quest.xp_required ?? 0,
-            assignments: (quest.assignments ?? []) as unknown as QuestAssignement[],
+            assignments: (quest.assignments ?? []).map((a) => ({
+                id: a.id,
+                adventurer: a.adventurer as unknown as Adventurer,
+                items: a.items.map((itemOnAssignment) => itemOnAssignment.item) as any[],
+            })) as unknown as QuestAssignement[],
         },
     };
 };
@@ -173,7 +300,21 @@ export const validate = async (id: string): Promise<Quest | null> => {
         where: { id },
         data: { status: QuestStatus.APPROVED as any },
         include: {
-            assignments: true,
+            assignments: {
+                include: {
+                    items: {
+                        include: {
+                            item: true,
+                        },
+                    },
+                    adventurer: {
+                        include: {
+                            user: true,
+                        },
+                    },
+                },
+            },
+            requester: true,
         },
     });
 
@@ -181,7 +322,7 @@ export const validate = async (id: string): Promise<Quest | null> => {
 
     return {
         id: quest.id,
-        requester: quest.createdBy ? (getUserById(quest.createdBy) as any) : null,
+        requester: quest.requester,
         title: quest.title,
         description: quest.description ?? "",
         deadline: quest.deadline ? new Date(quest.deadline) : new Date(),
@@ -192,7 +333,11 @@ export const validate = async (id: string): Promise<Quest | null> => {
             start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
             end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
             xp_required: quest.xp_required ?? 0,
-            assignments: (quest.assignments ?? []) as unknown as QuestAssignement[],
+            assignments: (quest.assignments ?? []).map((a) => ({
+                id: a.id,
+                adventurer: a.adventurer as unknown as Adventurer,
+                items: a.items.map((itemOnAssignment) => itemOnAssignment.item) as any[],
+            })) as unknown as QuestAssignement[],
         },
     };
 };
@@ -202,7 +347,21 @@ export const cancel = async (id: string): Promise<Quest | null> => {
         where: { id },
         data: { status: QuestStatus.CANCELED as any },
         include: {
-            assignments: true,
+            assignments: {
+                include: {
+                    items: {
+                        include: {
+                            item: true,
+                        },
+                    },
+                    adventurer: {
+                        include: {
+                            user: true,
+                        },
+                    },
+                },
+            },
+            requester: true,
         },
     });
 
@@ -210,7 +369,7 @@ export const cancel = async (id: string): Promise<Quest | null> => {
 
     return {
         id: quest.id,
-        requester: quest.createdBy ? (getUserById(quest.createdBy) as any) : null,
+        requester: quest.requester,
         title: quest.title,
         description: quest.description ?? "",
         deadline: quest.deadline ? new Date(quest.deadline) : new Date(),
@@ -221,7 +380,11 @@ export const cancel = async (id: string): Promise<Quest | null> => {
             start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
             end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
             xp_required: quest.xp_required ?? 0,
-            assignments: (quest.assignments ?? []) as unknown as QuestAssignement[],
+            assignments: (quest.assignments ?? []).map((a) => ({
+                id: a.id,
+                adventurer: a.adventurer as unknown as Adventurer,
+                items: a.items.map((itemOnAssignment) => itemOnAssignment.item) as any[],
+            })) as unknown as QuestAssignement[],
         },
     };
 };
