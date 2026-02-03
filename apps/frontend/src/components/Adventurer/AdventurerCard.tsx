@@ -24,7 +24,7 @@ export function AdventurerCard({ adventurer, onEdit, onDelete }: AdventurerCardP
 
     const activeQuest = quests.data?.find(
         (quest) =>
-            quest.status === QuestStatus.IN_PROGRESS &&
+            (quest.status === QuestStatus.IN_PROGRESS || quest.status === QuestStatus.APPROVED) &&
             quest.options?.assignments?.some((a) => a?.adventurer?.id === adventurer.id),
     );
 
