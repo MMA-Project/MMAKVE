@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Adventurer } from "../../../../../packages/shared/src/types/adventurer.type";
 import type { Item } from "../../../../../packages/shared/src/types/item.type";
 import { UpdateButton } from "../Buttons/UpdateButton";
@@ -11,6 +12,7 @@ import {
     statusColors,
     statusLabels,
 } from "../../utils/adventurerImages";
+import { ItemListDetails } from "../Item/ItemListDetails";
 import { useQuests } from "../../api/quest.api";
 
 interface AdventurerCardProps {
@@ -21,6 +23,7 @@ interface AdventurerCardProps {
 
 export function AdventurerCard({ adventurer, onEdit, onDelete }: AdventurerCardProps) {
     const quests = useQuests();
+    const [showDetailedView, setShowDetailedView] = useState(false);
 
     const activeQuest = quests.data?.find(
         (quest) =>
@@ -88,24 +91,49 @@ export function AdventurerCard({ adventurer, onEdit, onDelete }: AdventurerCardP
 
                         {usedItems.length > 0 && (
                             <div className="mt-3 pt-3 border-t border-slate-700">
-                                <p className="text-xs text-slate-500 mb-2">Items assignés:</p>
-                                <div className="flex gap-1.5 flex-wrap">
-                                    {usedItems.map((item: Item, index: number) => (
-                                        <div
-                                            key={`${adventurer.id}-${item.id}-${index}`}
-                                            className="relative"
-                                        >
-                                            <ItemCase item={item} />
-                                            {item.isConsumable &&
-                                                item.quantity &&
-                                                item.quantity > 1 && (
-                                                    <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                                                        {item.quantity}
-                                                    </span>
-                                                )}
-                                        </div>
-                                    ))}
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-xs text-slate-500">Items assignés:</p>
+                                    <button
+                                        onClick={() => setShowDetailedView(!showDetailedView)}
+                                        className="text-xs text-slate-500 hover:text-slate-300 transition px-2 py-1 rounded hover:bg-slate-700/50"
+                                        title={showDetailedView ? "Vue icônes" : "Vue détaillée"}
+                                    >
+                                        {showDetailedView ? "🔲" : "📋"}
+                                    </button>
                                 </div>
+                                {showDetailedView ? (
+                                    <div className="space-y-2">
+                                        {usedItems.map((item: Item, index: number) => (
+                                            <div
+                                                key={`${adventurer.id}-${item.id}-${index}`}
+                                                className="flex items-center gap-2 p-2 bg-slate-900/50 rounded border border-slate-700/50"
+                                            >
+                                                <div className="relative flex-shrink-0">
+                                                    <ItemCase item={item} />
+                                                </div>
+                                                <ItemListDetails item={item} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="flex gap-1.5 flex-wrap">
+                                        {usedItems.map((item: Item, index: number) => (
+                                            <div
+                                                key={`${adventurer.id}-${item.id}-${index}`}
+                                                className="relative"
+                                            >
+                                                <ItemCase item={item} />
+                                                {item.isConsumable &&
+                                                    item.quantity &&
+                                                    item.quantity > 1 && (
+                                                        <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                                                            {item.quantity}
+                                                        </span>
+                                                    )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
 
