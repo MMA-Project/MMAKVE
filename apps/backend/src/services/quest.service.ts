@@ -88,8 +88,8 @@ export async function getAll(params?: {
         reward: q.reward ?? 0,
         options: {
             profils: (q.profils ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: q.start_date ? new Date(q.start_date) : new Date(),
-            end_date: q.end_date ? new Date(q.end_date) : new Date(),
+            start_date: q.start_date ? new Date(q.start_date) : null,
+            end_date: q.end_date ? new Date(q.end_date) : null,
             xp_required: q.xp_required ?? 0,
             xp_reward: q.xp_reward ?? 0,
             assignments: (q.assignments ?? []).map((a) => ({
@@ -135,8 +135,8 @@ export const getById = async (id: string): Promise<Quest | null> => {
         status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
-            end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
+            start_date: quest.start_date ? new Date(quest.start_date) : null,
+            end_date: quest.end_date ? new Date(quest.end_date) : null,
             xp_required: quest.xp_required ?? 0,
             xp_reward: quest.xp_reward ?? 0,
             assignments: (quest.assignments ?? []).map((a) => ({
@@ -181,8 +181,8 @@ export const getAllByUser = async (userId: string): Promise<Quest[]> => {
         status: (q.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (q.profils ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: q.start_date ? new Date(q.start_date) : new Date(),
-            end_date: q.end_date ? new Date(q.end_date) : new Date(),
+            start_date: q.start_date ? new Date(q.start_date) : null,
+            end_date: q.end_date ? new Date(q.end_date) : null,
             xp_required: q.xp_required ?? 0,
             xp_reward: q.xp_reward ?? 0,
             assignments: (q.assignments ?? []).map((a) => ({
@@ -237,8 +237,8 @@ export const create = async (data: QuestCreation): Promise<Quest> => {
         status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
-            end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
+            start_date: quest.start_date ? new Date(quest.start_date) : null,
+            end_date: quest.end_date ? new Date(quest.end_date) : null,
             xp_required: quest.xp_required ?? 0,
             xp_reward: quest.xp_reward ?? 0,
             assignments: (quest.assignments ?? []).map((a) => ({
@@ -291,8 +291,8 @@ export const update = async (id: string, data: Partial<Quest>): Promise<Quest | 
         status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
-            end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
+            start_date: quest.start_date ? new Date(quest.start_date) : null,
+            end_date: quest.end_date ? new Date(quest.end_date) : null,
             xp_required: quest.xp_required ?? 0,
             xp_reward: quest.xp_reward ?? 0,
             assignments: (quest.assignments ?? []).map((a) => ({
@@ -339,8 +339,8 @@ export const validate = async (id: string): Promise<Quest | null> => {
         status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
-            end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
+            start_date: quest.start_date ? new Date(quest.start_date) : null,
+            end_date: quest.end_date ? new Date(quest.end_date) : null,
             xp_required: quest.xp_required ?? 0,
             xp_reward: quest.xp_reward ?? 0,
             assignments: (quest.assignments ?? []).map((a) => ({
@@ -387,8 +387,8 @@ export const cancel = async (id: string): Promise<Quest | null> => {
         status: (quest.status as QuestStatus) ?? QuestStatus.PENDING,
         options: {
             profils: (quest.profils ?? []).map((p) => p as unknown as AdventurerType),
-            start_date: quest.start_date ? new Date(quest.start_date) : new Date(),
-            end_date: quest.end_date ? new Date(quest.end_date) : new Date(),
+            start_date: quest.start_date ? new Date(quest.start_date) : null,
+            end_date: quest.end_date ? new Date(quest.end_date) : null,
             xp_required: quest.xp_required ?? 0,
             xp_reward: quest.xp_reward ?? 0,
             assignments: (quest.assignments ?? []).map((a) => ({

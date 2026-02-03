@@ -1,5 +1,6 @@
 import { useAllGuilds, useGuildBank, useGuildItems } from "../../api/guildApi";
 import { Bank } from "./Bank";
+import { BankPrediction } from "./BankPrediction";
 import { GuildInventory } from "./GuildInventory";
 import { LoadingState, ErrorState, EmptyState } from "../common";
 
@@ -37,9 +38,12 @@ export function GuildDashboard() {
                     </h1>
                     <p className="text-slate-400">Gestion des ressources et de l'inventaire</p>
                 </div>
-                <div className="flex flex-row gap-6">
+                <div className="flex flex-col gap-6">
                     <div className="w-full">
                         <Bank bank={getGuildBank.data} />
+                    </div>
+                    <div className="w-full">
+                        <BankPrediction currentBalance={getGuildBank.data?.balance || 0} />
                     </div>
                     <div className="w-full">
                         <GuildInventory inventory={getGuildItems.data ?? []} />
