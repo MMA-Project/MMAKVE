@@ -27,6 +27,8 @@ export function QuestFilters() {
         setSelectedStatus,
         clientSearch,
         setClientSearch,
+        nameSearch,
+        setNameSearch,
         selectedClasses,
         setSelectedClasses,
         resetAllFilters,
@@ -57,6 +59,7 @@ export function QuestFilters() {
                 onMinChange={setMinReward}
                 onMaxChange={setMaxReward}
                 icon="💰"
+                maxWidth="w-20"
             />
 
             <RangeFilter
@@ -66,6 +69,7 @@ export function QuestFilters() {
                 onMinChange={setMinXp}
                 onMaxChange={setMaxXp}
                 icon="⭐"
+                maxWidth="w-20"
             />
 
             <RangeFilter
@@ -76,7 +80,7 @@ export function QuestFilters() {
                 onMaxChange={setEndDate}
                 type="date"
                 icon="📅"
-                maxWidth="w-full sm:w-auto"
+                maxWidth="w-24"
             />
 
             <SelectFilter
@@ -97,6 +101,14 @@ export function QuestFilters() {
                 isOpen={isClassDropdownOpen}
                 onToggleOpen={setIsClassDropdownOpen}
                 icon="⚔️"
+            />
+
+            <SearchFilter
+                label="Nom de quête"
+                value={nameSearch}
+                onChange={setNameSearch}
+                placeholder="Rechercher une quête..."
+                icon="📝"
             />
 
             <SearchFilter

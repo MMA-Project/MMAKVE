@@ -6,17 +6,28 @@ import { computeProgress } from "../../utils/progressBar";
 import { UpdateButton } from "../Buttons/UpdateButton";
 import { ValidateButton } from "../Buttons/ValidateButton";
 import { CancelButton } from "../Buttons/CancelButton";
+import { StartButton } from "../Buttons/StartButton";
+import { SuccessButton } from "../Buttons/SuccessButton";
+import { FailButton } from "../Buttons/FailButton";
 import AssistantQuestProcessingForm from "./AssistantQuestProcessingForm";
 import { useState } from "react";
-import { useProcessQuest, useSuggestAdventurers } from "../../api/quest.api";
+import React from "react";
+import {
+    useProcessQuest,
+    useStartQuest,
+    useCompleteQuestSuccess,
+    useCompleteQuestFail,
+} from "../../api/quest.api";
+import { formatCurrency } from "../../utils/currency";
 
 interface QuestListProps {
     quests: Quest[] | undefined;
-    sortBy: "date_limit" | "prime" | "status" | "xp" | "client";
+    sortBy: "date_limit" | "prime" | "status" | "xp" | "client" | "name";
     sortOrder: "asc" | "desc";
     userRole: string;
     userId: string;
     cancelQuestMutation: any;
+    onProcessingFormOpen?: (isOpen: boolean) => void;
 }
 
 export function QuestList({
@@ -25,11 +36,19 @@ export function QuestList({
     sortOrder,
     userRole,
     cancelQuestMutation,
+    onProcessingFormOpen,
 }: QuestListProps) {
     const navigate = useNavigate();
     const [processingQuestId, setProcessingQuestId] = useState<string | null>(null);
     const processQuestMutation = useProcessQuest();
-    const suggestQuery = useSuggestAdventurers(processingQuestId || "");
+    const startQuestMutation = useStartQuest();
+    const completeQuestSuccessMutation = useCompleteQuestSuccess();
+    const completeQuestFailMutation = useCompleteQuestFail();
+
+    // Notifier le parent quand le formulaire ouvre/ferme
+    React.useEffect(() => {
+        onProcessingFormOpen?.(processingQuestId !== null);
+    }, [processingQuestId, onProcessingFormOpen]);
 
     if (!quests || quests.length === 0) {
         return (
@@ -52,7 +71,7 @@ export function QuestList({
 
         switch (sortBy) {
             case "date_limit":
-                return compare(a.deadline.getTime(), b.deadline.getTime());
+                return compare(new Date(a.deadline).getTime(), new Date(b.deadline).getTime());
             case "prime":
                 return compare(a.reward, b.reward);
             case "status":
@@ -64,6 +83,8 @@ export function QuestList({
                 return compare(a.options?.xp_required ?? 0, b.options?.xp_required ?? 0);
             case "client":
                 return compare(a.requester.name, b.requester.name);
+            case "name":
+                return compare(a.title, b.title);
         }
     });
 
@@ -84,7 +105,7 @@ export function QuestList({
         return (
             <AssistantQuestProcessingForm
                 questId={processingQuestId}
-                suggestedAdventurers={suggestQuery.data?.bestTeammates || []}
+                quest={questBeingProcessed}
                 initialData={initialData}
                 onSubmit={(data) => {
                     processQuestMutation.mutate(
@@ -92,6 +113,7 @@ export function QuestList({
                         {
                             onSuccess: () => {
                                 setProcessingQuestId(null);
+                                navigate(`/quest/${processingQuestId}`);
                             },
                         },
                     );
@@ -121,11 +143,8 @@ export function QuestList({
                             <p className="text-sm text-slate-300 mt-1">{quest.description}</p>
                             <div className="mt-2 text-xs text-slate-400">
                                 <p>Client : {quest.requester.name}</p>
-                                <p>Date limite : {quest.deadline.toLocaleDateString()}</p>
-                                <p>Prime : {quest.reward} 💰</p>
-                                {quest.options && (
-                                    <p>{quest.options?.xp_required ?? 0} XP requis</p>
-                                )}
+                                <p>Date limite : {new Date(quest.deadline).toLocaleDateString()}</p>
+                                <p>Prime : {formatCurrency(quest.reward)} 💰</p>
                             </div>
                         </div>
 
@@ -161,9 +180,7 @@ export function QuestList({
                                     }}
                                 />
                             )}
-                            {((userRole === "CLIENT" && quest.status === QuestStatus.PENDING) ||
-                                (userRole === "ASSISTANT" &&
-                                    quest.status === QuestStatus.APPROVED)) && (
+                            {userRole === "CLIENT" && quest.status === QuestStatus.PENDING && (
                                 <UpdateButton
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -171,6 +188,49 @@ export function QuestList({
                                     }}
                                 />
                             )}
+                            {quest.status === QuestStatus.APPROVED && userRole === "ASSISTANT" && (
+                                <StartButton
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (
+                                            window.confirm(
+                                                "Êtes-vous sûr de vouloir démarrer cette quête ?",
+                                            )
+                                        ) {
+                                            startQuestMutation.mutate(quest.id);
+                                        }
+                                    }}
+                                />
+                            )}
+                            {quest.status === QuestStatus.IN_PROGRESS &&
+                                userRole === "ASSISTANT" && (
+                                    <>
+                                        <SuccessButton
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (
+                                                    window.confirm(
+                                                        "Êtes-vous sûr de vouloir marquer cette quête comme réussie ?",
+                                                    )
+                                                ) {
+                                                    completeQuestSuccessMutation.mutate(quest.id);
+                                                }
+                                            }}
+                                        />
+                                        <FailButton
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (
+                                                    window.confirm(
+                                                        "Êtes-vous sûr de vouloir marquer cette quête comme échouée ?",
+                                                    )
+                                                ) {
+                                                    completeQuestFailMutation.mutate(quest.id);
+                                                }
+                                            }}
+                                        />
+                                    </>
+                                )}
                             <QuestStatusBanner status={quest.status} />
                         </div>
                     </div>

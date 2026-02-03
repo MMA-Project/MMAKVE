@@ -14,7 +14,9 @@ export async function getAll(params?: {
     minXp?: number;
     maxXp?: number;
 }): Promise<Adventurer[] | []> {
-    const where: any = {};
+    const where: any = {
+        status: { not: "DELETED" }, // Exclure les aventuriers supprimés
+    };
 
     if (params?.type) {
         where.type = params.type;
@@ -50,13 +52,13 @@ export async function getAll(params?: {
         user: adventurer.user
             ? {
                   id: adventurer.user.id,
-                  name: adventurer.user.name,
+                  name: adventurer.user.displayName || adventurer.user.name,
                   role: adventurer.user.role,
                   createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
         type: adventurer.type as unknown as AdventurerType,
-        status: adventurer.status.toLowerCase() as AdventurerStatus,
+        status: adventurer.status as AdventurerStatus,
         xp: adventurer.xp,
     }));
 }
@@ -86,13 +88,56 @@ export async function getById(id: string): Promise<Adventurer | null> {
         user: adventurer.user
             ? {
                   id: adventurer.user.id,
-                  name: adventurer.user.name,
+                  name: adventurer.user.displayName || adventurer.user.name,
                   role: adventurer.user.role,
                   createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
         type: adventurer.type as unknown as AdventurerType,
-        status: adventurer.status.toLowerCase() as AdventurerStatus,
+        status: adventurer.status as AdventurerStatus,
+        xp: adventurer.xp,
+    };
+}
+
+/**
+ * ! Rôle: Assistant
+ * Get adventurer by User ID
+ */
+export async function getByUserId(userId: string) {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+            adventurer: {
+                include: {
+                    user: true,
+                    guild: true,
+                    assignments: {
+                        include: {
+                            quest: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    if (!user?.adventurer) return null;
+
+    const adventurer = user.adventurer;
+
+    return {
+        id: adventurer.id,
+        guildId: adventurer.guildId,
+        user: adventurer.user
+            ? {
+                  id: adventurer.user.id,
+                  name: adventurer.user.displayName || adventurer.user.name,
+                  role: adventurer.user.role,
+                  createdAt: new Date(adventurer.user.createdAt),
+              }
+            : (null as any),
+        type: adventurer.type as unknown as AdventurerType,
+        status: adventurer.status as AdventurerStatus,
         xp: adventurer.xp,
     };
 }
@@ -119,13 +164,13 @@ export async function getByQuest(questId: string): Promise<Adventurer[]> {
         user: assignment.adventurer.user
             ? {
                   id: assignment.adventurer.user.id,
-                  name: assignment.adventurer.user.username,
+                  name: assignment.adventurer.user.displayName || assignment.adventurer.user.name,
                   role: assignment.adventurer.user.role,
                   createdAt: new Date(assignment.adventurer.user.createdAt),
               }
             : (null as any),
         type: assignment.adventurer.type as unknown as AdventurerType,
-        status: assignment.adventurer.status.toLowerCase() as AdventurerStatus,
+        status: assignment.adventurer.status as AdventurerStatus,
         xp: assignment.adventurer.xp,
     }));
 }
@@ -151,9 +196,9 @@ export async function create(data: {
         );
     }
 
-    // Check if username already exists
+    // Check if username already exists (checking the 'name' field in User model)
     const existingUser = await prisma.user.findUnique({
-        where: { name: data.name },
+        where: { name: data.username },
     });
     if (existingUser) {
         throw new AppError(ErrorCodes.USERNAME_TAKEN, "Username already taken", 409);
@@ -172,10 +217,9 @@ export async function create(data: {
 
     // Create adventurer and user in a transaction
     const result = await prisma.$transaction(async (tx: any) => {
-        // Create the adventurer first
+        // Create the adventurer first (without name, it goes into User)
         const adventurer = await tx.adventurer.create({
             data: {
-                name: data.name,
                 type: data.type as string,
                 status: "AVAILABLE",
                 xp: 0,
@@ -186,9 +230,10 @@ export async function create(data: {
         // Create the user linked to the adventurer
         const user = await tx.user.create({
             data: {
-                username: data.username,
+                name: data.username,
+                displayName: data.name,
                 password: hashedPassword,
-                role: "AVENTURIER",
+                role: "ADVENTURER",
                 adventurerId: adventurer.id,
             },
         });
@@ -200,12 +245,12 @@ export async function create(data: {
         id: result.adventurer.id,
         user: {
             id: result.user.id,
-            name: result.user.name,
+            name: result.user.displayName || result.user.name,
             role: result.user.role,
             createdAt: new Date(result.user.createdAt),
         },
         type: result.adventurer.type as unknown as AdventurerType,
-        status: result.adventurer.status.toLowerCase() as AdventurerStatus,
+        status: result.adventurer.status as AdventurerStatus,
         xp: result.adventurer.xp,
     };
 }
@@ -217,6 +262,7 @@ export async function create(data: {
 export async function modify(
     id: string,
     data: Partial<{
+        user: Partial<{ name: string; role: string }>;
         name: string;
         type: AdventurerType | string;
         status: string;
@@ -227,6 +273,7 @@ export async function modify(
     // Check if adventurer exists
     const existing = await prisma.adventurer.findUnique({
         where: { id },
+        include: { user: true },
     });
     if (!existing) {
         throw new AppError(ErrorCodes.NOT_FOUND, "Adventurer not found", 404);
@@ -243,11 +290,32 @@ export async function modify(
     }
 
     const updateData: any = {};
-    if (data.name !== undefined) updateData.name = data.name;
     if (data.type !== undefined) updateData.type = data.type as string;
     if (data.status !== undefined) updateData.status = data.status.toUpperCase();
     if (data.xp !== undefined) updateData.xp = data.xp;
     if (data.guildId !== undefined) updateData.guildId = data.guildId;
+
+    // Update User if user data is provided
+    if (data.user && existing.user) {
+        const userUpdateData: any = {};
+        if (data.user.name !== undefined) userUpdateData.name = data.user.name;
+        if (data.user.role !== undefined) userUpdateData.role = data.user.role;
+
+        if (Object.keys(userUpdateData).length > 0) {
+            await prisma.user.update({
+                where: { id: existing.user.id },
+                data: userUpdateData,
+            });
+        }
+    }
+
+    // Handle legacy 'name' field (for direct updates)
+    if (data.name !== undefined && existing.user) {
+        await prisma.user.update({
+            where: { id: existing.user.id },
+            data: { name: data.name },
+        });
+    }
 
     const adventurer = await prisma.adventurer.update({
         where: { id },
@@ -263,20 +331,21 @@ export async function modify(
         user: adventurer.user
             ? {
                   id: adventurer.user.id,
-                  name: adventurer.user.name,
+                  name: adventurer.user.displayName || adventurer.user.name,
                   role: adventurer.user.role,
                   createdAt: new Date(adventurer.user.createdAt),
               }
             : (null as any),
         type: adventurer.type as unknown as AdventurerType,
-        status: adventurer.status.toLowerCase() as AdventurerStatus,
+        status: adventurer.status as AdventurerStatus,
         xp: adventurer.xp,
     };
 }
 
 /**
  * ! Rôle: Assistant
- * Delete an adventurer and associated user
+ * Soft delete an adventurer (set status to DELETED)
+ * Only allowed if adventurer is AVAILABLE
  */
 export async function remove(id: string): Promise<void> {
     // Check if adventurer exists
@@ -292,6 +361,15 @@ export async function remove(id: string): Promise<void> {
         throw new AppError(ErrorCodes.NOT_FOUND, "Adventurer not found", 404);
     }
 
+    // Only allow deletion if status is AVAILABLE
+    if (existing.status !== "AVAILABLE") {
+        throw new AppError(
+            ErrorCodes.VALIDATION_ERROR,
+            "Cannot delete adventurer: must be available (not on quest, injured, etc.)",
+            422,
+        );
+    }
+
     // Check if adventurer has active quests
     if (existing.assignments.length > 0) {
         throw new AppError(
@@ -301,18 +379,9 @@ export async function remove(id: string): Promise<void> {
         );
     }
 
-    // Delete in transaction
-    await prisma.$transaction(async (tx: any) => {
-        // Delete the associated user if exists
-        if (existing.user) {
-            await tx.user.delete({
-                where: { id: existing.user.id },
-            });
-        }
-
-        // Delete the adventurer
-        await tx.adventurer.delete({
-            where: { id },
-        });
+    // Soft delete: update status to DELETED
+    await prisma.adventurer.update({
+        where: { id },
+        data: { status: "DELETED" },
     });
 }

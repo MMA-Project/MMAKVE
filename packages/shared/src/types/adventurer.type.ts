@@ -17,12 +17,13 @@ export enum AdventurerType {
 }
 
 export enum AdventurerStatus {
-    AVAILABLE = "available",
-    ON_QUEST = "on_quest",
-    INJURED = "injured",
-    DEAD = "dead",
-    RESTING = "resting",
-    LEAVED = "leaved",
+    AVAILABLE = "AVAILABLE",
+    ON_QUEST = "ON_QUEST",
+    INJURED = "INJURED",
+    DEAD = "DEAD",
+    RESTING = "RESTING",
+    LEAVED = "LEAVED",
+    DELETED = "DELETED",
 }
 
 export type Adventurer = {

@@ -40,10 +40,12 @@ enum Role {
 enum QuestStatus {
   PENDING
   APPROVED
+  REJECTED
   IN_PROGRESS
   COMPLETED
   FAILED
   CANCELED
+  DELETED
 }
 
 enum AdventurerStatus {
@@ -51,12 +53,14 @@ enum AdventurerStatus {
   ON_QUEST
   INJURED
   DEAD
-  SLEEPING
+  RESTING
+  LEAVED
+  DELETED
 }
 
 enum ItemType {
   WEAPON
-  EQUIPMENT
+  ARMOR
   POTION
   MISC
 }
@@ -83,15 +87,25 @@ enum ItemName {
   ARROW
 }
 
+enum ItemStatus {
+  AVAILABLE
+  IN_USE
+  CONSUMED
+  BROKEN
+  LOST
+  DELETED
+}
+
 /**
  * Traité
  */
 model User {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  password  String
-  role      Role     @default(CLIENT)
-  createdAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  name        String   @unique
+  displayName String   @default("")
+  password    String
+  role        Role     @default(CLIENT)
+  createdAt   DateTime @default(now())
 
   adventurer   Adventurer? @relation(fields: [adventurerId], references: [id])
   adventurerId String?     @unique
@@ -106,7 +120,8 @@ model Quest {
   deadline    DateTime
   start_date  DateTime?
   end_date    DateTime?
-  xp_required Int
+  xp_required Int?
+  xp_reward   Int?
   reward      Int
   status      QuestStatus       @default(PENDING)
   createdBy   String
@@ -140,11 +155,14 @@ model Item {
   id               String                  @id @default(uuid())
   name             ItemName
   description      String
-  durability       Int
+  durability       Int?
+  maxDurability    Int?
+  quantity         Int?
+  isConsumable     Boolean                 @default(false)
   price            Int
   type             ItemType
-  stats            String?
   rarity           ItemRarity              @default(COMMON)
+  status           ItemStatus              @default(AVAILABLE)
   profiles         AdventurerType[]
   questAssignments ItemOnQuestAssignment[]
   guilds           ItemOnGuild[]
@@ -161,18 +179,18 @@ model Guild {
 
 model Bank {
   id      String        @id @default(uuid())
-  amount  Int
+  amount  Float
   history Transaction[]
   guild   Guild         @relation(fields: [guildId], references: [id])
   guildId String        @unique
 }
 
 model Transaction {
-  id     String   @id @default(uuid())
-  amount Int
-  date   DateTime
+  id     String @id @default(uuid())
+  amount Float
+  date   Int
   name   String
-  bank   Bank     @relation(fields: [bankId], references: [id])
+  bank   Bank   @relation(fields: [bankId], references: [id])
   bankId String
 }
 

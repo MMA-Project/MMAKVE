@@ -1,13 +1,26 @@
-export function DeleteButton({ onClick }: any) {
+interface DeleteButtonProps {
+    onClick: () => void;
+    disabled?: boolean;
+    title?: string;
+}
+
+export function DeleteButton({
+    onClick,
+    disabled = false,
+    title = "Supprimer",
+}: DeleteButtonProps) {
     return (
         <button
-            aria-label="Supprimer la quête"
-            title="Supprimer"
-            className="p-2 rounded hover:bg-slate-700"
+            aria-label={title}
+            title={disabled ? "Suppression impossible (non disponible)" : title}
+            className={`p-2 rounded transition-all ${
+                disabled ? "opacity-50 cursor-not-allowed bg-slate-800" : "hover:bg-slate-700"
+            }`}
             onClick={onClick}
+            disabled={disabled}
         >
             <svg
-                className="w-5 h-5 text-rose-400"
+                className={`w-5 h-5 ${disabled ? "text-slate-500" : "text-rose-400"}`}
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"

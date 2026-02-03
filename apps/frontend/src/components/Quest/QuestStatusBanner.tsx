@@ -43,6 +43,14 @@ export default function QuestStatusBanner({ status }: { status: QuestStatus }) {
                     ❌
                 </span>
             )}
+            {status === QuestStatus.REJECTED && (
+                <span
+                    className="px-2 py-1 text-xs font-medium text-orange-500 bg-orange-900 rounded"
+                    title="Rejetée"
+                >
+                    🚫
+                </span>
+            )}
             {status === QuestStatus.CANCELED && (
                 <span
                     className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-800 rounded"

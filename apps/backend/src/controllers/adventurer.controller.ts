@@ -3,6 +3,7 @@ import * as adventurerService from "../services/adventurer.service";
 import { AppError, ErrorCodes, sendError } from "../utils/error";
 import { AdventurerCreation, AdventurerType } from "@mmakve/shared";
 import { generateRandomPassword } from "../utils/adventurer";
+import { prisma } from "../prisma-client";
 
 /**
  * ! Rôle: Assistant
@@ -90,19 +91,76 @@ export const createAdventurer = async (req: Request, res: Response) => {
             throw new AppError(ErrorCodes.VALIDATION_ERROR, "Adventurer data is required", 422);
         }
 
-        if (!data.name || !data.type || !data.guildId || !data.username) {
-            throw new AppError(
-                ErrorCodes.VALIDATION_ERROR,
-                "Name, type, guildId, and username are required",
-                422,
-            );
+        // Check if data has the frontend format (with user object) or the legacy format
+        let adventurerData: any;
+
+        if (data.user && typeof data.user === "object") {
+            // Frontend format: { user: { name, ... }, type, ... }
+            if (!data.user.name || !data.type) {
+                throw new AppError(
+                    ErrorCodes.VALIDATION_ERROR,
+                    "User name and adventurer type are required",
+                    422,
+                );
+            }
+
+            // MOCK: Since auth is mocked, use provided guildId or get the first guild from DB
+            let guildId = data.guildId;
+            if (!guildId) {
+                const guild = await prisma.guild.findFirst();
+                if (!guild) {
+                    throw new AppError(
+                        ErrorCodes.VALIDATION_ERROR,
+                        "No guild found in database",
+                        422,
+                    );
+                }
+                guildId = guild.id;
+            }
+
+            const fake_password = generateRandomPassword();
+            const username = data.user.name.toLowerCase().replace(/\s+/g, "_");
+
+            adventurerData = {
+                name: data.user.name,
+                type: data.type,
+                guildId,
+                username,
+                password: fake_password,
+            };
+        } else {
+            // Legacy format: { name, type, guildId, username, ... }
+            if (!data.name || !data.type || !data.username) {
+                throw new AppError(
+                    ErrorCodes.VALIDATION_ERROR,
+                    "Name, type, and username are required",
+                    422,
+                );
+            }
+
+            // MOCK: Use provided guildId or get the first guild from DB
+            let guildId = data.guildId;
+            if (!guildId) {
+                const guild = await prisma.guild.findFirst();
+                if (!guild) {
+                    throw new AppError(
+                        ErrorCodes.VALIDATION_ERROR,
+                        "No guild found in database",
+                        422,
+                    );
+                }
+                guildId = guild.id;
+            }
+
+            const fake_password = generateRandomPassword();
+            adventurerData = {
+                ...data,
+                guildId,
+                password: fake_password,
+            };
         }
 
-        const fake_password = generateRandomPassword();
-
-        data.password = fake_password;
-
-        const adventurer = await adventurerService.create(data);
+        const adventurer = await adventurerService.create(adventurerData);
         return res.status(201).json(adventurer);
     } catch (error: any) {
         if (error instanceof AppError) {

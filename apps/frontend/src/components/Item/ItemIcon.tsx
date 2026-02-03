@@ -8,8 +8,8 @@ interface ItemIconProps {
 }
 
 export function ItemIcon({ name, rarity }: ItemIconProps) {
-    const imageSrc = itemImages[name];
-    const emoji = itemEmojis[name];
+    const imageSrc = itemImages[name] ?? null;
+    const emoji = itemEmojis[name] ?? "📦";
 
     return (
         <div

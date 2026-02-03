@@ -6,13 +6,15 @@ import {
     AdventurerStatus,
     ItemType,
     ItemRarity,
+    ItemName,
+    ItemStatus,
 } from "../src/generated/prisma-client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function main() {
-    console.log("🌱 Début du seed...");
+    console.log("🌱 Début du seed (basé sur les mocks frontend)...");
 
     // Nettoyage de la base de données
     console.log("🧹 Nettoyage de la base de données...");
@@ -27,556 +29,1200 @@ async function main() {
     await prisma.item.deleteMany();
     await prisma.guild.deleteMany();
 
-    // Création de la guilde unique
+    const hashedPassword = await bcrypt.hash("password123", 10);
+
+    // === GUILDE UNIQUE ===
     console.log("🏰 Création de la guilde...");
 
     const guild = await prisma.guild.create({
         data: {
-            name: "Les Capuches d'Opale",
+            name: "Guilde des Aventuriers",
             bankId: "bank-main",
         },
     });
 
-    // Création de la banque
+    // === BANQUE ===
     console.log("💰 Création de la banque...");
 
-    const bank = await prisma.bank.create({
+    await prisma.bank.create({
         data: {
             id: "bank-main",
-            amount: 85000,
+            amount: 75000,
             guildId: guild.id,
         },
     });
 
-    // Création de transactions
-    console.log("📊 Création des transactions...");
+    // === UTILISATEURS & AVENTURIERS ===
+    console.log("👥 Création des utilisateurs et aventuriers...");
 
-    await prisma.transaction.createMany({
-        data: [
-            {
-                amount: 15000,
-                date: new Date("2025-09-15"),
-                name: "Récompense quête du Dragon",
-                bankId: bank.id,
-            },
-            {
-                amount: 8000,
-                date: new Date("2025-09-20"),
-                name: "Vente d'équipement rare",
-                bankId: bank.id,
-            },
-            {
-                amount: -5000,
-                date: new Date("2025-09-25"),
-                name: "Achat de potions et fournitures",
-                bankId: bank.id,
-            },
-            {
-                amount: 12000,
-                date: new Date("2025-10-01"),
-                name: "Récompense escorte royale",
-                bankId: bank.id,
-            },
-            {
-                amount: -3000,
-                date: new Date("2025-10-05"),
-                name: "Réparation d'armures",
-                bankId: bank.id,
-            },
-            {
-                amount: 10000,
-                date: new Date("2025-10-10"),
-                name: "Contrat avec le royaume",
-                bankId: bank.id,
-            },
-            {
-                amount: -8000,
-                date: new Date("2025-10-12"),
-                name: "Achat d'armes légendaires",
-                bankId: bank.id,
-            },
-            {
-                amount: 6000,
-                date: new Date("2025-10-18"),
-                name: "Vente de matériaux rares",
-                bankId: bank.id,
-            },
-            {
-                amount: -2000,
-                date: new Date("2025-10-20"),
-                name: "Entretien du bâtiment",
-                bankId: bank.id,
-            },
-            {
-                amount: 7000,
-                date: new Date("2025-10-25"),
-                name: "Prime de performance",
-                bankId: bank.id,
-            },
-        ],
+    // Guilde 1: Guilde du Poing de Fer
+    const user501 = await prisma.user.create({
+        data: {
+            id: "501",
+            name: "Borin Ironfist",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-01-02T10:00:00Z"),
+        },
     });
 
-    // Création des aventuriers
-    console.log("⚔️ Création des aventuriers...");
+    const adventurer501 = await prisma.adventurer.create({
+        data: {
+            id: "501",
+            type: AdventurerType.ENCHANTER,
+            status: AdventurerStatus.ON_QUEST,
+            xp: 1800,
+            guildId: guild.id,
+        },
+    });
 
-    const adventurers = await Promise.all([
-        prisma.adventurer.create({
-            data: {
-                name: "Theron Flèchedargent",
-                type: AdventurerType.ARCHER,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 2500,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Grom Cassemur",
-                type: AdventurerType.BARBARIAN,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 3200,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Seraphine Lumière",
-                type: AdventurerType.PRIEST,
-                status: AdventurerStatus.ON_QUEST,
-                xp: 2800,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Aldric Bouclier",
-                type: AdventurerType.PALADIN,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 3500,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Morgana Arcane",
-                type: AdventurerType.ARCANE_MAGE,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 4200,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Thalion Terrevive",
-                type: AdventurerType.GEOMANCER,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 3800,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Kaelith Mélixir",
-                type: AdventurerType.ALCHEMIST,
-                status: AdventurerStatus.INJURED,
-                xp: 3000,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Durgan Forgefer",
-                type: AdventurerType.BLACKSMITH,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 3600,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Lyra Ombrelame",
-                type: AdventurerType.ROGUE,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 4500,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Vex Messager",
-                type: AdventurerType.MESSENGER,
-                status: AdventurerStatus.ON_QUEST,
-                xp: 2200,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Mystral Enchant",
-                type: AdventurerType.ENCHANTER,
-                status: AdventurerStatus.SLEEPING,
-                xp: 3900,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Brann Épéefer",
-                type: AdventurerType.WARRIOR,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 4100,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Elara Lumineuse",
-                type: AdventurerType.PRIEST,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 1500,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Ragnar Hache",
-                type: AdventurerType.BARBARIAN,
-                status: AdventurerStatus.DEAD,
-                xp: 5200,
-                guildId: guild.id,
-            },
-        }),
-        prisma.adventurer.create({
-            data: {
-                name: "Silvia Furtive",
-                type: AdventurerType.ROGUE,
-                status: AdventurerStatus.INJURED,
-                xp: 2900,
-                guildId: guild.id,
-            },
-        }),
-    ]);
+    await prisma.user.update({
+        where: { id: user501.id },
+        data: { adventurerId: adventurer501.id },
+    });
 
-    // Création des utilisateurs (avec hash des mots de passe)
-    console.log("👥 Création des utilisateurs...");
+    const user502 = await prisma.user.create({
+        data: {
+            id: "502",
+            name: "Kaela Stormshield",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-01-12T09:15:00Z"),
+        },
+    });
 
-    const hashedPassword = await bcrypt.hash("password123", 10);
+    const adventurer502 = await prisma.adventurer.create({
+        data: {
+            id: "502",
+            type: AdventurerType.PRIEST,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 2400,
+            guildId: guild.id,
+        },
+    });
 
-    const users = await Promise.all([
-        // Clients
-        prisma.user.create({
-            data: {
-                name: "client_jean",
-                password: hashedPassword,
-                role: Role.CLIENT,
-            },
-        }),
-        prisma.user.create({
-            data: {
-                name: "client_marie",
-                password: hashedPassword,
-                role: Role.CLIENT,
-            },
-        }),
-        prisma.user.create({
-            data: {
-                name: "client_pierre",
-                password: hashedPassword,
-                role: Role.CLIENT,
-            },
-        }),
+    await prisma.user.update({
+        where: { id: user502.id },
+        data: { adventurerId: adventurer502.id },
+    });
 
-        // Assistants
-        prisma.user.create({
-            data: {
-                name: "assistant_alice",
-                password: hashedPassword,
-                role: Role.ASSISTANT,
-            },
-        }),
-        prisma.user.create({
-            data: {
-                name: "assistant_bob",
-                password: hashedPassword,
-                role: Role.ASSISTANT,
-            },
-        }),
+    // Guilde 2: Ordre de Lune d'Argent
+    const user503 = await prisma.user.create({
+        data: {
+            id: "503",
+            name: "Gorak Stonefist",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-01-15T14:45:00Z"),
+        },
+    });
 
-        // Aventuriers (liés à des aventuriers existants)
-        prisma.user.create({
-            data: {
-                name: "aventurier_theron",
-                password: hashedPassword,
-                role: Role.AVENTURIER,
-                adventurerId: adventurers[0].id,
-            },
-        }),
-        prisma.user.create({
-            data: {
-                name: "aventurier_morgana",
-                password: hashedPassword,
-                role: Role.AVENTURIER,
-                adventurerId: adventurers[4].id,
-            },
-        }),
-        prisma.user.create({
-            data: {
-                name: "aventurier_lyra",
-                password: hashedPassword,
-                role: Role.AVENTURIER,
-                adventurerId: adventurers[8].id,
-            },
-        }),
-    ]);
+    const adventurer503 = await prisma.adventurer.create({
+        data: {
+            id: "503",
+            type: AdventurerType.BARBARIAN,
+            status: AdventurerStatus.ON_QUEST,
+            xp: 2800,
+            guildId: guild.id,
+        },
+    });
 
-    // Création des items
+    await prisma.user.update({
+        where: { id: user503.id },
+        data: { adventurerId: adventurer503.id },
+    });
+
+    const user504 = await prisma.user.create({
+        data: {
+            id: "504",
+            name: "Thalion the Swift",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-01-12T11:15:00Z"),
+        },
+    });
+
+    const adventurer504 = await prisma.adventurer.create({
+        data: {
+            id: "504",
+            type: AdventurerType.ENCHANTER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1000,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user504.id },
+        data: { adventurerId: adventurer504.id },
+    });
+
+    const user505 = await prisma.user.create({
+        data: {
+            id: "505",
+            name: "Ryn Featherstep",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-02-10T10:00:00Z"),
+        },
+    });
+
+    const adventurer505 = await prisma.adventurer.create({
+        data: {
+            id: "505",
+            type: AdventurerType.ARCHER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1600,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user505.id },
+        data: { adventurerId: adventurer505.id },
+    });
+
+    // Guilde 3: Les Chercheurs
+    const user506 = await prisma.user.create({
+        data: {
+            id: "506",
+            name: "Elandra Whisperwind",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-01-10T10:30:00Z"),
+        },
+    });
+
+    const adventurer506 = await prisma.adventurer.create({
+        data: {
+            id: "506",
+            type: AdventurerType.ENCHANTER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1050,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user506.id },
+        data: { adventurerId: adventurer506.id },
+    });
+
+    const user507 = await prisma.user.create({
+        data: {
+            id: "507",
+            name: "Liora Dawnspark",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-02-20T08:45:00Z"),
+        },
+    });
+
+    const adventurer507 = await prisma.adventurer.create({
+        data: {
+            id: "507",
+            type: AdventurerType.ARCANE_MAGE,
+            status: AdventurerStatus.ON_QUEST,
+            xp: 2200,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user507.id },
+        data: { adventurerId: adventurer507.id },
+    });
+
+    // Autres aventuriers
+    const user508 = await prisma.user.create({
+        data: {
+            id: "508",
+            name: "Mira Lightveil",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-03-10T09:00:00Z"),
+        },
+    });
+
+    const adventurer508 = await prisma.adventurer.create({
+        data: {
+            id: "508",
+            type: AdventurerType.PRIEST,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1300,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user508.id },
+        data: { adventurerId: adventurer508.id },
+    });
+
+    const user509 = await prisma.user.create({
+        data: {
+            id: "509",
+            name: "Seren Willowglade",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-03-12T11:00:00Z"),
+        },
+    });
+
+    const adventurer509 = await prisma.adventurer.create({
+        data: {
+            id: "509",
+            type: AdventurerType.PRIEST,
+            status: AdventurerStatus.RESTING,
+            xp: 1500,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user509.id },
+        data: { adventurerId: adventurer509.id },
+    });
+
+    const user510 = await prisma.user.create({
+        data: {
+            id: "510",
+            name: "Tarin Emberforge",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-03-14T15:00:00Z"),
+        },
+    });
+
+    const adventurer510 = await prisma.adventurer.create({
+        data: {
+            id: "510",
+            type: AdventurerType.ENCHANTER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 900,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user510.id },
+        data: { adventurerId: adventurer510.id },
+    });
+
+    const user511 = await prisma.user.create({
+        data: {
+            id: "511",
+            name: "Selene Frostweaver",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-03-18T13:00:00Z"),
+        },
+    });
+
+    const adventurer511 = await prisma.adventurer.create({
+        data: {
+            id: "511",
+            type: AdventurerType.GEOMANCER,
+            status: AdventurerStatus.ON_QUEST,
+            xp: 2500,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user511.id },
+        data: { adventurerId: adventurer511.id },
+    });
+
+    const user512 = await prisma.user.create({
+        data: {
+            id: "512",
+            name: "Doran Quickblade",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-02-02T09:00:00Z"),
+        },
+    });
+
+    const adventurer512 = await prisma.adventurer.create({
+        data: {
+            id: "512",
+            type: AdventurerType.ROGUE,
+            status: AdventurerStatus.ON_QUEST,
+            xp: 1900,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user512.id },
+        data: { adventurerId: adventurer512.id },
+    });
+
+    const user513 = await prisma.user.create({
+        data: {
+            id: "513",
+            name: "Kara Windrunner",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-03-03T12:00:00Z"),
+        },
+    });
+
+    const adventurer513 = await prisma.adventurer.create({
+        data: {
+            id: "513",
+            type: AdventurerType.ENCHANTER,
+            status: AdventurerStatus.RESTING,
+            xp: 2300,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user513.id },
+        data: { adventurerId: adventurer513.id },
+    });
+
+    // === AVENTURIERS SUPPLÉMENTAIRES DISPONIBLES ===
+    console.log("🌟 Création des aventuriers supplémentaires...");
+
+    const user514 = await prisma.user.create({
+        data: {
+            id: "514",
+            name: "Thoric Ironhammer",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-01T10:00:00Z"),
+        },
+    });
+
+    const adventurer514 = await prisma.adventurer.create({
+        data: {
+            id: "514",
+            type: AdventurerType.BARBARIAN,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1200,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user514.id },
+        data: { adventurerId: adventurer514.id },
+    });
+
+    const user515 = await prisma.user.create({
+        data: {
+            id: "515",
+            name: "Astra Starlight",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-05T14:30:00Z"),
+        },
+    });
+
+    const adventurer515 = await prisma.adventurer.create({
+        data: {
+            id: "515",
+            type: AdventurerType.ARCANE_MAGE,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1700,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user515.id },
+        data: { adventurerId: adventurer515.id },
+    });
+
+    const user516 = await prisma.user.create({
+        data: {
+            id: "516",
+            name: "Marcus Steelblade",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-10T09:00:00Z"),
+        },
+    });
+
+    const adventurer516 = await prisma.adventurer.create({
+        data: {
+            id: "516",
+            type: AdventurerType.WARRIOR,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 2100,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user516.id },
+        data: { adventurerId: adventurer516.id },
+    });
+
+    const user517 = await prisma.user.create({
+        data: {
+            id: "517",
+            name: "Lysa Shadowstrike",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-12T11:20:00Z"),
+        },
+    });
+
+    const adventurer517 = await prisma.adventurer.create({
+        data: {
+            id: "517",
+            type: AdventurerType.ROGUE,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1450,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user517.id },
+        data: { adventurerId: adventurer517.id },
+    });
+
+    const user518 = await prisma.user.create({
+        data: {
+            id: "518",
+            name: "Elysia Holylight",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-15T15:00:00Z"),
+        },
+    });
+
+    const adventurer518 = await prisma.adventurer.create({
+        data: {
+            id: "518",
+            type: AdventurerType.PRIEST,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1600,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user518.id },
+        data: { adventurerId: adventurer518.id },
+    });
+
+    const user519 = await prisma.user.create({
+        data: {
+            id: "519",
+            name: "Kael Sunbringer",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-18T12:45:00Z"),
+        },
+    });
+
+    const adventurer519 = await prisma.adventurer.create({
+        data: {
+            id: "519",
+            type: AdventurerType.PALADIN,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 2050,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user519.id },
+        data: { adventurerId: adventurer519.id },
+    });
+
+    const user520 = await prisma.user.create({
+        data: {
+            id: "520",
+            name: "Terra Earthbinder",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-20T10:30:00Z"),
+        },
+    });
+
+    const adventurer520 = await prisma.adventurer.create({
+        data: {
+            id: "520",
+            type: AdventurerType.GEOMANCER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1350,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user520.id },
+        data: { adventurerId: adventurer520.id },
+    });
+
+    const user521 = await prisma.user.create({
+        data: {
+            id: "521",
+            name: "Aldric Flamebrand",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-22T13:15:00Z"),
+        },
+    });
+
+    const adventurer521 = await prisma.adventurer.create({
+        data: {
+            id: "521",
+            type: AdventurerType.ALCHEMIST,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1550,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user521.id },
+        data: { adventurerId: adventurer521.id },
+    });
+
+    const user522 = await prisma.user.create({
+        data: {
+            id: "522",
+            name: "Smithson Hammerhand",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-25T09:45:00Z"),
+        },
+    });
+
+    const adventurer522 = await prisma.adventurer.create({
+        data: {
+            id: "522",
+            type: AdventurerType.BLACKSMITH,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1750,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user522.id },
+        data: { adventurerId: adventurer522.id },
+    });
+
+    const user523 = await prisma.user.create({
+        data: {
+            id: "523",
+            name: "Aria Swiftbow",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-04-28T14:20:00Z"),
+        },
+    });
+
+    const adventurer523 = await prisma.adventurer.create({
+        data: {
+            id: "523",
+            type: AdventurerType.ARCHER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1400,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user523.id },
+        data: { adventurerId: adventurer523.id },
+    });
+
+    const user524 = await prisma.user.create({
+        data: {
+            id: "524",
+            name: "Rowan Spellweaver",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-05-01T11:00:00Z"),
+        },
+    });
+
+    const adventurer524 = await prisma.adventurer.create({
+        data: {
+            id: "524",
+            type: AdventurerType.ENCHANTER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 1850,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user524.id },
+        data: { adventurerId: adventurer524.id },
+    });
+
+    const user525 = await prisma.user.create({
+        data: {
+            id: "525",
+            name: "Raven Nightbringer",
+            password: hashedPassword,
+            role: Role.ADVENTURER,
+            createdAt: new Date("2024-05-03T16:30:00Z"),
+        },
+    });
+
+    const adventurer525 = await prisma.adventurer.create({
+        data: {
+            id: "525",
+            type: AdventurerType.MESSENGER,
+            status: AdventurerStatus.AVAILABLE,
+            xp: 950,
+            guildId: guild.id,
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user525.id },
+        data: { adventurerId: adventurer525.id },
+    });
+
+    // === CLIENT POUR LES QUÊTES ===
+    const clientUser = await prisma.user.create({
+        data: {
+            id: "1004",
+            name: "Lyria Moonshadow",
+            password: hashedPassword,
+            role: Role.CLIENT,
+            createdAt: new Date("2024-02-20T12:00:00Z"),
+        },
+    });
+
+    // === QUÊTES ===
+    console.log("📜 Création des quêtes...");
+
+    const quest1 = await prisma.quest.create({
+        data: {
+            id: "1",
+            title: "Récupérer le joyau azur",
+            description:
+                "Une gemme précieuse a été volée par une bande de pillards des rivières. Récupérez-la et ramenez-la en sécurité.",
+            deadline: new Date("2026-02-15T23:59:59Z"),
+            xp_required: 1200,
+            reward: 150,
+            status: QuestStatus.PENDING,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.ENCHANTER, AdventurerType.PRIEST],
+        },
+    });
+
+    const quest2 = await prisma.quest.create({
+        data: {
+            id: "2",
+            title: "Nettoyer les Mines Oubliées",
+            description:
+                "Les anciens tunnels de la mine ont été infestés par des élémentaires de terre. Nettoyez-les pour que les mineurs puissent revenir.",
+            deadline: new Date("2026-02-10T23:59:59Z"),
+            start_date: new Date("2026-01-28T09:00:00Z"),
+            end_date: new Date("2026-02-10T17:00:00Z"),
+            xp_required: 2400,
+            xp_reward: 1200,
+            reward: 300,
+            status: QuestStatus.IN_PROGRESS,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.BARBARIAN, AdventurerType.PALADIN],
+        },
+    });
+
+    const quest3 = await prisma.quest.create({
+        data: {
+            id: "3",
+            title: "Escorter la caravane marchande",
+            description:
+                "Une caravane a besoin de protection à travers des cols infestés de bandits. Assurez-vous que tous les chariots atteignent la prochaine ville.",
+            deadline: new Date("2026-02-20T23:59:59Z"),
+            start_date: new Date("2026-02-05T08:00:00Z"),
+            end_date: new Date("2026-02-20T20:00:00Z"),
+            xp_required: 1800,
+            xp_reward: 900,
+            reward: 220,
+            status: QuestStatus.APPROVED,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.ROGUE, AdventurerType.WARRIOR, AdventurerType.PRIEST],
+        },
+    });
+
+    const quest4 = await prisma.quest.create({
+        data: {
+            id: "4",
+            title: "Chasse au Basilic",
+            description:
+                "Un basilic terrorise les voyageurs sur la route du nord. Éliminez-le avant qu'il ne fasse plus de victimes.",
+            deadline: new Date("2026-01-20T23:59:59Z"),
+            start_date: new Date("2026-01-10T08:00:00Z"),
+            end_date: new Date("2026-01-18T18:00:00Z"),
+            xp_required: 2200,
+            xp_reward: 1100,
+            reward: 400,
+            status: QuestStatus.COMPLETED,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.ARCHER, AdventurerType.WARRIOR, AdventurerType.ALCHEMIST],
+        },
+    });
+
+    const quest5 = await prisma.quest.create({
+        data: {
+            id: "5",
+            title: "Livraison de parchemins secrets",
+            description:
+                "Transportez discrètement des parchemins importants jusqu'à la citadelle sans vous faire repérer.",
+            deadline: new Date("2026-02-25T23:59:59Z"),
+            xp_required: 800,
+            reward: 180,
+            status: QuestStatus.PENDING,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.MESSENGER, AdventurerType.ROGUE],
+        },
+    });
+
+    const quest6 = await prisma.quest.create({
+        data: {
+            id: "6",
+            title: "Exploration des Catacombes",
+            description:
+                "Explorez les anciennes catacombes sous la ville et cartographiez les passages secrets.",
+            deadline: new Date("2026-02-15T23:59:59Z"),
+            start_date: new Date("2026-01-28T10:00:00Z"),
+            end_date: new Date("2026-02-15T17:00:00Z"),
+            xp_required: 1500,
+            xp_reward: 750,
+            reward: 350,
+            status: QuestStatus.IN_PROGRESS,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.ROGUE, AdventurerType.ARCANE_MAGE, AdventurerType.ENCHANTER],
+        },
+    });
+
+    const quest7 = await prisma.quest.create({
+        data: {
+            id: "7",
+            title: "Défendre le village contre les gobelins",
+            description:
+                "Une horde de gobelins menace un village isolé. Protégez les habitants et repoussez l'invasion.",
+            deadline: new Date("2026-03-05T23:59:59Z"),
+            start_date: new Date("2026-02-10T08:00:00Z"),
+            end_date: new Date("2026-03-05T18:00:00Z"),
+            xp_required: 2000,
+            xp_reward: 1000,
+            reward: 500,
+            status: QuestStatus.APPROVED,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.WARRIOR, AdventurerType.PALADIN, AdventurerType.ARCHER],
+        },
+    });
+
+    const quest8 = await prisma.quest.create({
+        data: {
+            id: "8",
+            title: "Collecter des herbes rares",
+            description:
+                "Récoltez des plantes médicinales rares dans les marais maudits pour préparer des potions de guérison.",
+            deadline: new Date("2026-01-25T23:59:59Z"),
+            start_date: new Date("2026-01-05T08:00:00Z"),
+            end_date: new Date("2026-01-25T17:00:00Z"),
+            xp_required: 1000,
+            xp_reward: 500,
+            reward: 250,
+            status: QuestStatus.COMPLETED,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.ALCHEMIST, AdventurerType.GEOMANCER],
+        },
+    });
+
+    const quest9 = await prisma.quest.create({
+        data: {
+            id: "9",
+            title: "Enquête sur la secte interdite",
+            description:
+                "Infiltrez une secte mystérieuse et découvrez leurs plans. Discrétion absolue requise.",
+            deadline: new Date("2026-03-15T23:59:59Z"),
+            xp_required: 3000,
+            reward: 600,
+            status: QuestStatus.PENDING,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.ROGUE, AdventurerType.ENCHANTER],
+        },
+    });
+
+    const quest10 = await prisma.quest.create({
+        data: {
+            id: "10",
+            title: "Forger l'armure du champion",
+            description:
+                "Rassemblez les matériaux nécessaires et forgez une armure légendaire pour le champion du royaume.",
+            deadline: new Date("2026-02-25T23:59:59Z"),
+            start_date: new Date("2026-01-25T09:00:00Z"),
+            end_date: new Date("2026-02-25T17:00:00Z"),
+            xp_required: 2800,
+            xp_reward: 1400,
+            reward: 750,
+            status: QuestStatus.IN_PROGRESS,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.BLACKSMITH, AdventurerType.GEOMANCER],
+        },
+    });
+
+    const quest11 = await prisma.quest.create({
+        data: {
+            id: "11",
+            title: "Bannir l'esprit maléfique",
+            description:
+                "Un esprit maléfique hante le manoir abandonné. Utilisez vos pouvoirs pour le bannir définitivement.",
+            deadline: new Date("2026-03-10T23:59:59Z"),
+            start_date: new Date("2026-02-15T09:00:00Z"),
+            end_date: new Date("2026-03-10T17:00:00Z"),
+            xp_required: 2600,
+            xp_reward: 1300,
+            reward: 550,
+            status: QuestStatus.APPROVED,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.PRIEST, AdventurerType.ARCANE_MAGE, AdventurerType.ENCHANTER],
+        },
+    });
+
+    const quest12 = await prisma.quest.create({
+        data: {
+            id: "12",
+            title: "Récupération de reliques anciennes",
+            description:
+                "Des reliques sacrées ont été volées du temple. Retrouvez-les et rapportez-les avant qu'elles ne soient vendues.",
+            deadline: new Date("2026-01-28T23:59:59Z"),
+            start_date: new Date("2026-01-10T10:00:00Z"),
+            end_date: new Date("2026-01-25T16:00:00Z"),
+            xp_required: 1900,
+            xp_reward: 950,
+            reward: 450,
+            status: QuestStatus.FAILED,
+            createdBy: clientUser.id,
+            profils: [AdventurerType.PRIEST, AdventurerType.PALADIN, AdventurerType.WARRIOR],
+        },
+    });
+
+    // === ITEMS ===
     console.log("🗡️ Création des items...");
 
     const items = await Promise.all([
         // Armes
         prisma.item.create({
             data: {
-                name: "Épée de Flammes",
-                description: "Une épée légendaire qui brûle de flammes éternelles",
+                name: ItemName.SWORD,
+                description: "Une épée en acier trempé, fiable pour tout guerrier",
                 durability: 100,
-                price: 5000,
+                maxDurability: 100,
+                price: 250,
                 type: ItemType.WEAPON,
-                stats: '{"attack": 85, "fire_damage": 25}',
-                rarity: ItemRarity.LEGENDARY,
+                rarity: ItemRarity.COMMON,
+                status: ItemStatus.AVAILABLE,
                 profiles: [AdventurerType.WARRIOR, AdventurerType.PALADIN],
+                isConsumable: false,
             },
         }),
         prisma.item.create({
             data: {
-                name: "Arc Sylvestre",
-                description: "Un arc elfique taillé dans du bois ancien",
+                name: ItemName.BOW,
+                description: "Arc composite en bois d'if avec une excellente portée",
                 durability: 80,
-                price: 3500,
+                maxDurability: 80,
+                price: 200,
                 type: ItemType.WEAPON,
-                stats: '{"attack": 70, "precision": 30}',
-                rarity: ItemRarity.EPIC,
+                rarity: ItemRarity.COMMON,
+                status: ItemStatus.AVAILABLE,
                 profiles: [AdventurerType.ARCHER],
+                isConsumable: false,
             },
         }),
         prisma.item.create({
             data: {
-                name: "Hache du Berserker",
-                description: "Une hache massive qui augmente la rage du porteur",
-                durability: 90,
-                price: 4000,
-                type: ItemType.WEAPON,
-                stats: '{"attack": 95, "critical": 15}',
-                rarity: ItemRarity.RARE,
-                profiles: [AdventurerType.BARBARIAN],
-            },
-        }),
-        prisma.item.create({
-            data: {
-                name: "Dague des Ombres",
-                description: "Une dague furtive qui absorbe la lumière",
+                name: ItemName.DAGGER,
+                description: "Dague légère et mortellement précise pour les attaques furtives",
                 durability: 70,
-                price: 2800,
+                maxDurability: 70,
+                price: 150,
                 type: ItemType.WEAPON,
-                stats: '{"attack": 60, "stealth": 40}',
-                rarity: ItemRarity.EPIC,
+                rarity: ItemRarity.UNCOMMON,
+                status: ItemStatus.AVAILABLE,
                 profiles: [AdventurerType.ROGUE],
+                isConsumable: false,
             },
         }),
         prisma.item.create({
             data: {
-                name: "Bâton Arcanique",
-                description: "Un bâton imprégné de magie ancienne",
-                durability: 75,
-                price: 4500,
+                name: ItemName.STAFF,
+                description: "Bâton en bois ancien imprégné de magie élémentaire",
+                durability: 90,
+                maxDurability: 90,
+                price: 400,
                 type: ItemType.WEAPON,
-                stats: '{"magic_power": 80, "mana_regen": 10}',
-                rarity: ItemRarity.LEGENDARY,
+                rarity: ItemRarity.RARE,
+                status: ItemStatus.AVAILABLE,
                 profiles: [
                     AdventurerType.ARCANE_MAGE,
                     AdventurerType.GEOMANCER,
                     AdventurerType.ENCHANTER,
                 ],
+                isConsumable: false,
+            },
+        }),
+        prisma.item.create({
+            data: {
+                name: ItemName.AXE,
+                description: "Hache de guerre lourde capable de fendre les armures",
+                durability: 95,
+                maxDurability: 95,
+                price: 300,
+                type: ItemType.WEAPON,
+                rarity: ItemRarity.UNCOMMON,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.BARBARIAN, AdventurerType.WARRIOR],
+                isConsumable: false,
             },
         }),
 
-        // Équipements
+        // Armures et équipements
         prisma.item.create({
             data: {
-                name: "Armure de Plates Dragon",
-                description: "Une armure forgée à partir d'écailles de dragon",
+                name: ItemName.ARMOR,
+                description: "Armure complète en plates d'acier renforcé",
                 durability: 150,
-                price: 6000,
-                type: ItemType.EQUIPMENT,
-                stats: '{"defense": 100, "fire_resistance": 30}',
-                rarity: ItemRarity.LEGENDARY,
-                profiles: [AdventurerType.WARRIOR, AdventurerType.PALADIN],
-            },
-        }),
-        prisma.item.create({
-            data: {
-                name: "Robe du Sage",
-                description: "Une robe tissée de fils magiques",
-                durability: 60,
-                price: 3000,
-                type: ItemType.EQUIPMENT,
-                stats: '{"defense": 40, "magic_power": 20}',
+                maxDurability: 150,
+                price: 600,
+                type: ItemType.ARMOR,
                 rarity: ItemRarity.RARE,
-                profiles: [
-                    AdventurerType.ARCANE_MAGE,
-                    AdventurerType.PRIEST,
-                    AdventurerType.ENCHANTER,
-                ],
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.WARRIOR, AdventurerType.PALADIN],
+                isConsumable: false,
             },
         }),
         prisma.item.create({
             data: {
-                name: "Armure de Cuir Renforcé",
-                description: "Une armure légère mais résistante",
+                name: ItemName.SHIELD,
+                description: "Bouclier rond en chêne renforcé de métal",
+                durability: 120,
+                maxDurability: 120,
+                price: 180,
+                type: ItemType.ARMOR,
+                rarity: ItemRarity.COMMON,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.WARRIOR, AdventurerType.PALADIN],
+                isConsumable: false,
+            },
+        }),
+        prisma.item.create({
+            data: {
+                name: ItemName.HELMET,
+                description: "Casque en acier poli offrant une bonne protection",
                 durability: 80,
-                price: 2000,
-                type: ItemType.EQUIPMENT,
-                stats: '{"defense": 60, "agility": 15}',
+                maxDurability: 80,
+                price: 220,
+                type: ItemType.ARMOR,
                 rarity: ItemRarity.UNCOMMON,
-                profiles: [AdventurerType.ARCHER, AdventurerType.ROGUE, AdventurerType.MESSENGER],
-            },
-        }),
-        prisma.item.create({
-            data: {
-                name: "Casque du Champion",
-                description: "Un casque qui augmente la résistance mentale",
-                durability: 100,
-                price: 2500,
-                type: ItemType.EQUIPMENT,
-                stats: '{"defense": 30, "mental_resistance": 25}',
-                rarity: ItemRarity.EPIC,
+                status: ItemStatus.AVAILABLE,
                 profiles: [
                     AdventurerType.WARRIOR,
                     AdventurerType.PALADIN,
                     AdventurerType.BARBARIAN,
                 ],
-            },
-        }),
-        prisma.item.create({
-            data: {
-                name: "Bottes de Rapidité",
-                description: "Des bottes qui augmentent la vitesse de déplacement",
-                durability: 50,
-                price: 1500,
-                type: ItemType.EQUIPMENT,
-                stats: '{"speed": 30, "agility": 10}',
-                rarity: ItemRarity.RARE,
-                profiles: [AdventurerType.MESSENGER, AdventurerType.ROGUE, AdventurerType.ARCHER],
+                isConsumable: false,
             },
         }),
 
         // Potions
         prisma.item.create({
             data: {
-                name: "Potion de Soin Majeure",
-                description: "Restaure une grande quantité de points de vie",
-                durability: 1,
-                price: 500,
+                name: ItemName.HEALING_POTION,
+                description: "Potion de soin restaure 100 points de vie",
+                quantity: 5,
+                price: 50,
                 type: ItemType.POTION,
-                stats: '{"heal": 150}',
+                rarity: ItemRarity.COMMON,
+                status: ItemStatus.AVAILABLE,
+                profiles: [],
+                isConsumable: true,
+            },
+        }),
+        prisma.item.create({
+            data: {
+                name: ItemName.HEALING_POTION,
+                description: "Potion de soin majeure restaure 250 points de vie",
+                quantity: 3,
+                price: 120,
+                type: ItemType.POTION,
                 rarity: ItemRarity.RARE,
+                status: ItemStatus.AVAILABLE,
                 profiles: [],
-            },
-        }),
-        prisma.item.create({
-            data: {
-                name: "Potion de Mana",
-                description: "Restaure les points de mana",
-                durability: 1,
-                price: 400,
-                type: ItemType.POTION,
-                stats: '{"mana_restore": 100}',
-                rarity: ItemRarity.UNCOMMON,
-                profiles: [],
-            },
-        }),
-        prisma.item.create({
-            data: {
-                name: "Élixir de Force",
-                description: "Augmente temporairement la force",
-                durability: 1,
-                price: 600,
-                type: ItemType.POTION,
-                stats: '{"strength_boost": 30, "duration": 300}',
-                rarity: ItemRarity.RARE,
-                profiles: [],
-            },
-        }),
-        prisma.item.create({
-            data: {
-                name: "Potion d'Invisibilité",
-                description: "Rend invisible pendant un court moment",
-                durability: 1,
-                price: 800,
-                type: ItemType.POTION,
-                stats: '{"invisibility": true, "duration": 60}',
-                rarity: ItemRarity.EPIC,
-                profiles: [],
+                isConsumable: true,
             },
         }),
 
-        // Divers
+        // Items magiques
         prisma.item.create({
             data: {
-                name: "Pierre de Téléportation",
-                description: "Permet de se téléporter à la guilde",
-                durability: 10,
-                price: 1000,
+                name: ItemName.MAGIC_RING,
+                description: "Anneau enchanté augmentant la puissance magique",
+                durability: 200,
+                maxDurability: 200,
+                price: 800,
                 type: ItemType.MISC,
-                stats: '{"teleport": true}',
-                rarity: ItemRarity.RARE,
-                profiles: [],
-            },
-        }),
-        prisma.item.create({
-            data: {
-                name: "Cristal de Magie",
-                description: "Un cristal concentrant de l'énergie magique",
-                durability: 50,
-                price: 2000,
-                type: ItemType.MISC,
-                stats: '{"magic_power": 15}',
                 rarity: ItemRarity.EPIC,
+                status: ItemStatus.AVAILABLE,
                 profiles: [
                     AdventurerType.ARCANE_MAGE,
-                    AdventurerType.GEOMANCER,
                     AdventurerType.ENCHANTER,
-                    AdventurerType.ALCHEMIST,
+                    AdventurerType.PRIEST,
                 ],
+                isConsumable: false,
+            },
+        }),
+
+        // Flèches
+        prisma.item.create({
+            data: {
+                name: ItemName.ARROW,
+                description: "Carquois de 20 flèches en bois d'orme avec pointes en acier",
+                quantity: 20,
+                price: 30,
+                type: ItemType.MISC,
+                rarity: ItemRarity.COMMON,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.ARCHER],
+                isConsumable: true,
             },
         }),
         prisma.item.create({
             data: {
-                name: "Parchemin de Protection",
-                description: "Un parchemin magique de protection",
-                durability: 3,
-                price: 700,
+                name: ItemName.ARROW,
+                description: "Flèches enchantées de feu, 10 unités",
+                quantity: 10,
+                price: 150,
                 type: ItemType.MISC,
-                stats: '{"defense_boost": 20, "duration": 600}',
-                rarity: ItemRarity.UNCOMMON,
-                profiles: [],
-            },
-        }),
-        prisma.item.create({
-            data: {
-                name: "Sac à Dos Enchanté",
-                description: "Un sac qui augmente la capacité de transport",
-                durability: 200,
-                price: 1500,
-                type: ItemType.MISC,
-                stats: '{"inventory_slots": 20}',
                 rarity: ItemRarity.RARE,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.ARCHER],
+                isConsumable: true,
+            },
+        }),
+
+        // Items légendaires
+        prisma.item.create({
+            data: {
+                name: ItemName.SWORD,
+                description:
+                    "Épée légendaire Flammegivre - Une lame qui brûle et glace simultanément",
+                durability: 250,
+                maxDurability: 250,
+                price: 5000,
+                type: ItemType.WEAPON,
+                rarity: ItemRarity.LEGENDARY,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.WARRIOR, AdventurerType.PALADIN],
+                isConsumable: false,
+            },
+        }),
+        prisma.item.create({
+            data: {
+                name: ItemName.STAFF,
+                description:
+                    "Bâton des Arcanes Éternelles - Concentre une puissance magique infinie",
+                durability: 300,
+                maxDurability: 300,
+                price: 8000,
+                type: ItemType.WEAPON,
+                rarity: ItemRarity.LEGENDARY,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.ARCANE_MAGE],
+                isConsumable: false,
+            },
+        }),
+
+        // Items épiques variés
+        prisma.item.create({
+            data: {
+                name: ItemName.ARMOR,
+                description: "Armure du Dragon Noir - Forgée à partir d'écailles de dragon",
+                durability: 200,
+                maxDurability: 200,
+                price: 3500,
+                type: ItemType.ARMOR,
+                rarity: ItemRarity.EPIC,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.WARRIOR, AdventurerType.PALADIN],
+                isConsumable: false,
+            },
+        }),
+        prisma.item.create({
+            data: {
+                name: ItemName.BOW,
+                description:
+                    "Arc Ailé du Chasseur - Tire des flèches qui ne manquent jamais leur cible",
+                durability: 150,
+                maxDurability: 150,
+                price: 2800,
+                type: ItemType.WEAPON,
+                rarity: ItemRarity.EPIC,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.ARCHER],
+                isConsumable: false,
+            },
+        }),
+
+        // Items communs supplémentaires
+        prisma.item.create({
+            data: {
+                name: ItemName.SHIELD,
+                description: "Petit bouclier en bois renforcé",
+                durability: 60,
+                maxDurability: 60,
+                price: 80,
+                type: ItemType.ARMOR,
+                rarity: ItemRarity.COMMON,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.WARRIOR, AdventurerType.PALADIN, AdventurerType.ROGUE],
+                isConsumable: false,
+            },
+        }),
+        prisma.item.create({
+            data: {
+                name: ItemName.DAGGER,
+                description: "Dague empoisonnée - Inflige des dégâts de poison sur la durée",
+                durability: 50,
+                maxDurability: 50,
+                price: 450,
+                type: ItemType.WEAPON,
+                rarity: ItemRarity.RARE,
+                status: ItemStatus.AVAILABLE,
+                profiles: [AdventurerType.ROGUE],
+                isConsumable: false,
+            },
+        }),
+
+        // Potions variées
+        prisma.item.create({
+            data: {
+                name: ItemName.HEALING_POTION,
+                description: "Potion de régénération - Restaure lentement 500 PV sur 30 secondes",
+                quantity: 2,
+                price: 300,
+                type: ItemType.POTION,
+                rarity: ItemRarity.EPIC,
+                status: ItemStatus.AVAILABLE,
                 profiles: [],
+                isConsumable: true,
             },
         }),
     ]);
 
-    // Ajout de tous les items à l'inventaire de la guilde
-    console.log("📦 Ajout d'items à la guilde...");
+    // Ajouter tous les items à l'inventaire de la guilde
+    console.log("📦 Ajout des items à l'inventaire de la guilde...");
 
     await prisma.itemOnGuild.createMany({
         data: items.map((item) => ({
@@ -585,262 +1231,277 @@ async function main() {
         })),
     });
 
-    // Création des quêtes
-    console.log("📜 Création des quêtes...");
-
-    const quests = await Promise.all([
-        // Quêtes en attente
-        prisma.quest.create({
-            data: {
-                title: "Éliminer le Dragon de la Montagne",
-                description:
-                    "Un dragon terrorise les villages au pied de la montagne. Il faut le vaincre.",
-                deadline: new Date("2025-11-15"),
-                xp_required: 4000,
-                reward: 15000,
-                status: QuestStatus.PENDING,
-                createdBy: users[0].id,
-                profils: [
-                    AdventurerType.WARRIOR,
-                    AdventurerType.PALADIN,
-                    AdventurerType.ARCANE_MAGE,
-                ],
-            },
-        }),
-        prisma.quest.create({
-            data: {
-                title: "Livraison Urgente",
-                description: "Livrer un colis important à la capitale avant la tombée de la nuit.",
-                deadline: new Date("2025-10-30"),
-                xp_required: 1000,
-                reward: 2000,
-                status: QuestStatus.PENDING,
-                createdBy: users[1].id,
-                profils: [AdventurerType.MESSENGER, AdventurerType.ROGUE],
-            },
-        }),
-
-        // Quêtes approuvées
-        prisma.quest.create({
-            data: {
-                title: "Récupération d'Artefact",
-                description: "Récupérer un artefact ancien dans les ruines du temple maudit.",
-                deadline: new Date("2025-11-10"),
-                xp_required: 3000,
-                reward: 10000,
-                status: QuestStatus.APPROVED,
-                createdBy: users[2].id,
-                profils: [AdventurerType.ROGUE, AdventurerType.ARCANE_MAGE, AdventurerType.PRIEST],
-            },
-        }),
-
-        // Quêtes en cours
-        prisma.quest.create({
-            data: {
-                title: "Escorte de Marchands",
-                description: "Escorter une caravane de marchands à travers la forêt dangereuse.",
-                deadline: new Date("2025-11-05"),
-                start_date: new Date("2025-10-25"),
-                xp_required: 2000,
-                reward: 5000,
-                status: QuestStatus.IN_PROGRESS,
-                createdBy: users[0].id,
-                profils: [AdventurerType.WARRIOR, AdventurerType.ARCHER, AdventurerType.PRIEST],
-            },
-        }),
-        prisma.quest.create({
-            data: {
-                title: "Enquête sur les Disparitions",
-                description: "Enquêter sur les disparitions mystérieuses dans le village voisin.",
-                deadline: new Date("2025-11-08"),
-                start_date: new Date("2025-10-26"),
-                xp_required: 2500,
-                reward: 7000,
-                status: QuestStatus.IN_PROGRESS,
-                createdBy: users[1].id,
-                profils: [AdventurerType.ROGUE, AdventurerType.MESSENGER],
-            },
-        }),
-
-        // Quêtes complétées
-        prisma.quest.create({
-            data: {
-                title: "Nettoyage de Cave",
-                description: "Éliminer les monstres qui infestent la cave du fermier.",
-                deadline: new Date("2025-10-20"),
-                start_date: new Date("2025-10-15"),
-                end_date: new Date("2025-10-18"),
-                xp_required: 1500,
-                reward: 3000,
-                status: QuestStatus.COMPLETED,
-                createdBy: users[2].id,
-                profils: [AdventurerType.WARRIOR, AdventurerType.BARBARIAN],
-            },
-        }),
-        prisma.quest.create({
-            data: {
-                title: "Collecte de Plantes Rares",
-                description: "Collecter des plantes médicinales rares dans la forêt enchantée.",
-                deadline: new Date("2025-10-22"),
-                start_date: new Date("2025-10-18"),
-                end_date: new Date("2025-10-21"),
-                xp_required: 1800,
-                reward: 4000,
-                status: QuestStatus.COMPLETED,
-                createdBy: users[0].id,
-                profils: [AdventurerType.ALCHEMIST, AdventurerType.GEOMANCER],
-            },
-        }),
-
-        // Quête échouée
-        prisma.quest.create({
-            data: {
-                title: "Défense du Fort",
-                description: "Défendre le fort contre une horde d'orcs.",
-                deadline: new Date("2025-10-15"),
-                start_date: new Date("2025-10-10"),
-                end_date: new Date("2025-10-14"),
-                xp_required: 3500,
-                reward: 12000,
-                status: QuestStatus.FAILED,
-                createdBy: users[1].id,
-                profils: [
-                    AdventurerType.WARRIOR,
-                    AdventurerType.PALADIN,
-                    AdventurerType.BARBARIAN,
-                    AdventurerType.ARCHER,
-                ],
-            },
-        }),
-
-        // Plus de quêtes variées
-        prisma.quest.create({
-            data: {
-                title: "Forger une Épée Légendaire",
-                description:
-                    "Aider le forgeron à créer une épée légendaire en récupérant les matériaux nécessaires.",
-                deadline: new Date("2025-11-20"),
-                xp_required: 2800,
-                reward: 8000,
-                status: QuestStatus.APPROVED,
-                createdBy: users[2].id,
-                profils: [AdventurerType.BLACKSMITH, AdventurerType.WARRIOR],
-            },
-        }),
-        prisma.quest.create({
-            data: {
-                title: "Pacte avec les Esprits",
-                description: "Négocier avec les esprits de la forêt pour apaiser leur colère.",
-                deadline: new Date("2025-11-12"),
-                xp_required: 3200,
-                reward: 9000,
-                status: QuestStatus.PENDING,
-                createdBy: users[0].id,
-                profils: [AdventurerType.GEOMANCER, AdventurerType.PRIEST],
-            },
-        }),
-    ]);
-
-    // Création des assignations de quêtes
+    // === ASSIGNATION POUR LA QUÊTE EN COURS ===
     console.log("🎯 Création des assignations...");
 
-    const assignments = await Promise.all([
-        // Quête en cours 1 (Escorte de Marchands)
-        prisma.questAssignment.create({
-            data: {
-                adventurerId: adventurers[0].id, // Theron (Archer)
-                questId: quests[3].id,
-            },
-        }),
-        prisma.questAssignment.create({
-            data: {
-                adventurerId: adventurers[2].id, // Seraphine (Priest)
-                questId: quests[3].id,
-            },
-        }),
+    // Quest 2 (IN_PROGRESS) - Nettoyer les Mines Oubliées [BARBARIAN, PALADIN]
+    const assignment1 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer503.id, // Gorak Stonefist (BARBARIAN)
+            questId: quest2.id,
+        },
+    });
 
-        // Quête en cours 2 (Enquête)
-        prisma.questAssignment.create({
-            data: {
-                adventurerId: adventurers[8].id, // Lyra (Rogue)
-                questId: quests[4].id,
-            },
-        }),
-        prisma.questAssignment.create({
-            data: {
-                adventurerId: adventurers[9].id, // Vex (Messenger)
-                questId: quests[4].id,
-            },
-        }),
+    // Quest 3 (APPROVED) - Escorter la caravane marchande [ROGUE, WARRIOR, PRIEST]
+    const assignment2 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer512.id, // Doran Quickblade (ROGUE, ON_QUEST)
+            questId: quest3.id,
+        },
+    });
 
-        // Quête complétée 1
-        prisma.questAssignment.create({
-            data: {
-                adventurerId: adventurers[1].id, // Grom (Barbarian)
-                questId: quests[5].id,
-            },
-        }),
+    const assignment3 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer502.id, // Kaela Stormshield (PRIEST)
+            questId: quest3.id,
+        },
+    });
 
-        // Quête complétée 2
-        prisma.questAssignment.create({
-            data: {
-                adventurerId: adventurers[6].id, // Kaelith (Alchemist)
-                questId: quests[6].id,
-            },
-        }),
-    ]);
+    // Quest 4 (COMPLETED) - Chasse au Basilic [ARCHER, WARRIOR, ALCHEMIST]
+    const assignment4 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer505.id, // Ryn Featherstep (ARCHER)
+            questId: quest4.id,
+        },
+    });
 
-    // Ajout d'items aux assignations
-    console.log("⚔️ Ajout d'items aux assignations...");
+    // Quest 6 (IN_PROGRESS) - Exploration des Catacombes [ROGUE, ARCANE_MAGE, ENCHANTER]
+    const assignment5 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer507.id, // Liora Dawnspark (ARCANE_MAGE)
+            questId: quest6.id,
+        },
+    });
+
+    const assignment6 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer501.id, // Borin Ironfist (ENCHANTER)
+            questId: quest6.id,
+        },
+    });
+
+    // Quest 8 (COMPLETED) - Collecter des herbes rares [ALCHEMIST, GEOMANCER]
+    const assignment7 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer513.id, // Kara Windrunner (ENCHANTER, RESTING)
+            questId: quest8.id,
+        },
+    });
+
+    // Quest 10 (IN_PROGRESS) - Forger l'armure du champion [BLACKSMITH, GEOMANCER]
+    const assignment8 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer511.id, // Selene Frostweaver (GEOMANCER)
+            questId: quest10.id,
+        },
+    });
+
+    // Quest 11 (APPROVED) - Bannir l'esprit maléfique [PRIEST, ARCANE_MAGE, ENCHANTER]
+    const assignment9 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer506.id, // Elandra Whisperwind (ENCHANTER)
+            questId: quest11.id,
+        },
+    });
+
+    const assignment10 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer508.id, // Mira Lightveil (PRIEST)
+            questId: quest11.id,
+        },
+    });
+
+    // Quest 12 (FAILED) - Récupération de reliques anciennes [PRIEST, PALADIN, WARRIOR]
+    const assignment11 = await prisma.questAssignment.create({
+        data: {
+            adventurerId: adventurer509.id, // Seren Willowglade (PRIEST)
+            questId: quest12.id,
+        },
+    });
+
+    // === AJOUT DES ITEMS AUX ASSIGNATIONS ===
+    console.log("⚔️ Ajout des items aux assignations...");
 
     await prisma.itemOnQuestAssignment.createMany({
         data: [
-            // Assignment 1 (Theron - Escorte)
-            { questAssignmentId: assignments[0].id, itemId: items[1].id }, // Arc Sylvestre
-            { questAssignmentId: assignments[0].id, itemId: items[7].id }, // Armure de Cuir
-            { questAssignmentId: assignments[0].id, itemId: items[10].id }, // Potion de Soin
+            // Assignment 1 (Gorak - Nettoyer les Mines) - 3 items
+            { questAssignmentId: assignment1.id, itemId: items[4].id }, // AXE
+            { questAssignmentId: assignment1.id, itemId: items[7].id }, // HELMET
+            { questAssignmentId: assignment1.id, itemId: items[8].id }, // Potion de soin
 
-            // Assignment 2 (Seraphine - Escorte)
-            { questAssignmentId: assignments[1].id, itemId: items[6].id }, // Robe du Sage
-            { questAssignmentId: assignments[1].id, itemId: items[11].id }, // Potion de Mana
+            // Assignment 2 (Doran - Escorter caravane) - 2 items
+            { questAssignmentId: assignment2.id, itemId: items[2].id }, // DAGGER
+            { questAssignmentId: assignment2.id, itemId: items[8].id }, // Potion de soin
 
-            // Assignment 3 (Lyra - Enquête)
-            { questAssignmentId: assignments[2].id, itemId: items[3].id }, // Dague des Ombres
-            { questAssignmentId: assignments[2].id, itemId: items[13].id }, // Potion d'Invisibilité
+            // Assignment 3 (Kaela - Escorter caravane) - 2 items
+            { questAssignmentId: assignment3.id, itemId: items[10].id }, // MAGIC_RING
+            { questAssignmentId: assignment3.id, itemId: items[9].id }, // Potion majeure
 
-            // Assignment 4 (Vex - Enquête)
-            { questAssignmentId: assignments[3].id, itemId: items[9].id }, // Bottes de Rapidité
-            { questAssignmentId: assignments[3].id, itemId: items[14].id }, // Pierre de Téléportation
+            // Assignment 4 (Ryn - Chasse au Basilic) - 4 items
+            { questAssignmentId: assignment4.id, itemId: items[1].id }, // BOW
+            { questAssignmentId: assignment4.id, itemId: items[11].id }, // ARROW (commun)
+            { questAssignmentId: assignment4.id, itemId: items[12].id }, // ARROW (enchantées)
+            { questAssignmentId: assignment4.id, itemId: items[19].id }, // Potion régénération
 
-            // Assignment 5 (Grom - Nettoyage)
-            { questAssignmentId: assignments[4].id, itemId: items[2].id }, // Hache du Berserker
-            { questAssignmentId: assignments[4].id, itemId: items[8].id }, // Casque du Champion
+            // Assignment 5 (Liora - Exploration Catacombes) - 3 items
+            { questAssignmentId: assignment5.id, itemId: items[3].id }, // STAFF
+            { questAssignmentId: assignment5.id, itemId: items[10].id }, // MAGIC_RING
+            { questAssignmentId: assignment5.id, itemId: items[8].id }, // Potion de soin
 
-            // Assignment 6 (Kaelith - Collecte)
-            { questAssignmentId: assignments[5].id, itemId: items[15].id }, // Cristal de Magie
-            { questAssignmentId: assignments[5].id, itemId: items[17].id }, // Sac à Dos Enchanté
+            // Assignment 6 (Borin - Exploration Catacombes) - 2 items
+            { questAssignmentId: assignment6.id, itemId: items[3].id }, // STAFF
+            { questAssignmentId: assignment6.id, itemId: items[11].id }, // ARROW
+
+            // Assignment 7 (Selene - Collecter herbes rares) - 2 items
+            { questAssignmentId: assignment7.id, itemId: items[3].id }, // STAFF
+            { questAssignmentId: assignment7.id, itemId: items[8].id }, // Potion de soin
+
+            // Assignment 8 (Selene - Forger l'armure) - 3 items
+            { questAssignmentId: assignment8.id, itemId: items[13].id }, // ARMOR du dragon
+            { questAssignmentId: assignment8.id, itemId: items[5].id }, // ARMOR
+            { questAssignmentId: assignment8.id, itemId: items[6].id }, // SHIELD
+
+            // Assignment 9 (Liora - Bannir esprit) - 2 items
+            { questAssignmentId: assignment9.id, itemId: items[14].id }, // STAFF légendaire
+            { questAssignmentId: assignment9.id, itemId: items[9].id }, // Potion majeure
+
+            // Assignment 10 (Mira - Bannir esprit) - 2 items
+            { questAssignmentId: assignment10.id, itemId: items[10].id }, // MAGIC_RING
+            { questAssignmentId: assignment10.id, itemId: items[19].id }, // Potion régénération
+
+            // Assignment 11 (Kaela - Récupération reliques) - 1 item
+            { questAssignmentId: assignment11.id, itemId: items[12].id }, // ARROW enchantées
+        ],
+    });
+
+    // === MISE À JOUR DU STATUT DES ITEMS EN UTILISATION ===
+    console.log("📝 Mise à jour du statut des items utilisés dans les quêtes actives...");
+
+    // Récupérer tous les items utilisés dans les quêtes EN COURS et APPROUVÉES (IN_PROGRESS, APPROVED)
+    const itemsInActiveQuests = await prisma.itemOnQuestAssignment.findMany({
+        where: {
+            questAssignment: {
+                quest: {
+                    status: {
+                        in: [QuestStatus.IN_PROGRESS, QuestStatus.APPROVED],
+                    },
+                },
+            },
+        },
+        select: { itemId: true },
+    });
+
+    // Extraire les IDs uniques
+    const itemIdsToUpdate = [...new Set(itemsInActiveQuests.map((item) => item.itemId))];
+
+    // Mettre à jour le statut à IN_USE pour ces items
+    if (itemIdsToUpdate.length > 0) {
+        await prisma.item.updateMany({
+            where: { id: { in: itemIdsToUpdate } },
+            data: { status: ItemStatus.IN_USE },
+        });
+    }
+
+    // === TRANSACTIONS BANCAIRES ===
+    console.log("💳 Création des transactions bancaires...");
+
+    const bank = await prisma.bank.findUnique({
+        where: { guildId: guild.id },
+    });
+
+    await prisma.transaction.createMany({
+        data: [
+            // Transactions de revenus (quêtes complétées)
+            {
+                amount: 400,
+                date: Math.floor(new Date("2026-01-18T18:00:00Z").getTime() / 1000),
+                name: "Récompense - Chasse au Basilic",
+                bankId: bank!.id,
+            },
+            {
+                amount: 250,
+                date: Math.floor(new Date("2026-01-25T17:00:00Z").getTime() / 1000),
+                name: "Récompense - Collecter des herbes rares",
+                bankId: bank!.id,
+            },
+            // Transactions de revenus (quêtes en cours - acomptes 20% au démarrage)
+            {
+                amount: 60,
+                date: Math.floor(new Date("2026-01-28T09:00:00Z").getTime() / 1000),
+                name: "Acompte quête - Nettoyer les Mines Oubliées",
+                bankId: bank!.id,
+            },
+            {
+                amount: 70,
+                date: Math.floor(new Date("2026-01-28T10:00:00Z").getTime() / 1000),
+                name: "Acompte quête - Exploration des Catacombes",
+                bankId: bank!.id,
+            },
+            {
+                amount: 150,
+                date: Math.floor(new Date("2026-01-25T09:00:00Z").getTime() / 1000),
+                name: "Acompte quête - Forger l'armure du champion",
+                bankId: bank!.id,
+            },
+            // Dépenses (équipement et fournitures)
+            {
+                amount: -150,
+                date: Math.floor(new Date("2026-01-10T14:30:00Z").getTime() / 1000),
+                name: "Achat - Équipement de base pour aventuriers",
+                bankId: bank!.id,
+            },
+            {
+                amount: -200,
+                date: Math.floor(new Date("2026-01-12T10:00:00Z").getTime() / 1000),
+                name: "Achat - Potions de soin (stock)",
+                bankId: bank!.id,
+            },
+            {
+                amount: -300,
+                date: Math.floor(new Date("2026-01-15T09:00:00Z").getTime() / 1000),
+                name: "Réparation - Équipements endommagés",
+                bankId: bank!.id,
+            },
+            {
+                amount: -100,
+                date: Math.floor(new Date("2026-01-20T16:00:00Z").getTime() / 1000),
+                name: "Approvisionnement - Fournitures générales",
+                bankId: bank!.id,
+            },
+            // Pénalités et pertes
+            {
+                amount: -450,
+                date: Math.floor(new Date("2026-01-25T16:00:00Z").getTime() / 1000),
+                name: "Perte - Échec de la mission (Récupération reliques)",
+                bankId: bank!.id,
+            },
+            // Revenus divers
+            {
+                amount: 80,
+                date: Math.floor(new Date("2026-01-30T15:00:00Z").getTime() / 1000),
+                name: "Vente - Objets de rebut et équipements usagés",
+                bankId: bank!.id,
+            },
         ],
     });
 
     console.log("✅ Seed terminé avec succès!");
     console.log(`
-📊 Résumé:
-- Guilde créée Les Capuches d'Opale
-- Banque créée avec 85 000 pièces d'or
-- 10 Transactions créées
-- ${adventurers.length} Aventuriers créés (tous dans la même guilde)
-- ${users.length} Utilisateurs créés
-- ${items.length} Items créés (tous dans l'inventaire de la guilde)
-- ${quests.length} Quêtes créées
-- ${assignments.length} Assignations créées
+📊 Résumé (basé sur les mocks):
+- 1 Guilde créée (Guilde des Aventuriers)
+- 13 Aventuriers créés (tous dans la même guilde)
+- 12 Quêtes créées (PENDING, IN_PROGRESS, APPROVED, COMPLETED, FAILED)
+- 20 Items créés (armes, armures, potions, items magiques)
+- 11 Assignations créées avec items variés
+- 12 Transactions bancaires logiques
 
 🔐 Identifiants de test:
-- Clients: client_jean, client_marie, client_pierre
-- Assistants: assistant_alice, assistant_bob
-- Aventuriers: aventurier_theron, aventurier_morgana, aventurier_lyra
+- Aventuriers: Borin Ironfist, Kaela Stormshield, Gorak Stonefist, etc.
+- Client: Lyria Moonshadow
 - Mot de passe: password123
 
-💡 Tous les aventuriers et items appartiennent à la même guilde!
+💡 Les assignations correspondent aux profils requis et incluent des items!
+💡 Les transactions reflètent les revenus et dépenses liés aux quêtes!
   `);
 }
 

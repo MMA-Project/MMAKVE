@@ -1,53 +1,29 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-    AdventurerStatus,
-    AdventurerType,
     type Adventurer,
     type AdventurerCreation,
 } from "../../../../packages/shared/src/types/adventurer.type";
 
-const mockAdventurers: Adventurer[] = [
-    {
-        id: "501",
-        user: {
-            id: "501",
-            name: "Elara Swiftwind",
-            role: "ADVENTURER",
-            createdAt: new Date("2025-01-10T09:30:00Z"),
-        },
-        type: AdventurerType.ENCHANTER,
-        status: AdventurerStatus.AVAILABLE,
-        xp: 112500,
-    },
-    {
-        id: "502",
-        user: {
-            id: "502",
-            name: "Thalion the Swift",
-            role: "ADVENTURER",
-            createdAt: new Date("2025-03-12T11:15:00Z"),
-        },
-        type: AdventurerType.ROGUE,
-        status: AdventurerStatus.INJURED,
-        xp: 3000,
-    },
-    {
-        id: "503",
-        user: {
-            id: "503",
-            name: "Gorak Stonefist",
-            role: "ADVENTURER",
-            createdAt: new Date("2025-05-15T14:45:00Z"),
-        },
-        type: AdventurerType.BARBARIAN,
-        status: AdventurerStatus.ON_QUEST,
-        xp: 2800,
-    },
-];
+const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
+
+// Fonction utilitaire pour convertir les dates d'un adventurer
+const convertAdventurerDates = (adventurer: any): Adventurer => {
+    if (adventurer?.user?.createdAt && typeof adventurer.user.createdAt === "string") {
+        adventurer.user.createdAt = new Date(adventurer.user.createdAt);
+    }
+    return adventurer;
+};
 
 export const useAdventurers = () => {
     const fetchAdventurers = async (): Promise<Adventurer[]> => {
-        return mockAdventurers;
+        const response = await fetch(`${API_BASE}/adventurers`);
+
+        if (!response.ok) {
+            throw new Error("Erreur lors de la récupération des aventuriers");
+        }
+
+        const data = await response.json();
+        return data.map(convertAdventurerDates);
     };
     const getAdventurers = useQuery({
         queryKey: ["adventurers"],
@@ -60,14 +36,21 @@ export const useCreateAdventurer = () => {
     const queryClient = useQueryClient();
     const createAdventurerMutation = useMutation({
         mutationFn: async (newAdventurer: AdventurerCreation): Promise<Adventurer> => {
-            const createdAdventurer: Adventurer = {
-                id: (Math.random() * 1000).toFixed(0),
-                ...newAdventurer,
-                status: AdventurerStatus.AVAILABLE,
-                xp: 0,
-            };
-            mockAdventurers.push(createdAdventurer);
-            return createdAdventurer;
+            const response = await fetch(`${API_BASE}/adventurers`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newAdventurer),
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Erreur lors de la création de l'aventurier");
+            }
+
+            const data = await response.json();
+            return convertAdventurerDates(data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["adventurers"] });
@@ -86,20 +69,45 @@ export const useUpdateAdventurer = () => {
             id: string;
             updates: Partial<Adventurer>;
         }): Promise<Adventurer> => {
-            const index = mockAdventurers.findIndex((a) => a.id === id);
-            if (index === -1) throw new Error("Aventurier introuvable");
+            const response = await fetch(`${API_BASE}/adventurers/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updates),
+            });
 
-            const updatedAdventurer = {
-                ...mockAdventurers[index],
-                ...updates,
-                id: mockAdventurers[index].id, // Ensure id doesn't change
-            };
-            mockAdventurers[index] = updatedAdventurer;
-            return updatedAdventurer;
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Erreur lors de la mise à jour de l'aventurier");
+            }
+
+            const data = await response.json();
+            return convertAdventurerDates(data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["adventurers"] });
         },
     });
     return updateAdventurerMutation;
+};
+
+export const useDeleteAdventurer = () => {
+    const queryClient = useQueryClient();
+    const deleteAdventurerMutation = useMutation({
+        mutationFn: async (id: string): Promise<void> => {
+            const response = await fetch(`${API_BASE}/adventurers/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Erreur lors de la suppression de l'aventurier");
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["adventurers"] });
+        },
+    });
+    return deleteAdventurerMutation;
 };

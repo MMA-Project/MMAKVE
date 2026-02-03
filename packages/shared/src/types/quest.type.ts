@@ -25,6 +25,7 @@ export type Quest = {
         start_date: Date;
         end_date: Date;
         xp_required: number;
+        xp_reward: number;
         assignments: QuestAssignement[];
     };
 };
@@ -42,4 +43,6 @@ export type QuestProcessingData = {
     xpGained: number;
     adventurers: string[];
     approved: boolean;
+    startDate?: Date;
+    endDate?: Date;
 };

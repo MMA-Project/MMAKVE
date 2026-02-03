@@ -6,6 +6,7 @@ import {
     ItemType,
 } from "../../../../../packages/shared/src/types/item.type";
 import { Link } from "react-router-dom";
+import { formatCurrency } from "../../utils/currency";
 import {
     itemEmojis,
     itemImages,
@@ -14,8 +15,9 @@ import {
     itemTypeLabels,
 } from "../../utils/itemConstants";
 import { ItemModal } from "./ItemModal";
-import { useAddItem, useUpdateItem } from "../../api/guildApi";
+import { useAddItem, useUpdateItem, useDeleteItem } from "../../api/guildApi";
 import { UpdateButton } from "../Buttons/UpdateButton";
+import { DeleteButton } from "../Buttons/DeleteButton";
 import { ItemStatusBadge } from "../Item/ItemStatusBadge";
 import { SortControls } from "../common/SortControls";
 import { SearchFilter } from "../common/SearchFilter";
@@ -71,12 +73,22 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
 
     const addItem = useAddItem();
     const updateItem = useUpdateItem();
+    const deleteItem = useDeleteItem();
+
+    const handleDeleteItem = (itemId: string, itemName: string, isAvailable: boolean) => {
+        if (!isAvailable) return;
+
+        if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${itemName} ?`)) {
+            deleteItem.mutate(itemId);
+        }
+    };
 
     // Filtrage
     const filteredAndSortedItems = sortedItems.filter((item: Item) => {
+        const itemLabel = itemNameLabels[item.name] ?? item.name;
         const matchesSearch =
             !searchTerm ||
-            itemNameLabels[item.name].toLowerCase().includes(searchTerm.toLowerCase()) ||
+            itemLabel.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.description.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesType = !selectedType || item.type === selectedType;
         const matchesRarity = !selectedRarity || item.rarity === selectedRarity;
@@ -160,7 +172,7 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                 <div>
                     <p className="text-sm text-slate-400">Valeur totale</p>
                     <p className="text-xl font-bold text-amber-400">
-                        {new Intl.NumberFormat("fr-FR").format(totalValue)} po
+                        {formatCurrency(totalValue)} po
                     </p>
                 </div>
             </div>
@@ -269,20 +281,22 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                                         {itemImages[item.name] ? (
                                             <img
                                                 src={itemImages[item.name]!}
-                                                alt={item.name}
+                                                alt={itemNameLabels[item.name] ?? item.name}
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
-                                            <span className="text-lg">{itemEmojis[item.name]}</span>
+                                            <span className="text-lg">
+                                                {itemEmojis[item.name] ?? "📦"}
+                                            </span>
                                         )}
                                     </div>
                                 </td>
                                 <td className="py-3 px-2">
                                     <div>
                                         <p className="font-medium text-slate-200">
-                                            {itemNameLabels[item.name]}
+                                            {itemNameLabels[item.name] ?? item.name}
                                         </p>
-                                        <p className="text-xs text-slate-500 truncate max-w-xs">
+                                        <p className="text-xs text-slate-500 max-w-xs ">
                                             {item.description}
                                         </p>
                                     </div>
@@ -318,7 +332,7 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                                 </td>
                                 <td className="py-3 px-2 text-center whitespace-nowrap">
                                     <span className="text-amber-400 font-semibold">
-                                        {item.price} po
+                                        {formatCurrency(item.price)} po
                                     </span>
                                 </td>
                                 <td className="py-3 px-2 text-center">
@@ -344,6 +358,27 @@ export function GuildInventory({ inventory }: { inventory: Item[] }) {
                                                 setEditingItem(item);
                                                 setIsModalOpen(true);
                                             }}
+                                            disabled={item.status === ItemStatus.IN_USE}
+                                            title={
+                                                item.status === ItemStatus.IN_USE
+                                                    ? "Les objets en cours d'utilisation ne peuvent pas être modifiés"
+                                                    : "Modifier l'objet"
+                                            }
+                                        />
+                                        <DeleteButton
+                                            onClick={() =>
+                                                handleDeleteItem(
+                                                    item.id,
+                                                    itemNameLabels[item.name] ?? item.name,
+                                                    item.status === ItemStatus.AVAILABLE,
+                                                )
+                                            }
+                                            disabled={item.status !== ItemStatus.AVAILABLE}
+                                            title={
+                                                item.status === ItemStatus.AVAILABLE
+                                                    ? "Supprimer l'item"
+                                                    : "Seuls les items disponibles peuvent être supprimés"
+                                            }
                                         />
                                     </div>
                                 </td>

@@ -1,16 +1,13 @@
 import type { Bank } from "../../../../../packages/shared/src/types/bank.type";
+import { formatCurrency } from "../../utils/currency";
 
 export function Bank({ bank }: { bank: Bank | undefined }) {
     if (!bank) {
         return null;
     }
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat("fr-FR").format(amount);
-    };
-
     const formatDate = (timestamp: number) => {
-        return new Date(timestamp).toLocaleDateString("fr-FR", {
+        return new Date(timestamp * 1000).toLocaleDateString("fr-FR", {
             day: "numeric",
             month: "short",
             hour: "2-digit",

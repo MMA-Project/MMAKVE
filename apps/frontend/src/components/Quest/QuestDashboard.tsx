@@ -9,8 +9,9 @@ import type { AdventurerType } from "../../../../../packages/shared/src/types/ad
 import { CreateQuestModal } from "./CreateQuestModal";
 import { SortControls, type SortOrder } from "../common/SortControls";
 import { CreateButton } from "../common/CreateButton";
+import { LoadingState, ErrorState, EmptyState } from "../common";
 
-type SortBy = "date_limit" | "prime" | "status" | "xp" | "client";
+type SortBy = "date_limit" | "prime" | "status" | "xp" | "client" | "name";
 
 export function QuestDashboard() {
     const getQuests = useQuests();
@@ -29,6 +30,7 @@ export function QuestDashboard() {
         endDate,
         selectedStatus,
         clientSearch,
+        nameSearch,
         selectedClasses,
     } = useFilterStore();
 
@@ -38,9 +40,29 @@ export function QuestDashboard() {
         { value: "status" as const, label: "Statut" },
         { value: "xp" as const, label: "XP requis" },
         { value: "client" as const, label: "Client" },
+        { value: "name" as const, label: "Nom" },
     ];
 
     if (!user) return null;
+
+    if (getQuests.isLoading) {
+        return <LoadingState message="Chargement des quêtes..." />;
+    }
+
+    if (getQuests.isError) {
+        const errorMessage =
+            getQuests.error instanceof Error ? getQuests.error.message : "Une erreur est survenue.";
+        return <ErrorState title="Impossible de charger les quêtes" message={errorMessage} />;
+    }
+
+    if (!getQuests.data) {
+        return (
+            <EmptyState
+                title="Aucune donnée disponible"
+                message="Les quêtes ne sont pas disponibles pour le moment."
+            />
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 p-8">
@@ -103,6 +125,13 @@ export function QuestDashboard() {
                                 return false;
                             }
 
+                            if (
+                                nameSearch &&
+                                !quest.title.toLowerCase().includes(nameSearch.toLowerCase())
+                            ) {
+                                return false;
+                            }
+
                             if (selectedClasses.length > 0 && quest.options?.profils) {
                                 const hasMatchingClass = selectedClasses.some(
                                     (selectedClass: AdventurerType) =>
@@ -122,6 +151,9 @@ export function QuestDashboard() {
                                 userRole={user.role}
                                 userId={user.id}
                                 cancelQuestMutation={cancelQuestMutation}
+                                onProcessingFormOpen={() => {
+                                    // Le formulaire est géré directement par QuestList
+                                }}
                             />
                         );
                     })()}
